@@ -1,22 +1,22 @@
-﻿################################################################################
+################################################################################
 NAME := minishell
-CFLAGS:= -g -Wall -Wextra -Werror
-LIBFTFLAGS:= -Ilibft -Llibft -lreadline
-LIBFT:= ./libft/
+CFLAGS := -g -Wall -Wextra -Werror
+LIBFTFLAGS := -Ilibft -Llibft -lreadline
+LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
-SRCS:= main.c lexer.c exec.c expander.c pwd.c cd.c
-OBJS    := $(SRCS:.c=.o)
+SRCS := main.c lexer.c
+OBJS := $(SRCS:.c=.o)
 ################################################################################
 
 all: libft ${NAME}
 
-${NAME}:	${OBJS} ${LIBS}
+${NAME}: ${OBJS} ${LIBS}
 	cc $^ ${LIBFTFLAGS} -o ${NAME}
 
 libft:
 	make -C ${LIBFT}
 
-.c.o:   ${SRCS}
+.c.o: ${SRCS}
 	cc ${CFLAGS} -I. -Ilibft -c -o $@ $<
 
 clean:
