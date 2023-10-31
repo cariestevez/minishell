@@ -1,5 +1,12 @@
 #include "parser.h"
 
+typedef struct	s_tools
+{
+	char	**envp;
+	t_simple_cmds	**cmds;
+}	t_tools;
+
+
 char	*get_path(char *cmd)
 {
 	int		i;
@@ -29,7 +36,7 @@ char	*get_path(char *cmd)
 	return (cmd);
 }
 
-void	execute(char *cmd, char **env)
+void	execute(char *cmd, char **envp)
 {
 	char	**s_cmd;
 	char	*path;	
@@ -37,7 +44,7 @@ void	execute(char *cmd, char **env)
 	s_cmd = ft_split(cmd, ' ');
 	write(2, "\n", 1);
 	path = get_path(s_cmd[0]);
-	if (execve(path, s_cmd, env) == -1)
+	if (execve(path, s_cmd, envp) == -1)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
 		ft_putendl_fd(s_cmd[0], 2);
@@ -46,7 +53,7 @@ void	execute(char *cmd, char **env)
 	}
 }
 
-int	child_process(t_simple_commands *cmds, int	**fd, int i)
+int	child_process(t_tools *tools, char **cmds, int **fd, int i)
 {
 	int j;
 	int fd_out;
@@ -65,41 +72,41 @@ int	child_process(t_simple_commands *cmds, int	**fd, int i)
 	//if this process is the last command, output should be redirected to outfile or stay as stdout
 	if (cmd_index == amount_of_commands - 1)
 	{
-		if (redirections->out != NULL)
-			dup2(redirections->out, 1);
+		if (tools->cmds->out != NULL)
+			dup2(tools->cmds->out, 1);
 	}
 	//replace stdout with write part of pipe i+1 if not
 	else
 		dup2(fd[i+1][1], 1);
 	//read from fd[i][0]
-	execute(get_path(cmds->str[0]), env);
+	execute(get_path(cmds->str[0]), tools->envp);
 	//write to fd[i + 1][1]
 	close(fd[i][0]);
 	close(fd[i + 1][1]);
 	return (1);
 }
 
-int	parent_process(t_simple_commands *cmds, int	**fd, int *pid, int i)
+int	parent_process(t_tools *tools, int	**fd, int *pid, int i)
 {
 	//close all unneccesary file descriptors
 	while (i > 0)
 	{
 		close(fd[i][1])
-		if (i != amount_of_commands)
+		if (i != tools->amount_of_commands)
 			close(fd[i][0]);
 		i--;
 	}
 	//the parent will handle the input and send it to the first child via pipe fd[0]
 	//read from infile if given
-	if (redirections->in != NULL)
-		dup2(redirections->in, 0);
+	if (tools->redirections->in != NULL)
+		dup2(tools->redirections->in, 0);
 	dup2(fd[0][1], 1);
 	//write (input for first command) to fd[0][1]
 	close(fd[0][1]);
 	close(fd[i][0]);
 	//parent waits for all children to finish
 	i = 0;
-	while (i < amount_of_commands)
+	while (i < tools->amount_of_commands)
 	{
 		waitpid(pid[i], NULL, 0);
 		i++;
@@ -130,18 +137,20 @@ int	create_pipes(int amount_of_commands, int **fd)
 	return (1);
 }
 
-int	fork_processes(t_simple_commands *cmds, int *pid, int **fd)
+int	fork_processes(t_tools *tools, int *pid, int **fd)
 {
-	int	i;
+	int		i;
+	char	**cmd;
 
+	cmd = tools->cmd;
 	i = 0;
-	while (i < amount_of_commands)
+	while (i < tools->amount_of_commands)
 	{
 		pid[i] = fork;
 		//Error on fork
 		if (pid[i] < 0)
 		{
-			i = amount_of_commands - 1;
+			i = tools->amount_of_commands - 1;
 			while (i >= 0)
 			{
 				close(fd[i]);
@@ -152,35 +161,35 @@ int	fork_processes(t_simple_commands *cmds, int *pid, int **fd)
 		//Child process
 		if (pid == 0)
 		{
-			if (!child_process(cmds, fd, i))
+			if (!child_process(tools, cmd, fd, i))
 				return (-1);
 			return (1);
 		}
-		cmds = cmds->next;	
+		cmd = cmd->next;	
 		i++;
 	}
 	return (1);
 }
 
-int	executor(t_simple_commands *cmds)
+int	executor(t_tools *tools)
 {
-		int	fd[amount_of_commands + 1][2];
-		int pid[amount_of_commands];
+		int	fd[tools->amount_of_commands + 1][2];
+		int pid[tools->amount_of_commands];
 		int	i;
 
 		i = 0;
 		//check if only one command and it is a builtin
-		if (amount_of_commands == 1 && cmd->builtin != NULL)
-			cmd->builtin(tools, cmd);
+		if (tools->amount_of_commands == 1 && tools->cmd->builtin != NULL)
+			tools->cmd->builtin(tools, tools->cmd);
 		//create required amount of pipes
-		if (!create_pipes(amount_of_commands, fd))
+		if (!create_pipes(tools->amount_of_commands, fd))
 			return (-1);
 		//handle heredocs here ...
 		//fork required amount of processes
-		if (!fork_processes(cmds, pid, fd))
+		if (!fork_processes(tools, pid, fd))
 			return (-1);
 		//Parent process
-		if (!parent_process(cmds, fd, i, pid))
+		if (!parent_process(tools, fd, i, pid))
 			return (-1);
 		return (0);
 }
