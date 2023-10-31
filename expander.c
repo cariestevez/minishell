@@ -24,6 +24,7 @@ char    *expand_var(char *str, int start)
     ft_strlcat(ret, append, ft_strlen(append) + ft_strlen(ret) + 1);
     free(str);
     free(append);
+    ft_printf("expanded variable is %s\n", ret);
     return (ret);
 }
 
@@ -45,7 +46,7 @@ char    *expand_exit(char *str, int start)
     return (ret);
 }
 
-int expander(t_simple_cmds *cmds)
+int expander(t_lexer *cmds)
 {
     int            i;
     int             j;
@@ -56,28 +57,23 @@ int expander(t_simple_cmds *cmds)
     {
          while (cmds->str[i])
          {
-            while (cmds->str[i][j])
-            {
-                if (cmds->str[i][j] == 39)
+                if (cmds->str[i] == 39)
                 {
-                    j++;
-                    while (cmds->str[i][j] != 39)
+                    i++;
+                    while (cmds->str[i] != 39)
                         j++;
                 }          
-                if (cmds->str[i][j] == '$')
+                if (cmds->str[i] == '$')
                 {
-                    if (cmds->str[i][j + 1] == '?')
-                        cmds->str[i] = expand_exit(cmds->str[i], j);
+                    if (cmds->str[i + 1] == '?')
+                        cmds->str = expand_exit(cmds->str[i], j);
                     /*else if (isdigit(cmds->str[i][j + 1]))
                         cmds->str[i] = expand_arg(cmds->str[i], j);*/
                     else
-                        cmds->str[i] = expand_var(cmds->str[i], j + 1);
+                        cmds->str[i] = expand_var(cmds->str, i + 1);
                 }
-                j++;
+                i++;
             }
-            i++;
-            j = 0;
-        }
         cmds = cmds->next;
     }
     return (0);

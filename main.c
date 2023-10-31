@@ -2,7 +2,6 @@
 
 int free_lexer(t_lexer *lexer)
 {
-    //t_lexer *head;
     t_lexer *tmp;
 
     while (lexer)

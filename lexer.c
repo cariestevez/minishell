@@ -68,10 +68,12 @@ t_lexertype get_key(char *str, int i)
     return (0);
 }
 
-int if_quotes(char *str, int i)
+int if_quotes(char *str, t_lexer *lexer, int i)
 {
     int tmp;
+    int start;
 
+    start = i;
     tmp = 0;
     if (str[i] == 34 || str[i] == 39)
     {
@@ -81,17 +83,35 @@ int if_quotes(char *str, int i)
             i++;
         i++;
     }
+    lexer->str = ft_substr(str, start + 1, i - start);
+    lexer->key = get_key(str, start);
     return (i);
 }
 
 int    parse_lexlst(t_lexer *lexer, char *str)
 {
     int i;
+    int quote_status;
     int start;
 
     i = 0;
+    quote_status = 0;
     start = 0;
+    
     while (str[i])
+    {
+        if (str[i] == 34 || str[i] == 39)
+        {
+            i = if_quotes(lexer, str, i);
+            lexer = lexer->next;
+        }
+        if (get_key(str, i) == l_in)
+        {
+            
+        }
+        i++;
+    }
+    /*while (str[i])
     {
         i = if_quotes(str, i);
         if (get_key(str, i) != 0)
@@ -111,6 +131,7 @@ int    parse_lexlst(t_lexer *lexer, char *str)
             while (get_key(str, i) == l_space)
                 i++;
             start = i;
+            lexer->key = get_key(str, i);
         }
         i++;
     }
@@ -122,7 +143,7 @@ int    parse_lexlst(t_lexer *lexer, char *str)
         free(str);
         return (-1);
     }
-    return (1);
+    return (1);*/
 }
 
 
@@ -144,7 +165,7 @@ t_lexer	*ft_lexer(char *str)
     head = lexer;
     if (!parse_lexlst(lexer, str))
         return (NULL);
-    ft_printf("lexer has %d nodes\n", lexer->index + 1);
     free(str);
+    expander(lexer);
     return (head);
 }

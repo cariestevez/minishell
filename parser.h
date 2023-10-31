@@ -48,8 +48,8 @@ typedef struct s_simple_cmds
 t_lexer			*ft_lexer(char *input);
 int				free_lexer(t_lexer *lexer);
 t_simple_cmds	*ft_parser(t_lexer *lexer);
+int 	expander(t_lexer *cmds);
 
-int 	expander(t_simple_cmds *cmds);
 int 	executer(t_simple_cmds *cmds);
 
 int		pwd(void);
