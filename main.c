@@ -6,7 +6,7 @@
 /*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 15:01:03 by emollebr          #+#    #+#             */
-/*   Updated: 2023/10/31 15:01:07 by emollebr         ###   ########.fr       */
+/*   Updated: 2023/10/31 15:04:54 by emollebr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ int free_lexer(t_lexer *lexer)
     }
     return (0);
 }
+
+// asjgsagdsa
 
 void    print_cmds(t_simple_cmds *cmds)
 {
