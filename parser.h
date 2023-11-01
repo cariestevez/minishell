@@ -13,6 +13,8 @@
 
 typedef enum e_lexertype
 {
+	l_non_op,
+	l_space,
 	l_quote,
 	l_dquote,
 	l_word,
@@ -23,12 +25,11 @@ typedef enum e_lexertype
 	l_out,
 	l_append,
 	l_pipe,
-	l_space
 }	t_lexertype;
 
 typedef struct s_lexer
 {
-	char    		*str;
+	char    		*token;
 	t_lexertype     key;
 	int				index;
 	struct s_lexer	*next;
@@ -37,7 +38,7 @@ typedef struct s_lexer
 
 typedef struct s_simple_cmds
 {
-	char                    **str;
+	char                    **str; //what gets saved in here?
 	//int                     (*builtin)(t_tools *, struct s_simple_cmds *);
 	t_lexer					*in;
 	t_lexer					*out;
@@ -48,8 +49,8 @@ typedef struct s_simple_cmds
 t_lexer			*ft_lexer(char *input);
 int				free_lexer(t_lexer *lexer);
 t_simple_cmds	*ft_parser(t_lexer *lexer);
-int 	expander(t_lexer *cmds);
 
+int 	expander(t_simple_cmds *cmds);
 int 	executer(t_simple_cmds *cmds);
 
 int		pwd(void);
