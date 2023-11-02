@@ -4,7 +4,7 @@ CFLAGS := -g -Wall -Wextra -Werror
 LIBFTFLAGS := -Ilibft -Llibft -lreadline
 LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
-SRCS := main.c lexer.c expander.c exec.c builtins/pwd.c builtins/cd.c
+SRCS := main.c lexer.c exec.c #expander.c  builtins/pwd.c builtins/cd.c
 OBJS := $(SRCS:.c=.o)
 ################################################################################
 
@@ -22,8 +22,7 @@ libft:
 clean:
 	rm -f ${OBJS} && cd ${LIBFT} && make clean
 
-fclean:
-	clean
+fclean: clean
 	rm -f ${NAME} ${LIBS}
 
 re: clean all
