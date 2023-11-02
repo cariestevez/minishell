@@ -5,6 +5,10 @@
 # include "libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <errno.h>
+# include <sys/types.h>
+# include <fcntl.h>
+# include <sys/wait.h>
 
 # ifndef NULL
 #  define NULL ((void*)0)

@@ -56,8 +56,8 @@ int	minishell_loop(void)
 	return (0);
 }
 
-int	main(void)
+/*int	main(void)
 {
 	while (1)
 		minishell_loop();
-}
+}*/
