@@ -150,11 +150,7 @@ t_lexer	*ft_lexer(char *str)
 {
 	t_lexer     *lexer;
 	t_lexer     *head;
-	int           i;
-	int           start;
 
-	i = 0;
-	start = 0;
 	lexer = new_node(NULL);
 	if (!lexer)
 	{

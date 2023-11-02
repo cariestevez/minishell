@@ -40,18 +40,22 @@ typedef struct s_simple_cmds
 {
 	char                    **str; //what gets saved in here?
 	//int                     (*builtin)(t_tools *, struct s_simple_cmds *);
-	t_lexer					*in;
-	t_lexer					*out;
+	char					*in;
+	char					*out;
+	char					**env;
+	int						index;
+	int						amount_of_cmds;
 	struct s_simple_cmds	*next;
 	struct s_simple_cmds	*prev;
 }	t_simple_cmds;
+
 
 t_lexer			*ft_lexer(char *input);
 int				free_lexer(t_lexer *lexer);
 t_simple_cmds	*ft_parser(t_lexer *lexer);
 
 int 	expander(t_simple_cmds *cmds);
-int 	executer(t_simple_cmds *cmds);
+int 	executor(t_simple_cmds *cmds);
 
 int		pwd(void);
 int 	cd(char *path);
