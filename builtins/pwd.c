@@ -8,5 +8,4 @@ int pwd(void)
         return (-1);
     ft_putstr_fd(path, 1);
     return (0);
-
 }

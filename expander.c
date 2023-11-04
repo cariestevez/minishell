@@ -1,5 +1,8 @@
 #include "parser.h"
-
+/*missing:
+- expand exit code $?
+- expand arguments $1/2/3...
+- find more edge cases*/
 char    *expand_var(char *str, int start)
 {
     int i;
@@ -46,7 +49,7 @@ char    *expand_exit(char *str, int start)
     return (ret);
 }
 
-int expander(t_lexer *cmds)
+int expander(t_simple_cmds *cmds)
 {
     int            i;
     int             j;
@@ -57,12 +60,14 @@ int expander(t_lexer *cmds)
     {
          while (cmds->str[i])
          {
+            //when single quotes, envvars are not expanded
                 if (cmds->str[i] == 39)
                 {
                     i++;
                     while (cmds->str[i] != 39)
                         j++;
-                }          
+                }
+            //$? prints the exit code   
                 if (cmds->str[i] == '$')
                 {
                     if (cmds->str[i + 1] == '?')
