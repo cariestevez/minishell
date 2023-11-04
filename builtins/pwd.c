@@ -1,6 +1,6 @@
 #include "parser.h"
 
-int pwd(void)
+int pwd(t_simple_cmds *cmds)
 {
     char    path[BUFFER];
    
