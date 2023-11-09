@@ -40,12 +40,18 @@ typedef struct s_lexer
 	struct s_lexer	*prev;
 }	t_lexer;
 
+typedef struct s_redir
+{
+	t_lexertype		type;
+	char			*str;
+	struct s_redir	*next;
+}	t_redir;
+
 typedef struct s_simple_cmds
 {
 	char                    **str;
 	int                   	(*builtin)(struct s_simple_cmds *);
-	char					**in;
-	char					**out;
+	struct s_redir			*redir;
 	char					**env;
 	int						index;
 	int						amount_of_cmds;

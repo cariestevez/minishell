@@ -1,5 +1,5 @@
 #ifndef EXECUTOR_H
-# define EXECUTORH
+# define EXECUTOR_H
 
 # include "libft.h"
 # include "parser.h"
@@ -27,21 +27,23 @@ int 	executor(t_simple_cmds *cmds);
 int		fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd);
 int		create_pipes(int amount_of_cmds, int **fd);
 int		parent_process(t_simple_cmds *cmds, int	**fd, pid_t *pid);
-int     execute(char **cmds, char **envp, int **fd);
+int     execute(char **cmds, char **envp);
 
 //exec_children.c
-int redirect(t_simple_cmds *cmds, int **fd, int in_or_out);
-void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode);
-int		execute_builtin(t_simple_cmds *cmds, int **fd);
+int     redirect(t_redir *redir);
+int		execute_builtin(t_simple_cmds *cmds, int **fd, int i);
 void	child_process(t_simple_cmds *cmds, int	**fd, int i);
 
 //exec_utils.c
-void	free_tab(char **tab);
-void    free_simple_commands(t_simple_cmds *cmds);
-void    free_array(int **arr);
+void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode);
 int		count_commands(t_simple_cmds *cmds);
 int		close_unneccesary_fds(int **fd, int i, int amount_of_cmds);
 char	*get_path(char *cmd);
+
+//free.c
+void	free_tab(char **tab);
+void    free_simple_commands(t_simple_cmds *cmds);
+void    free_array(int **arr);
 
 //builtins
 int		pwd(void);

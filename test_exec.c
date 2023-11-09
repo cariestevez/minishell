@@ -1,87 +1,126 @@
-#include "parser.h"
+#include "executor.h"
 
-t_simple_cmds *create_simple_cmds(char **str, char *in, char *out, char **envp, int index, int amount_of_cmds) {
-    t_simple_cmds *cmd = malloc(sizeof(t_simple_cmds));
-    if (cmd == NULL) {
+void add_redir_node(t_redir **head, t_lexertype type, char *str) {
+    t_redir *new_node = malloc(sizeof(t_redir));
+    if (new_node == NULL) {
         perror("malloc");
         exit(EXIT_FAILURE);
     }
 
-    // Allocate memory and copy the string array
-    int num_strings = 0;
-    while (str[num_strings] != NULL) {
-        num_strings++;
-    }
+    new_node->type = type;
+    new_node->str = strdup(str);
+    new_node->next = NULL;
 
-    cmd->str = malloc((num_strings + 1) * sizeof(char *));
-    if (cmd->str == NULL) {
-        perror("malloc");
-        exit(EXIT_FAILURE);
-    }
-
-    for (int i = 0; i < num_strings; i++) {
-        cmd->str[i] = strdup(str[i]);
-        if (cmd->str[i] == NULL) {
-            perror("strdup");
-            exit(EXIT_FAILURE);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        t_redir *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
         }
+        current->next = new_node;
     }
-    cmd->str[num_strings] = NULL;
-
-    // Allocate memory and copy the 'in' and 'out' strings
-    cmd->in = (in != NULL) ? strdup(in) : NULL;
-    if (in != NULL && cmd->in == NULL) {
-        perror("strdup");
-        exit(EXIT_FAILURE);
-    }
-
-    cmd->out = (out != NULL) ? strdup(out) : NULL;
-    if (out != NULL && cmd->out == NULL) {
-        perror("strdup");
-        exit(EXIT_FAILURE);
-    }
-
-    // Allocate memory and copy the environment variables array
-
-    cmd->env = envp;
-    cmd->index = index;
-    cmd->amount_of_cmds = amount_of_cmds;
-    cmd->next = NULL;
-    cmd->prev = NULL;
-
-    return cmd;
 }
 
-int main(int argc, char **argv, char **envp)
-{
-	(void)argc;
-	(void)argv;
-    // Create the first node
-    char *str1[] = {"ls", "-l", NULL};
-    char *in1 = NULL;
-    char *out1 = NULL;
-    //char *env1[] = {envp[0], envp[1], NULL}; // Copy only two environment variables for example
-    t_simple_cmds *node1 = create_simple_cmds(str1, in1, out1, envp, 0, 2);
+void add_simple_cmds_node(t_simple_cmds **head, char **str, int (*builtin)(struct s_simple_cmds *), t_redir *redir, char **env, int index, int amount_of_cmds) {
+    t_simple_cmds *new_node = malloc(sizeof(t_simple_cmds));
+    if (new_node == NULL) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
 
-    // Create the second node
-    char *str2[] = {"sort", "-r", NULL};
-    char *in2 = NULL;
-    char *out2 = ft_strdup("out.txt");
-   // char *env2[] = {envp[2], envp[3], NULL}; // Copy only two environment variables for example
-    t_simple_cmds *node2 = create_simple_cmds(str2, in2, out2, envp, 1, 2);
+    new_node->str = str;
+    new_node->builtin = builtin;
+    new_node->redir = redir;
+    new_node->env = env;
+    new_node->index = index;
+    new_node->amount_of_cmds = amount_of_cmds;
+    new_node->next = NULL;
 
-    // Link the nodes
-    node1->next = node2;
-    node2->prev = node1;
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        t_simple_cmds *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+        new_node->prev = current;
+    }
+}
 
-    // Now you have two nodes with the specified data
-    // You can access the data like node1->str[0], node1->str[1], etc.
+void free_redir_list(t_redir *head) {
+    while (head != NULL) {
+        t_redir *temp = head;
+        head = head->next;
+        free(temp->str);
+        free(temp);
+    }
+}
 
-    // Don't forget to free the allocated memory when you're done using it
-	ft_printf("node 1 has input/output %s/%s\n", node1->in, node1->out);
-	ft_printf("node 2 has input/output %s/%s\n", node2->in, node2->out);
-	executor(node1);
-    free(node1);
-    free(node2);
+void free_simple_cmds_list(t_simple_cmds *head) {
+    while (head != NULL) {
+        t_simple_cmds *temp = head;
+        head = head->next;
+        free(temp->str);
+        free_redir_list(temp->redir);
+        free(temp->env);
+        free(temp);
+    }
+}
+
+void print_redir_list(t_redir *head) {
+    t_redir *current = head;
+    while (current != NULL) {
+        printf("Type: %d, String: %s\n", current->type, current->str);
+        current = current->next;
+    }
+}
+
+void print_simple_cmds_list(t_simple_cmds *head) {
+    t_simple_cmds *current = head;
+    while (current != NULL) {
+        printf("Index: %d, Amount of Commands: %d\n", current->index, current->amount_of_cmds);
+        print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
+        current = current->next;
+    }
+}
+
+int main(int ac, char **av, char **envp) {
+    t_redir **redir_list = NULL;
+    t_simple_cmds *cmds_list = NULL;
+
+    (void)ac;
+    redir_list = ft_calloc(sizeof(t_redir), 2);
+
+    // Add sample redir nodes
+    add_redir_node(&redir_list[0], l_in, "input.txt");
+
+    // Add sample t_simple_cmds node
+    char *str0[] = {av[1], av[2], NULL};
+    add_simple_cmds_node(&cmds_list, str0, NULL, redir_list[0], envp, 0, 2);
+
+    //add_redir_node(&redir_list[1], l_out, NULL);
+    //add_redir_node(&redir_list[1], l_in, NULL);
+
+    add_redir_node(&redir_list[1], l_append, "output.txt");
+
+    char *str2[] = {av[5], av[6]};
+    add_simple_cmds_node(&cmds_list, str2, NULL, redir_list[1], envp, 0, 2);
+
+    // Print the lists for verification
+    print_redir_list(*redir_list);
+    print_simple_cmds_list(cmds_list);
+
+    executor(cmds_list);
+    // Free the allocated memory
+    int i = 0;
+    while(redir_list[i])
+    {
+        free_redir_list(redir_list[i]);
+        i++;
+    }
+    free_simple_cmds_list(cmds_list);
+
     return 0;
 }

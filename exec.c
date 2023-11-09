@@ -1,14 +1,12 @@
 #include "executor.h"
 
-int	execute(char **cmds, char **envp, int **fd)
+int	execute(char **cmds, char **envp)
 {
 	write(2, "\n", 1);
-	if (execve(get_path(cmds[0]), cmds, envp) == -1)
-	{
-		ft_putendl_fd(cmds[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
-		return (EXECUTOR_EXEC_ERROR);
-	}
+	execve(get_path(cmds[0]), cmds, envp);
+	ft_putendl_fd(cmds[0], 2);
+	ft_putstr_fd(": command not found\n", 2);
+	return (EXECUTOR_EXEC_ERROR);
 }
 
 int	parent_process(t_simple_cmds *cmds, int	**fd, pid_t *pid)
@@ -84,7 +82,7 @@ int	fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd)
 				child_process(cmds, fd, i);
 		}
 		else if (cmds->builtin)
-			execute_builtin(cmds, fd[i]);
+			execute_builtin(cmds, fd, i);
 		if (cmds->next != NULL)
 			cmds = cmds->next;	
 		i++;
@@ -116,7 +114,7 @@ int	executor(t_simple_cmds *cmds)
 		}
 		//check if only one command and it is a builtin
 		if (cmds->amount_of_cmds == 1 && cmds->builtin != NULL)
-			execute_builtin(cmds, fd);
+			execute_builtin(cmds, fd, i);
 		if (create_pipes(cmds->amount_of_cmds, fd) != 0)
 			return (EXECUTOR_PIPE_ERROR);
 		//handle heredocs here ...

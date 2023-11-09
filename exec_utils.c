@@ -1,50 +1,4 @@
-#include "parser.h"
-
-void	free_tab(char **tab)
-{
-	int	i;
-
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-}
-
-void    free_array(int  **arr)
-{
-    int i;
-
-    i = 0;
-    while (arr[i])
-    {
-        free(arr[i]);
-        i++;
-    }
-    free(arr);
-}
-
-void    free_simple_cmds(t_simple_cmds *cmds)
-{
-    int i;
-
-    i = 0;
-    while (cmds)
-    {
-        free_tab(cmds->str);
-        free(cmds->in);
-        free(cmds->out);
-        if (cmds->index > 0)
-            free(cmds->prev);
-        if (cmds->next == NULL)
-        {
-            free(cmds);
-            return ;
-        }
-        cmds = cmds->next;
-    }
-}
+#include "executor.h"
 
 int	count_commands(t_simple_cmds *cmds)
 {
@@ -74,6 +28,15 @@ int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds)
 		j++;
 	}
 	return (1);
+}
+
+void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode)
+{
+    //this function call will close ALL fds
+	close_unneccesary_fds(fd, cmds->amount_of_cmds + 1, cmds->amount_of_cmds);
+	free_simple_commands(cmds);
+    free_array(fd);
+	exit(exitcode);
 }
 
 char	*get_path(char *cmd)
