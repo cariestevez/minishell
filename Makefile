@@ -4,7 +4,8 @@ CFLAGS := -g -Wall -Wextra -Werror
 LIBFTFLAGS := -Ilibft -Llibft -lreadline
 LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
-SRCS :=  exec.c exec_children.c exec_utils.c test_exec.c free.c #main.c lexer.c expander.c  builtins/pwd.c builtins/cd.c
+SRCS :=  exec.c exec_children.c exec_utils.c free.c test_exec.c #lexer.c parser.c main.c expander.c  
+#builtins/pwd.c builtins/cd.c 
 OBJS := $(SRCS:.c=.o)
 ################################################################################
 

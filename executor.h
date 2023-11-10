@@ -45,6 +45,8 @@ void	free_tab(char **tab);
 void    free_simple_commands(t_simple_cmds *cmds);
 void    free_array(int **arr);
 
+void print_simple_cmds_list(t_simple_cmds *head);
+
 //builtins
 int		pwd(void);
 int 	cd(char *path);

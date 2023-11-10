@@ -1,7 +1,8 @@
-#include "executor.h"
+#include "minishell.h"
 
 int	execute(char **cmds, char **envp)
 {
+	ft_printf("hello from execute, command is %s\n", cmds[0]);
 	write(2, "\n", 1);
 	execve(get_path(cmds[0]), cmds, envp);
 	ft_putendl_fd(cmds[0], 2);
@@ -13,6 +14,7 @@ int	parent_process(t_simple_cmds *cmds, int	**fd, pid_t *pid)
 {
 	int	i;
 
+	ft_printf("hello from parent process\n");
 	i = 0;
 	//close all file descriptors
 	while (i < cmds->amount_of_cmds)
@@ -34,21 +36,21 @@ int	parent_process(t_simple_cmds *cmds, int	**fd, pid_t *pid)
 int	create_pipes(int amount_of_cmds, int **fd)
 {
 	int	i;
-		
+	
+	ft_printf("hello from create_pipes\n");
 	i = 0;
 	//create required amount of pipes
-	while (i < amount_of_cmds)
+	while (i < amount_of_cmds - 1)
 	{
 		if (pipe(fd[i]) < 0)
 		{
 			//Error on pipe
-			while (i >= 0)
+			while (--i >= 0)
 			{
 				close(fd[i][0]);
 				close(fd[i][1]);
-				i--;
 			}
-			return (free_array(fd), -1);
+			return (free_array(fd), EXECUTOR_PIPE_ERROR);
 		}
 		i++;
 	}
@@ -59,6 +61,7 @@ int	fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd)
 {
 	int		i;
 
+	ft_printf("hello from fork_processes\n");
 	i = 0;
 	while (i < cmds->amount_of_cmds)
 	{
@@ -67,16 +70,7 @@ int	fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd)
 			pid[i] = fork();
 			//Error on fork
 			if (pid[i] < 0)
-			{
-				i = cmds->amount_of_cmds;
-				while (i >= 0)
-				{
-					close(fd[i][0]);
-					close(fd[i][1]);
-					i--;
-				}
-				return (free_array(fd), -1);
-			}
+				free_and_exit(cmds, fd, EXECUTOR_FORK_ERROR);
 			//Child process
 			if (pid[i] == 0)
 				child_process(cmds, fd, i);
@@ -98,11 +92,11 @@ int	executor(t_simple_cmds *cmds)
 	- test builtin scenarios
 	- append output to a file*/
 		int		**fd;
-		pid_t	pid[cmds->amount_of_cmds - 1];
+		pid_t	pid[cmds->amount_of_cmds];
 		int	i;
 		
 		i = 0;
-		fd = malloc(sizeof(int *) * cmds->amount_of_cmds);
+		fd = malloc(sizeof(int *) * cmds->amount_of_cmds - 1);
 		if (!fd)
 			return (EXECUTOR_MALLOC_ERROR);
 		while (i < cmds->amount_of_cmds)

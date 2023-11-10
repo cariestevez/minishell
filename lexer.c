@@ -1,4 +1,4 @@
-﻿#include "parser.h"
+﻿#include "minishell.h"
 
 // initializes the new nodes of the list
 t_lexer *new_node(t_lexer *prev)
@@ -38,16 +38,6 @@ void print_lex(t_lexer *lexer)
 	return ;
 }
 
-void    free_array(char **str)
-{
-	int i;
-
-	i = -1;
-	while (str[++i])
-		free(str[i]);
-	return ;
-}
-
 // checks if it's space, pipe, operand, quotations... Else -is command or file name- ret 0.
 
 t_lexertype get_key(char *str, int i)
@@ -73,22 +63,22 @@ t_lexertype get_key(char *str, int i)
 }
 
 //searches for the closing quotation mark and returns its position
-int if_quotes(char *str, int i)
+int if_quotes(char *str, int first_position)
 {
-	int tmp;
+	char 	looking_for;
+	int		i;
 
-	tmp = 0;
-	if (str[i] == 34 || str[i] == 39)
+	i = first_position + 1;
+	if (str[first_position] == 34 || str[first_position] == 39)
 	{
-		tmp = str[i];
-		i++;
-		while (str[i] != tmp && str[i] != '\0')
+		looking_for = str[first_position];
+		while (str[i] != looking_for && str[i] != '\0')
 			i++;
-		i++;
+		ft_printf("found closing quotes at %c, index %d\n", str[i], i);
 	}
 	if (str[i] == '\0')
-		return(tmp);
-	return (i);
+		return (first_position);
+	return (i + 1);
 }
 
 // separes the words(commands/file names etc), operands or pipes in nodes, creating a list
@@ -100,49 +90,76 @@ int if_quotes(char *str, int i)
 //ADD: don't save spaces or empty strings (""), just skip
 //ADD: delete (don't save) the quotations marks around a command or file name when saving it
 //if the whole command line is in between quotation marks->invalid input
-int    parse_command_line(t_lexer *lexer, char *str)
+int	get_token(char *str, int i, t_lexer *lexer)
+{
+	int	start;
+
+	start = i;
+	//check for operators and return if true
+	if (get_key(str, i) == l_pipe || get_key(str, i) == l_in 
+			|| get_key(str, i) == l_out || get_key(str, i) == l_append)
+	{
+		lexer->key = get_key(str, i);
+		return (i);
+	}
+	else if (get_key(str, i) == l_append)
+	{
+		lexer->key = get_key(str, i);
+		return (i + 1);
+	}
+	//returns the position of the end of the quotations to save its content as a str
+	i = if_quotes(str, i);
+	//finds end of token and duplicates
+	while (get_key(str, i) == l_non_op && str[i] != '\0')
+			i++;
+	lexer->token = ft_substr(str, start, i - start);
+	lexer->key = l_word;
+	return (i);
+}
+
+t_lexer    *parse_command_line(t_lexer *lexer, char *str)
 {
 	int i;
 	int start;
+	t_lexer	*head;
 
 	i = 0;
+	head = lexer;
 	while (str[i] && str[i] == ' ')
 		i++;
 	start = i;	
 	while (str[i] != '\0')
 	{
-		//returns the position of the end of the quotations to save its content as a str
-		i = if_quotes(str, i);
-		if (get_key(str, i) != l_non_op && i != start)
-		{
-			lexer->token = ft_substr(str, start, i - start);
-			// print for debuggin
-			print_lex(lexer);
-			lexer->next = new_node(lexer);
-			lexer = lexer->next;
-			if (!lexer)
-			{
-				free_lexer(lexer);
-				free(str);
-				return (-1);
-			}
-			while (get_key(str, i) == l_space)
+		//skip leading whitespace
+		while ((get_key(str, i) - 1) == l_space)
 				i++;
-			start = i;
-			//lexer->key = get_key(str, i);
+		if (!str[i])
+			break ;
+		i = get_token(str, i, lexer);
+		if (!str[i])
+			break ;
+		// print for debuggin
+		print_lex(lexer);
+		lexer->next = new_node(lexer);
+		lexer = lexer->next;
+		if (!lexer)
+		{
+			//free_lexer(lexer);
+			free(str);
+			return (NULL);
 		}
-
 		i++;
+		ft_printf("end of loop, position is i=%d: %c\n", i, str[i]);
 	}
 	lexer->token = ft_substr(str, start, i - start);
 	print_lex(lexer);
 	if (!lexer)
 	{
-		free_lexer(lexer);
+		//free_lexer(lexer);
 		free(str);
-		return (-1);
+		return (NULL);
 	}
-	return (1);
+	return (head);
 }
 
 //initializes the list and saves the pointer to the 1st node (head)

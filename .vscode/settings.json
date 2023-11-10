@@ -6,6 +6,7 @@
 		"cstdlib": "c",
 		"optional": "c",
 		"unordered_map": "c",
-		"executor.h": "c"
+		"executor.h": "c",
+		"minishell.h": "c"
 	}
 }

@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "minishell.h"
 
 int	free_lexer(t_lexer *lexer)
 {
@@ -42,6 +42,7 @@ int	minishell_loop(void)
 	str = readline(prompt);
 	//add_history(str);
 	lexer = ft_lexer(str);
+	cmds = ft_parser(lexer);
 	//saves the first node as the 1st command
 	//should have been validatet at this point already-->
 	//so we know it's a command. Anything else should have returned error in the lexer
@@ -49,15 +50,16 @@ int	minishell_loop(void)
 	//parser
 	//scans the saved tokens for an environment variable and substitutes(expand) it with its value
 	//expander(cmds);
-	free_lexer(lexer);
+	executor(cmds);
+	//free_lexer(lexer);
 	free(str);//frees the readline
 	free(cmds->str);
 	free(cmds);
 	return (0);
 }
 
-/*int	main(void)
+int	main(void)
 {
 	while (1)
 		minishell_loop();
-}*/
+}

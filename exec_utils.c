@@ -1,4 +1,4 @@
-#include "executor.h"
+#include "minishell.h"
 
 int	count_commands(t_simple_cmds *cmds)
 {
@@ -36,6 +36,7 @@ void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode)
 	close_unneccesary_fds(fd, cmds->amount_of_cmds + 1, cmds->amount_of_cmds);
 	free_simple_commands(cmds);
     free_array(fd);
+	ft_printf("child process %d failed with %d\n", cmds->index, exitcode);
 	exit(exitcode);
 }
 
