@@ -1,4 +1,4 @@
-#include "executor.h"
+#include "minishell.h"
 
 void	execute(t_simple_cmds *cmds, char **envp, int **fd)
 {
@@ -91,18 +91,18 @@ int	fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd)
 int	executor(t_simple_cmds *cmds)
 {
 	/*missing
-	- handling multiple redirections in a row 
 	- heredocs 
-	- test builtin scenarios
-	- append output to a file >>*/
+	- test +++++commands
+	- test builtin scenarios*/
+	int		i;
 	int		**fd;
 	pid_t	pid[cmds->amount_of_cmds - 1];
-	int	i;
 	
 	fd = NULL;
 	//check if only one command and it is a builtin
 	if (cmds->amount_of_cmds == 1 && cmds->builtin != NULL)
 		execute_builtin(cmds, fd, 0);
+	//otherwise continue with piping and forking
 	fd = create_pipes(cmds, fd);
 	if (!fd)
 		return (EXECUTOR_PIPE_ERROR);

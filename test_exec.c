@@ -134,17 +134,16 @@ int main(int ac, char **av, char **envp) {
  
     //add another redir
     add_redir_node(&redir_list[1], l_append, "a.txt");
-    add_redir_node(&redir_list[1], l_out, "b.txt");
+    add_redir_node(&redir_list[1], l_append, "b.txt");
     //add another command
     
     str1[0] = ft_strdup(av[3]);
     str1[1] = ft_strdup(av[4]);
     str1[2] = NULL;
-    add_simple_cmds_node(&cmds_list, str1, NULL, NULL, env, 1, 2);
+    add_simple_cmds_node(&cmds_list, str1, NULL, redir_list[1], env, 1, 2);
 
     // Print the lists for verification
     print_simple_cmds_list(cmds_list);
-    ft_printf("debug check\n");
     ft_printf("error code: %d\n", executor(cmds_list));
     // Free the allocated memory
     /*

@@ -2,10 +2,8 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# ifndef NULL
-#  define NULL ((void*)0)
-# endif
 # define BUFFER 500
+# define PROMPT "Hello \033[36m$USER$ \033[0m"
 
 typedef enum e_lexertype
 {
@@ -21,6 +19,7 @@ typedef enum e_lexertype
 	l_out,
 	l_append,
 	l_pipe,
+	l_heredoc,
 }	t_lexertype;
 
 typedef struct s_lexer
@@ -35,6 +34,7 @@ typedef struct s_lexer
 typedef struct s_redir
 {
 	t_lexertype		type;
+	//if type == l_heredoc, str is the delimiting identifier
 	char			*str;
 	struct s_redir	*next;
 }	t_redir;
@@ -60,6 +60,8 @@ t_simple_cmds	*ft_parser(t_lexer *lexer);
 
 //expander.c
 int 	expander(t_simple_cmds *cmds);
+char    *expand_var(char *str, int start, char **env);
+
 
 //builtins
 int		pwd(void);

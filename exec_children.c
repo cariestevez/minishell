@@ -1,75 +1,5 @@
 #include "minishell.h"
 
-int	redirect_input(t_redir *input)
-{
-	int 	fd_in;
-
-	fd_in = open(input->str, O_RDONLY, 0777);
-	if (fd_in == -1)
-	{
-		close(fd_in);
-		ft_printf("failed at opening file\n");
-		return (EXECUTOR_REDIRECTION_ERROR);
-	}	
-	if (dup2(fd_in, STDIN_FILENO) == -1)
-	{
-		close(fd_in);
-		ft_printf("failed at duplicating fd\n");
-		return (EXECUTOR_REDIRECTION_ERROR);
-	}			
-	close(fd_in);
-	return (EXECUTOR_SUCCES);
-}
-
-int	redirect_output(t_redir *output)
-{
-	int 	fd_out;
-
-	if (output->type == l_append )
-		fd_out = open(output->str, O_WRONLY | O_CREAT | O_APPEND, 0777);
-	else
-		fd_out = open(output->str, O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (fd_out == -1)
-	{
-		close(fd_out);
-		return (EXECUTOR_REDIRECTION_ERROR);
-	}	
-	if (dup2(fd_out, STDOUT_FILENO) == -1)
-	{
-		close(fd_out);
-		return (EXECUTOR_REDIRECTION_ERROR);
-	}			
-	close(fd_out);
-	return (EXECUTOR_SUCCES);
-}
-
-int redirect(t_simple_cmds *cmd, int **fd)
-{
-
-	while (cmd->redir != NULL)
-	{
-		if (cmd->redir->type == l_in && cmd->redir->str != NULL)
-		{
-			if (redirect_input(cmd->redir) != EXECUTOR_SUCCES)
-			{
-				ft_printf("child %d failed at redirecting input %s\n", cmd->index, cmd->redir->str);
-				free_and_exit(cmd, fd, EXECUTOR_REDIRECTION_ERROR);
-			}
-		}
-		if ((cmd->redir->type == l_append || cmd->redir->type == l_out) 
-				&& cmd->redir->str != NULL)
-		{
-			if (redirect_output(cmd->redir) != EXECUTOR_SUCCES)
-			{
-				ft_printf("child %d failed at redirecting output %s\n", cmd->index, cmd->redir->str);
-				free_and_exit(cmd, fd, EXECUTOR_REDIRECTION_ERROR);
-			}
-		}
-		cmd->redir = cmd->redir->next;
-	}
-	return (EXECUTOR_SUCCES);
-}
-
 int	execute_builtin(t_simple_cmds *cmds, int **fd, int i)
 {
 	int	std_in;
@@ -78,7 +8,7 @@ int	execute_builtin(t_simple_cmds *cmds, int **fd, int i)
     //store standard streams for restoration later
 	std_in = dup(STDIN_FILENO);
 	std_out = dup(STDOUT_FILENO);
-	if (redirect(cmds, fd) != 0)
+	if (redirections(cmds, fd) != 0)
 		free_and_exit(cmds, fd, EXECUTOR_REDIRECTION_ERROR);
 	//redirect in/out to relevant pipes if not first or last command
 	if (i > 0)
@@ -100,7 +30,7 @@ void	child_process(t_simple_cmds *cmds, int	**fd, int i)
 	close_unneccesary_fds(fd, i, cmds->amount_of_cmds);
     //if process is first command, input is redirected from infile or stay as stin
 	//if process is last command, output is redirected to outfile or stay as stdout
-	if (redirect(cmds, fd) != 0)
+	if (redirections(cmds, fd) != 0)
 		free_and_exit(cmds, fd, EXECUTOR_REDIRECTION_ERROR);
 	//replace stdin with read end of pipe i-1 if not
 	if (cmds->index != 0)

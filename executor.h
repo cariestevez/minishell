@@ -1,14 +1,7 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-# include "libft.h"
-# include "parser.h"
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <errno.h>
-# include <sys/types.h>
-# include <fcntl.h>
-# include <sys/wait.h>
+# define HEREDOC_PROMPT "heredoc> "
 
 typedef enum
 {
@@ -19,7 +12,7 @@ typedef enum
     EXECUTOR_REDIRECTION_ERROR,
     EXECUTOR_MALLOC_ERROR,
     EXECUTOR_ACCESS_ERROR,
-
+    EXECUTOR_HEREDOC_ERROR,
 }   executor_error_code;
 
 //exec.c
@@ -29,9 +22,13 @@ int		**create_pipes(t_simple_cmds *cmds, int **fd);
 void     execute(t_simple_cmds *cmds, char **envp, int **fd);
 
 //exec_children.c
-int     redirect(t_simple_cmds *cmd, int **fd);
 int		execute_builtin(t_simple_cmds *cmds, int **fd, int i);
 void	child_process(t_simple_cmds *cmds, int	**fd, int i);
+
+//exec_redir.c
+int	redirect_input(t_redir *input);
+int	redirect_output(t_redir *output);
+int redirections(t_simple_cmds *cmd, int **fd);
 
 //exec_utils.c
 void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode);

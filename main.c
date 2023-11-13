@@ -29,17 +29,44 @@ void	print_cmds(t_simple_cmds *cmds)
 	//ft_printf("outfile is %s", cmds->in->str);
 }
 
-int	minishell_loop(void)
+char    **arrdup(char **env)
+{
+    int     i;
+    char    **ret;
+    i = 0;
+    while (env[i])
+        i++;
+    ret = ft_calloc(sizeof(char **), i + 2);
+    if (!ret)
+        return (NULL);
+    i = 0;
+    while (env[i] != NULL)
+    {
+        ret[i] = ft_strdup(env[i]);
+        if (ret[i] == NULL)
+            return (NULL);
+        i++;
+    }
+    ret[i] = NULL;
+    return (ret);
+}
+
+int	minishell_loop(char **envp)
 {
 	char			*str;
 	t_lexer			*lexer;
-	const char		*prompt;
 	t_simple_cmds	*cmds;
+	char			**env_cpy;
 
+	env_cpy = arrdup(envp);
 	cmds = (t_simple_cmds *)malloc(sizeof(t_simple_cmds));
 	cmds->str = malloc(sizeof(char *) * 2);
-	prompt = "pRoMpT hErE ~(*__*)~> ";
-	str = readline(prompt);
+	//printf statement changes the color of the stdout
+	ft_printf("\033[35m");
+	str = readline((expand_var(PROMPT, 12, env_cpy)));
+	//this changes it back to white/black
+	ft_printf("\033[0m");
+
 	//add_history(str);
 	lexer = ft_lexer(str);
 	cmds = ft_parser(lexer);
@@ -58,8 +85,10 @@ int	minishell_loop(void)
 	return (0);
 }
 
-int	main(void)
+int	main(int ac, char **av, char **envp)
 {
+	(void)ac;
+	(void)av;
 	while (1)
-		minishell_loop();
+		minishell_loop(envp);
 }

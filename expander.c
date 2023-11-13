@@ -3,9 +3,34 @@
 - expand exit code $?
 - expand arguments $1/2/3...
 - find more edge cases*/
-char    *expand_var(char *str, int start)
+
+char	*ft_getenv(char *name, char **env)
 {
-    int i;
+	int		i;
+	int		j;
+	char	*sub;
+
+	i = 0;
+	while (env[i])
+	{
+		j = 0;
+		while (env[i][j] && env[i][j] != '=')
+			j++;
+		sub = ft_substr(env[i], 0, j);
+		if (ft_strncmp(sub, name, 100) == 0)
+		{
+			free(sub);
+			return (env[i] + j + 1);
+		}
+		free(sub);
+		i++;
+	}
+	return (NULL);
+}
+
+char    *expand_var(char *str, int start, char **env)
+{
+    int     i;
     char    *var;
     char    *ret;
     char    *append;
@@ -17,7 +42,8 @@ char    *expand_var(char *str, int start)
             break ;
         i++;
     }
-    var = getenv(ft_substr(str, start, i - start ));
+    //find the variable name in env
+    var = ft_getenv(ft_substr(str, start, i - start), env);
      if (!var)
         return (NULL);
     ret = (char *)malloc(sizeof(char) * (ft_strlen(str) - (i - start) + ft_strlen(var)));
@@ -25,9 +51,8 @@ char    *expand_var(char *str, int start)
     ft_strlcat(ret, var, ft_strlen(var) + start + 1);
     append = ft_substr(str, i, ft_strlen(str) - i);
     ft_strlcat(ret, append, ft_strlen(append) + ft_strlen(ret) + 1);
-    free(str);
+    //free(str);
     free(append);
-    ft_printf("expanded variable is %s\n", ret);
     return (ret);
 }
 
@@ -61,7 +86,7 @@ int expander(t_simple_cmds *cmds)
          while (cmds->str[i])
          {
             //when single quotes, envvars are not expanded
-                if (cmds->str[i] == 39)
+               /*  if (cmds->str[i] == 39)
                 {
                     i++;
                     while (cmds->str[i] != 39)
@@ -72,11 +97,11 @@ int expander(t_simple_cmds *cmds)
                 {
                     if (cmds->str[i + 1] == '?')
                         cmds->str = expand_exit(cmds->str[i], j);
-                    /*else if (isdigit(cmds->str[i][j + 1]))
-                        cmds->str[i] = expand_arg(cmds->str[i], j);*/
+                    else if (isdigit(cmds->str[i][j + 1]))
+                        cmds->str[i] = expand_arg(cmds->str[i], j);
                     else
-                        cmds->str[i] = expand_var(cmds->str, i + 1);
-                }
+                        cmds->str[i] = expand_var(cmds->str, i + 1, cmds->env);
+                } */
                 i++;
             }
         cmds = cmds->next;
