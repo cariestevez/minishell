@@ -121,13 +121,13 @@ int main(int ac, char **av, char **envp) {
     char    *str1[3];
 
     (void)ac;
-    redir_list = ft_calloc(sizeof(t_redir), 2);
+    redir_list = ft_calloc(sizeof(t_redir), 3);
 
     // Add sample redir nodes
     add_redir_node(&redir_list[0], l_in, "input.txt");
 
     // Add sample t_simple_cmds node
-     str0[0] = ft_strdup(av[1]);
+    str0[0] = ft_strdup(av[1]);
     str0[1] = ft_strdup(av[2]);
     str0[2] = NULL;
     add_simple_cmds_node(&cmds_list, str0, NULL, redir_list[0], env, 0, 2);

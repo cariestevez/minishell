@@ -17,7 +17,7 @@ void    free_array(int  **arr)
     int i;
 
     i = 0;
-    while (arr[i])
+    while (arr[i] != NULL)
     {
         free(arr[i]);
         i++;
@@ -27,9 +27,6 @@ void    free_array(int  **arr)
 
 void    free_simple_commands(t_simple_cmds *cmds)
 {
-    int i;
-
-    i = 0;
     while (cmds)
     {
         free_tab(cmds->str);

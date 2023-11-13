@@ -25,12 +25,11 @@ typedef enum
 //exec.c
 int 	executor(t_simple_cmds *cmds);
 int		fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd);
-int		create_pipes(int amount_of_cmds, int **fd);
-int		parent_process(t_simple_cmds *cmds, int	**fd, pid_t *pid);
-int     execute(char **cmds, char **envp);
+int		**create_pipes(t_simple_cmds *cmds, int **fd);
+void     execute(t_simple_cmds *cmds, char **envp, int **fd);
 
 //exec_children.c
-int     redirect(t_redir *redir);
+int     redirect(t_simple_cmds *cmd, int **fd);
 int		execute_builtin(t_simple_cmds *cmds, int **fd, int i);
 void	child_process(t_simple_cmds *cmds, int	**fd, int i);
 
