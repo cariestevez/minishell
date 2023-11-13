@@ -117,30 +117,29 @@ int main(int ac, char **av, char **envp) {
     t_redir **redir_list = NULL;
     t_simple_cmds *cmds_list = NULL;
     char    **env = arrdup(envp);
-    char    *str0[3];
+    char    *str0[2];
     char    *str1[3];
 
     (void)ac;
     redir_list = ft_calloc(sizeof(t_redir), 3);
 
     // Add sample redir nodes
-    add_redir_node(&redir_list[0], l_in, "input.txt");
+    add_redir_node(&redir_list[0], l_heredoc, "EOF");
 
     // Add sample t_simple_cmds node
     str0[0] = ft_strdup(av[1]);
-    str0[1] = ft_strdup(av[2]);
-    str0[2] = NULL;
+    str0[1] = NULL;
     add_simple_cmds_node(&cmds_list, str0, NULL, redir_list[0], env, 0, 2);
- 
+
     //add another redir
     add_redir_node(&redir_list[1], l_append, "a.txt");
     add_redir_node(&redir_list[1], l_append, "b.txt");
     //add another command
-    
-    str1[0] = ft_strdup(av[3]);
-    str1[1] = ft_strdup(av[4]);
+
+    str1[0] = ft_strdup(av[2]);
+    str1[1] = ft_strdup(av[3]);
     str1[2] = NULL;
-    add_simple_cmds_node(&cmds_list, str1, NULL, redir_list[1], env, 1, 2);
+    add_simple_cmds_node(&cmds_list, str1, NULL, NULL, env, 1, 2);
 
     // Print the lists for verification
     print_simple_cmds_list(cmds_list);

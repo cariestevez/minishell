@@ -3,7 +3,7 @@
 # define PARSER_H
 
 # define BUFFER 500
-# define PROMPT "Hello \033[36m$USER$ \033[0m"
+# define PROMPT "Hello \033[36m$USER@$NAME\033[0m$ "
 
 typedef enum e_lexertype
 {

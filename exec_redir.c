@@ -10,13 +10,13 @@ int	redirect_input(t_redir *input)
 		close(fd_in);
 		ft_printf("failed at opening file\n");
 		return (EXECUTOR_REDIRECTION_ERROR);
-	}	
+	}
 	if (dup2(fd_in, STDIN_FILENO) == -1)
 	{
 		close(fd_in);
 		ft_printf("failed at duplicating fd\n");
 		return (EXECUTOR_REDIRECTION_ERROR);
-	}			
+	}
 	close(fd_in);
 	return (EXECUTOR_SUCCES);
 }
@@ -33,12 +33,12 @@ int	redirect_output(t_redir *output)
 	{
 		close(fd_out);
 		return (EXECUTOR_REDIRECTION_ERROR);
-	}	
+	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 	{
 		close(fd_out);
 		return (EXECUTOR_REDIRECTION_ERROR);
-	}			
+	}
 	close(fd_out);
 	return (EXECUTOR_SUCCES);
 }
@@ -78,7 +78,7 @@ int redirections(t_simple_cmds *cmd, int **fd)
 			if (redirect_input(cmd->redir) != EXECUTOR_SUCCES)
 				free_and_exit(cmd, fd, EXECUTOR_REDIRECTION_ERROR);
 		}
-		if ((cmd->redir->type == l_append || cmd->redir->type == l_out) 
+		if ((cmd->redir->type == l_append || cmd->redir->type == l_out)
 				&& cmd->redir->str != NULL)
 		{
 			if (redirect_output(cmd->redir) != EXECUTOR_SUCCES)
@@ -89,6 +89,7 @@ int redirections(t_simple_cmds *cmd, int **fd)
 			if (heredoc(cmd->redir) != EXECUTOR_SUCCES)
 				free_and_exit(cmd, fd, EXECUTOR_HEREDOC_ERROR);
 		}
+		ft_printf("child %d redirected to %s\n", cmd->redir->str);
 		cmd->redir = cmd->redir->next;
 	}
 	return (EXECUTOR_SUCCES);

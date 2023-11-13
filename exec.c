@@ -21,7 +21,7 @@ void	execute(t_simple_cmds *cmds, char **envp, int **fd)
 int	**create_pipes(t_simple_cmds *cmds, int **fd)
 {
 	int	i;
-		
+
 	i = 0;
 	fd = malloc(sizeof(int *) * cmds->amount_of_cmds);
 	if (!fd)
@@ -82,7 +82,7 @@ int	fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd)
 		}
 		else if (cmds->builtin)
 			execute_builtin(cmds, fd, cmds->index);
-		cmds = cmds->next;	
+		cmds = cmds->next;
 		i++;
 	}
 	return (0);
@@ -91,13 +91,14 @@ int	fork_processes(t_simple_cmds *cmds, pid_t *pid, int **fd)
 int	executor(t_simple_cmds *cmds)
 {
 	/*missing
-	- heredocs 
+	- child is not waiting for pipe input, are redirections ok?
+	fx. cat <<EOF | ls -l
 	- test +++++commands
 	- test builtin scenarios*/
 	int		i;
 	int		**fd;
 	pid_t	pid[cmds->amount_of_cmds - 1];
-	
+
 	fd = NULL;
 	//check if only one command and it is a builtin
 	if (cmds->amount_of_cmds == 1 && cmds->builtin != NULL)

@@ -28,9 +28,10 @@ char	*ft_getenv(char *name, char **env)
 	return (NULL);
 }
 
-char    *expand_var(char *str, int start, char **env)
+char    *expand_var(char *str, char **env)
 {
     int     i;
+		input		start;
     char    *var;
     char    *ret;
     char    *append;
@@ -38,7 +39,9 @@ char    *expand_var(char *str, int start, char **env)
     i = start;
     while (str[i])
     {
-        if (!str[i] || ft_isalpha(str[i]) != 1)
+			if(str[i] == '$')
+				start = i + 1;
+      if (!str[i] || ft_isalpha(str[i]) != 1)
             break ;
         i++;
     }
@@ -53,6 +56,8 @@ char    *expand_var(char *str, int start, char **env)
     ft_strlcat(ret, append, ft_strlen(append) + ft_strlen(ret) + 1);
     //free(str);
     free(append);
+		if (str[i] != NULL)
+			expand_var(ret, env);
     return (ret);
 }
 
@@ -77,10 +82,10 @@ char    *expand_exit(char *str, int start)
 int expander(t_simple_cmds *cmds)
 {
     int            i;
-    int             j;
+  //  int             j;
 
     i = 0;
-    j = 0;
+    //j = 0;
     while (cmds)
     {
          while (cmds->str[i])
@@ -92,7 +97,7 @@ int expander(t_simple_cmds *cmds)
                     while (cmds->str[i] != 39)
                         j++;
                 }
-            //$? prints the exit code   
+            //$? prints the exit code
                 if (cmds->str[i] == '$')
                 {
                     if (cmds->str[i + 1] == '?')
