@@ -34,7 +34,7 @@ int redirections(t_simple_cmds *cmd, int **fd);
 void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode);
 int		count_commands(t_simple_cmds *cmds);
 int		close_unneccesary_fds(int **fd, int i, int amount_of_cmds);
-char	*get_path(char *cmd);
+char	*get_path(char *cmd, char **env);
 
 //free.c
 void	free_tab(char **tab);

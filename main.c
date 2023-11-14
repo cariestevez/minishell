@@ -62,10 +62,8 @@ int	minishell_loop(char **envp)
 	cmds = (t_simple_cmds *)malloc(sizeof(t_simple_cmds));
 	cmds->str = malloc(sizeof(char *) * 2);
 	//printf statement changes the color of the stdout
-	ft_printf("\033[35m");
-	str = readline((expand_var(PROMPT, 12, env_cpy)));
+	str = readline((expand_var(PROMPT, env_cpy)));
 	//this changes it back to white/black
-	ft_printf("\033[0m");
 
 	//add_history(str);
 	lexer = ft_lexer(str);
@@ -84,11 +82,11 @@ int	minishell_loop(char **envp)
 	free(cmds);
 	return (0);
 }
-
+/*
 int	main(int ac, char **av, char **envp)
 {
 	(void)ac;
 	(void)av;
 	while (1)
 		minishell_loop(envp);
-}
+}*/

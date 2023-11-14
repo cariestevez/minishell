@@ -12,5 +12,8 @@
 # include <sys/wait.h>
 # include <errno.h>
 
+//builtins
+int		ft_pwd(void);
+int 	ft_cd(t_shell *shell);
 
 #endif
