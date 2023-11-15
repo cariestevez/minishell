@@ -30,53 +30,57 @@ char	*ft_getenv(char *name, char **env)
 
 char    *expand_var(char *str, char **env)
 {
+    //not working correctly
+    //edgecases not handled
     int     i;
-		input		start;
     char    *var;
     char    *ret;
     char    *append;
 
-    i = start;
+    i = 0;
+    start = 0;
     while (str[i])
     {
-			if(str[i] == '$')
-				start = i + 1;
-      if (!str[i] || ft_isalpha(str[i]) != 1)
-            break ;
+        if (str[i] == '$')           
+            start = i + 1;
         i++;
+        if (str[start - 1] == '$' && (ft_isalnum(str[i]) != 1 || str[i] == '_')
+            break ;
     }
-    //find the variable name in env
+    //get the variable from env
     var = ft_getenv(ft_substr(str, start, i - start), env);
      if (!var)
         return (NULL);
+    //malloc for the epanded string
     ret = (char *)malloc(sizeof(char) * (ft_strlen(str) - (i - start) + ft_strlen(var)));
+    //copy the initial part of the str without the variable
     ft_strlcpy(ret, str, start);
+    //concatinate the variable onto the initial part of the str
     ft_strlcat(ret, var, ft_strlen(var) + start + 1);
+    //get the remaining part of the str
     append = ft_substr(str, i, ft_strlen(str) - i);
+    //concatinate remaining part of str onto the expanded str
     ft_strlcat(ret, append, ft_strlen(append) + ft_strlen(ret) + 1);
-    //free(str);
     free(append);
-		if (str[i] != NULL)
-			expand_var(ret, env);
+    //free(str);
+    if (str[i] != '\0')
+        expand_var(ret, env);
     return (ret);
 }
 
-/*char    *expand_arg(char *str, int start)
+int		set_locvar(char *var, char **locvars)
 {
+	//the syntax of var should be "name=value"
+    //adds the new variabel to the end of the array
+	int	i;
 
-}*/
-
-char    *expand_exit(char *str, int start)
-{
-    char *exit;
-    //char    *append;
-    char    *ret;
-
-    (void)start;
-    exit = "127";
-    ret = exit;
-    free(str);
-    return (ret);
+	i = 0;
+	while (env[i] != NULL)
+		i++;
+	locvars[i] = malloc(sizeof(char *) * 2);
+	locvars[i] = ft_strdup(var);
+	locvars[i + 1] = NULL;
+	return (0);
 }
 
 int expander(t_simple_cmds *cmds)
@@ -101,7 +105,7 @@ int expander(t_simple_cmds *cmds)
                 if (cmds->str[i] == '$')
                 {
                     if (cmds->str[i + 1] == '?')
-                        cmds->str = expand_exit(cmds->str[i], j);
+                        ft_putstr_fd(g_exit, 1);
                     else if (isdigit(cmds->str[i][j + 1]))
                         cmds->str[i] = expand_arg(cmds->str[i], j);
                     else

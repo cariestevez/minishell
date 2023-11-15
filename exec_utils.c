@@ -40,31 +40,54 @@ void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode)
 	exit(exitcode);
 }
 
-char	*get_path(char *cmd)
+char	*get_path(char *cmd, char **env)
 {
 	int		i;
-	char	*exec;
+	char	*path;
 	char	**fullpath;
 	char	*path_elem;
 	char	**s_cmd;
 
 	i = 0;
-	fullpath = ft_split(getenv("PATH"), ':');
+	fullpath = ft_split(ft_getenv("PATH", env), ':');
 	s_cmd = ft_split(cmd, ' ');
 	while (fullpath[i])
 	{
 		path_elem = ft_strjoin(fullpath[i], "/");
-		exec = ft_strjoin(path_elem, s_cmd[0]);
+		path = ft_strjoin(path_elem, s_cmd[0]);
 		free(path_elem);
-		if (access(exec, F_OK | X_OK) == 0)
+		if (access(path, F_OK | X_OK) == 0)
 		{
 			free_tab(s_cmd);
-			return (exec);
+			return (path);
 		}
-		free(exec);
+		free(path);
 		i++;
 	}
 	free_tab(fullpath);
 	free_tab(s_cmd);
 	return (cmd);
+}
+char	*ft_getenv(char *name, char **env)
+{
+	int		i;
+	int		j;
+	char	*sub;
+
+	i = 0;
+	while (env[i])
+	{
+		j = 0;
+		while (env[i][j] && env[i][j] != '=')
+			j++;
+		sub = ft_substr(env[i], 0, j);
+		if (ft_strncmp(sub, name, 100) == 0)
+		{
+			free(sub);
+			return (env[i] + j + 1);
+		}
+		free(sub);
+		i++;
+	}
+	return (NULL);
 }

@@ -4,7 +4,7 @@ void	execute(t_simple_cmds *cmds, char **envp, int **fd)
 {
 	write(2, "\n", 1);
 	ft_printf("child %d trying to get access to %s and write to %d\n", cmds->index, get_path(cmds->str[0]), STDOUT_FILENO);
-	if ((get_path(cmds->str[0]), F_OK) != 0)
+	if ((get_path(cmds->str[0], envp), F_OK) != 0)
 	{
 		ft_putendl_fd(cmds->str[0], 2);
 		ft_putstr_fd(": access failure\n", 2);

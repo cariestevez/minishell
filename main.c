@@ -1,20 +1,5 @@
 #include "minishell.h"
 
-int	free_lexer(t_lexer *lexer)
-{
-	t_lexer	*tmp;
-
-	//t_lexer *head;
-	while (lexer)
-	{
-		tmp = lexer->next;
-		free(lexer);
-		lexer = tmp;
-	}
-	free(lexer);
-	return (0);
-}
-
 void	print_cmds(t_simple_cmds *cmds)
 {
 	int	i;
@@ -51,6 +36,26 @@ char    **arrdup(char **env)
     return (ret);
 }
 
+t_shell	*init_shell(char *str, char **envp)
+{
+	t_shell	*shell;
+	t_lexer	*lexer;
+
+	shell = ft_calloc(sizeof(t_shell *));
+	if (!shell)
+		return (NULL);
+	lexer = ft_lexer(str);
+	if (!lexer)
+		return (NULL);
+	shell->env = arrdup(envp);
+	if (!shell->env)
+		return (NULL);
+	shell->cmds = ft_parser(lexer);
+	if (!shell->cmds)
+		return (NULL);
+	return (shell);
+}
+
 int	minishell_loop(char **envp)
 {
 	char			*str;
@@ -58,16 +63,12 @@ int	minishell_loop(char **envp)
 	t_simple_cmds	*cmds;
 	char			**env_cpy;
 
-	env_cpy = arrdup(envp);
-	cmds = (t_simple_cmds *)malloc(sizeof(t_simple_cmds));
-	cmds->str = malloc(sizeof(char *) * 2);
-	//printf statement changes the color of the stdout
-	ft_printf("\033[35m");
-	str = readline(expand_var(PROMPT, env_cpy);
-
+	str = readline((expand_var(PROMPT, env_cpy)));
 	//add_history(str);
-	lexer = ft_lexer(str);
-	cmds = ft_parser(lexer);
+	shell = init_shell(str, envp);
+	if (!shell)
+		return (-1);
+	
 	//saves the first node as the 1st command
 	//should have been validatet at this point already-->
 	//so we know it's a command. Anything else should have returned error in the lexer
@@ -82,11 +83,14 @@ int	minishell_loop(char **envp)
 	free(cmds);
 	return (0);
 }
-
+/*
 int	main(int ac, char **av, char **envp)
 {
+	ft_printf(\036[0m)
+	execve(getpath(cat), "welcome.txt"
+	ft_printf(\033[0m);
 	(void)ac;
 	(void)av;
 	while (1)
 		minishell_loop(envp);
-}
+}*/

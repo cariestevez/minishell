@@ -25,6 +25,21 @@ void    free_array(int  **arr)
     free(arr);
 }
 
+int	free_lexer(t_lexer *lexer)
+{
+	t_lexer	*tmp;
+
+	//t_lexer *head;
+	while (lexer)
+	{
+		tmp = lexer->next;
+		free(lexer);
+		lexer = tmp;
+	}
+	free(lexer);
+	return (0);
+}
+
 void    free_simple_commands(t_simple_cmds *cmds)
 {
     while (cmds)
