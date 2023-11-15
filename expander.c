@@ -28,92 +28,91 @@ char	*ft_getenv(char *name, char **env)
 	return (NULL);
 }
 
-char    *expand_var(char *str, char **env)
-{
-    //not working correctly
-    //edgecases not handled
-    int     i;
+char *replace_variable(char *str, int start, int end, char **env)
+{ 
     char    *var;
     char    *ret;
     char    *append;
 
-    i = 0;
-    start = 0;
-    while (str[i])
-    {
-        if (str[i] == '$')           
-            start = i + 1;
-        i++;
-        if (str[start - 1] == '$' && (ft_isalnum(str[i]) != 1 || str[i] == '_')
-            break ;
-    }
-    //get the variable from env
-    var = ft_getenv(ft_substr(str, start, i - start), env);
-     if (!var)
+    var = ft_substr(str, start, end - start);
+    //trims the variable and gets the env value
+    var = ft_getenv(ft_strtrim(var, "${}"), env);
+    if (!var)
         return (NULL);
-    //malloc for the epanded string
-    ret = (char *)malloc(sizeof(char) * (ft_strlen(str) - (i - start) + ft_strlen(var)));
-    //copy the initial part of the str without the variable
-    ft_strlcpy(ret, str, start);
-    //concatinate the variable onto the initial part of the str
-    ft_strlcat(ret, var, ft_strlen(var) + start + 1);
-    //get the remaining part of the str
-    append = ft_substr(str, i, ft_strlen(str) - i);
-    //concatinate remaining part of str onto the expanded str
-    ft_strlcat(ret, append, ft_strlen(append) + ft_strlen(ret) + 1);
+    //joins first part of str with the expanded var
+    ret = ft_strjoin(ft_substr(str, 0, start), var);
+    //get the last part of the str and join with ret str
+    append = ft_substr(str, end, ft_strlen(str) - end);
+    ret = ft_strjoin(ret, append);
     free(append);
-    //free(str);
-    if (str[i] != '\0')
-        expand_var(ret, env);
     return (ret);
 }
 
-int		set_locvar(char *var, char **locvars)
+int    param_expansion(char *str, char **env)
 {
-	//the syntax of var should be "name=value"
-    //adds the new variabel to the end of the array
+    int     i;
+    char     *start;
+    int     end;
+   
+    i = 0;
+    start = 0;
+    while (str[i] != '\0')
+    {
+        if (str[i] == '$')
+        {
+            start = i;
+            while (ft_isalnum(str[i]) == 1 || ft_strncmp("_{}", str[i], 3) > 0)
+                i++;
+            str = replace_variable(str, start, i, env);
+            if (!str)
+                return (-1);
+        }
+        i++;
+    }
+    return (0);
+}
+
+int		declare_variable(char *var, char **locvars)
+{
+	//the syntax of var should be name=[value]
+    //adds the new variable to the end of the array
 	int	i;
 
 	i = 0;
-	while (env[i] != NULL)
+    if (!locvars)
+        locvars = ft_calloc(sizeof(char *), 1);
+    if (!locvars)
+        return (-1);
+	while (locvars[i] != NULL)
 		i++;
-	locvars[i] = malloc(sizeof(char *) * 2);
 	locvars[i] = ft_strdup(var);
+    if (!locvars[i])
+        return (-1);
 	locvars[i + 1] = NULL;
 	return (0);
 }
 
-int expander(t_simple_cmds *cmds)
+int expander(t_shell *shell)
 {
     int            i;
-  //  int             j;
 
     i = 0;
-    //j = 0;
-    while (cmds)
+    while (shell->cmds)
     {
-         while (cmds->str[i])
+         while (shell->cmds->str[i])
          {
-            //when single quotes, envvars are not expanded
-               /*  if (cmds->str[i] == 39)
-                {
-                    i++;
-                    while (cmds->str[i] != 39)
-                        j++;
-                }
-            //$? prints the exit code
-                if (cmds->str[i] == '$')
-                {
-                    if (cmds->str[i + 1] == '?')
-                        ft_putstr_fd(g_exit, 1);
-                    else if (isdigit(cmds->str[i][j + 1]))
-                        cmds->str[i] = expand_arg(cmds->str[i], j);
-                    else
-                        cmds->str[i] = expand_var(cmds->str, i + 1, cmds->env);
-                } */
-                i++;
-            }
-        cmds = cmds->next;
+           //brace expansion
+           //tilde expansion 
+            if (param_expansion(shell->cmds->str[i], shell->env) != 0)
+                return(exitcode);
+           //command substitution 
+           //arithmetic expansion 
+           //word splitting 
+           //filename expansion
+           i++;
+        }
+        shell->cmds = shell->cmds->next;
     }
+    //quote removal
     return (0);
 }

@@ -1,19 +1,5 @@
 #include "minishell.h"
 
-void	print_cmds(t_simple_cmds *cmds)
-{
-	int	i;
-
-	i = 0;
-	while (cmds->str[i])
-	{
-		ft_printf("cmd string is %s\n", cmds->str[i]);
-		i++;
-	}
-	//ft_printf("infile is %s", cmds->in->str);
-	//ft_printf("outfile is %s", cmds->in->str);
-}
-
 char    **arrdup(char **env)
 {
     int     i;
@@ -41,7 +27,7 @@ t_shell	*init_shell(char *str, char **envp)
 	t_shell	*shell;
 	t_lexer	*lexer;
 
-	shell = ft_calloc(sizeof(t_shell *));
+	shell = ft_calloc(sizeof(t_shell *)), 1;
 	if (!shell)
 		return (NULL);
 	lexer = ft_lexer(str);
@@ -50,6 +36,7 @@ t_shell	*init_shell(char *str, char **envp)
 	shell->env = arrdup(envp);
 	if (!shell->env)
 		return (NULL);
+	shell->locvars = ft_calloc(sizeof(char *), 1);
 	shell->cmds = ft_parser(lexer);
 	if (!shell->cmds)
 		return (NULL);

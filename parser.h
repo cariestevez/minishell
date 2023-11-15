@@ -62,13 +62,16 @@ char    **arrdup(char **env);
 
 //lexer.c
 t_lexer			*ft_lexer(char *input);
-int				free_lexer(t_lexer *lexer);
 
 //parser.c
 t_simple_cmds	*ft_parser(t_lexer *lexer);
 
 //expander.c
-int 	expander(t_simple_cmds *cmds);
-char    *expand_var(char *str, char **env);
+int 	expander(t_shell *shell);
+int		declare_variable(char *var, char **locvars);
+int		param_expansion(char *str, char **env);
+char	*replace_variable(char *str, int start, int end, char **env);
+char	*ft_getenv(char *name, char **env);
+
 
 #endif

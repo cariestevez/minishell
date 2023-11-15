@@ -45,15 +45,15 @@ int	redirect_output(t_redir *output)
 
 int	heredoc(t_redir *heredoc)
 {
-	char *line;
-	int		fd;
+	char 		*line;
+	int				fd;
 	char	*temp_file;
 
 	temp_file = "heredoc_temp";
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	line = readline(HEREDOC_PROMPT);
 	//heredoc->str is the delimiting identifier of the heredoc
-	while (ft_strncmp(heredoc->str, line, ft_strlen(heredoc->str)))
+	while (ft_strnstr(line, heredoc->str, ft_strlen(line)))
 	{
 		ft_putstr_fd(line, fd);
 		ft_putchar_fd('\n', fd);
