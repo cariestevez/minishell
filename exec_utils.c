@@ -30,16 +30,6 @@ int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds)
 	return (1);
 }
 
-void    free_and_exit(t_simple_cmds *cmds, int **fd, int exitcode)
-{
-    //this function call will close ALL fds
-	close_unneccesary_fds(fd, cmds->amount_of_cmds + 1, cmds->amount_of_cmds);
-	free_simple_commands(cmds);
-    free_array(fd);
-	ft_printf("child process %d failed with %d\n", cmds->index, exitcode);
-	exit(exitcode);
-}
-
 char	*get_path(char *cmd, char **env)
 {
 	int		i;

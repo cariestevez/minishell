@@ -56,3 +56,19 @@ void    free_simple_commands(t_simple_cmds *cmds)
         cmds = cmds->next;
     }
 }
+
+void    free_and_exit(t_shell *shell, int **fd, int exitcode)
+{
+    //this function call will close ALL fds
+	if (fd != NULL)
+	{
+		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
+	 	free_array(fd);
+	}
+	free_simple_commands(shell->cmds);
+    free_tab(shell->env);
+    free_tab(shell->locvars);
+	free(shell);
+	//perror(get_exit_msg(exitcode));
+	exit(exitcode);
+}

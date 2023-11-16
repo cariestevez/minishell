@@ -4,72 +4,51 @@
 - expand arguments $1/2/3...
 - find more edge cases*/
 
-char	*ft_getenv(char *name, char **env)
-{
-	int		i;
-	int		j;
-	char	*sub;
-
-	i = 0;
-	while (env[i])
-	{
-		j = 0;
-		while (env[i][j] && env[i][j] != '=')
-			j++;
-		sub = ft_substr(env[i], 0, j);
-		if (ft_strncmp(sub, name, 100) == 0)
-		{
-			free(sub);
-			return (env[i] + j + 1);
-		}
-		free(sub);
-		i++;
-	}
-	return (NULL);
-}
-
 char *replace_variable(char *str, int start, int end, char **env)
 { 
+    //something weird not working here!!!
     char    *var;
     char    *ret;
     char    *append;
-
-    var = ft_substr(str, start, end - start);
     //trims the variable and gets the env value
-    var = ft_getenv(ft_strtrim(var, "${}"), env);
+    var = ft_substr(str, start, end - start);
+    var = ft_strtrim(var, "}${");
+    var = ft_getenv(var, env);
     if (!var)
         return (NULL);
     //joins first part of str with the expanded var
-    ret = ft_strjoin(ft_substr(str, 0, start), var);
+    ret = ft_substr(str, 0, start);
+    ret = ft_strjoin(ret, var);
     //get the last part of the str and join with ret str
-    append = ft_substr(str, end, ft_strlen(str) - end);
+    append = ft_substr(str, end, ft_strlen(str) - end + 1);
     ret = ft_strjoin(ret, append);
     free(append);
     return (ret);
 }
 
-int    param_expansion(char *str, char **env)
+char    *variable_expansion(char *str, char **env)
 {
     int     i;
-    char     *start;
-    int     end;
+    int     start;
    
     i = 0;
     start = 0;
     while (str[i] != '\0')
     {
-        if (str[i] == '$')
+        if (str[i] == '$' && 
+            (ft_isalnum(str[i + 1]) == 1 || ft_strchr("_{}", str[i + 1]) != 0))
         {
             start = i;
-            while (ft_isalnum(str[i]) == 1 || ft_strncmp("_{}", str[i], 3) > 0)
+            i++;
+            while (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0)
                 i++;
             str = replace_variable(str, start, i, env);
             if (!str)
-                return (-1);
+                return (NULL);
         }
         i++;
     }
-    return (0);
+    return (str);
 }
 
 int		declare_variable(char *var, char **locvars)
@@ -80,15 +59,19 @@ int		declare_variable(char *var, char **locvars)
 
 	i = 0;
     if (!locvars)
+    {
         locvars = ft_calloc(sizeof(char *), 1);
-    if (!locvars)
-        return (-1);
-	while (locvars[i] != NULL)
+        if (!locvars)
+            return (-1);
+    }
+    while (locvars[i] != NULL)
 		i++;
 	locvars[i] = ft_strdup(var);
     if (!locvars[i])
-        return (-1);
-	locvars[i + 1] = NULL;
+    {
+        return (DECLARE_VAR_ERROR);
+    }
+    locvars[i + 1] = NULL;
 	return (0);
 }
 
@@ -101,18 +84,13 @@ int expander(t_shell *shell)
     {
          while (shell->cmds->str[i])
          {
-           //brace expansion
-           //tilde expansion 
-            if (param_expansion(shell->cmds->str[i], shell->env) != 0)
-                return(exitcode);
-           //command substitution 
-           //arithmetic expansion 
-           //word splitting 
-           //filename expansion
+            shell->cmds->str[i] = variable_expansion(shell->cmds->str[i], shell->env);
+            if (shell->cmds->str == NULL)
+                return (EXPANDER_VAR_ERROR);
            i++;
         }
         shell->cmds = shell->cmds->next;
     }
     //quote removal
-    return (0);
+    return (SUCCESS);
 }

@@ -18,7 +18,7 @@ int	redirect_input(t_redir *input)
 		return (EXECUTOR_REDIRECTION_ERROR);
 	}
 	close(fd_in);
-	return (EXECUTOR_SUCCES);
+	return (SUCCESS);
 }
 
 int	redirect_output(t_redir *output)
@@ -40,7 +40,7 @@ int	redirect_output(t_redir *output)
 		return (EXECUTOR_REDIRECTION_ERROR);
 	}
 	close(fd_out);
-	return (EXECUTOR_SUCCES);
+	return (SUCCESS);
 }
 
 int	heredoc(t_redir *heredoc)
@@ -66,31 +66,31 @@ int	heredoc(t_redir *heredoc)
 		return (EXECUTOR_HEREDOC_ERROR);
 	unlink(temp_file);
 	//temp_file will be deleted once all fds are closed
-	return (EXECUTOR_SUCCES);
+	return (SUCCESS);
 }
 
-int redirections(t_simple_cmds *cmd, int **fd)
+int redirections(t_simple_cmds *cmd)
 {
 	while (cmd->redir != NULL)
 	{
 		if (cmd->redir->type == l_in && cmd->redir->str != NULL)
 		{
-			if (redirect_input(cmd->redir) != EXECUTOR_SUCCES)
-				free_and_exit(cmd, fd, EXECUTOR_REDIRECTION_ERROR);
+			if (redirect_input(cmd->redir) != 0)
+				return (-1);
 		}
 		if ((cmd->redir->type == l_append || cmd->redir->type == l_out)
 				&& cmd->redir->str != NULL)
 		{
-			if (redirect_output(cmd->redir) != EXECUTOR_SUCCES)
-				free_and_exit(cmd, fd, EXECUTOR_REDIRECTION_ERROR);
+			if (redirect_output(cmd->redir) != 0)
+				return (-1);
 		}
 		if (cmd->redir->type == l_heredoc && cmd->redir->str != NULL)
 		{
-			if (heredoc(cmd->redir) != EXECUTOR_SUCCES)
-				free_and_exit(cmd, fd, EXECUTOR_HEREDOC_ERROR);
+			if (heredoc(cmd->redir) != 0)
+				return (-1);
 		}
 		ft_printf("child %d redirected to %s\n", cmd->redir->str);
 		cmd->redir = cmd->redir->next;
 	}
-	return (EXECUTOR_SUCCES);
+	return (SUCCESS);
 }

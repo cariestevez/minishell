@@ -22,12 +22,12 @@ char    **arrdup(char **env)
     return (ret);
 }
 
-t_shell	*init_shell(char *str, char **envp)
+/*t_shell	*init_shell(char *str, char **envp)
 {
 	t_shell	*shell;
 	t_lexer	*lexer;
 
-	shell = ft_calloc(sizeof(t_shell *)), 1;
+	shell = ft_calloc(sizeof(t_shell *), 1);
 	if (!shell)
 		return (NULL);
 	lexer = ft_lexer(str);
@@ -42,17 +42,47 @@ t_shell	*init_shell(char *str, char **envp)
 		return (NULL);
 	return (shell);
 }
+*/
+t_shell	*test_init_shell(char *str, char **envp)
+{
+	t_shell         *shell;
+	char			**split_str;
+    int                 i;
+
+	split_str = ft_split(str, ' ');
+    shell = malloc(sizeof(t_shell *));
+    shell->cmds = malloc(sizeof(t_simple_cmds *));
+    shell->env = arrdup(envp);
+    ft_printf("env before cd:\n");
+    i = 0;
+    while (shell->env[i])
+    {
+        ft_printf("%s\n", shell->env[i]);
+        i++;
+    }
+    shell->cmds->str = split_str;
+    shell->cmds->builtin = &ft_cd;
+    i = 0;
+    while (shell->env[i])
+    {
+        ft_printf("%s\n", shell->env[i]);
+        free(shell->env[i]);
+        i++;
+    }
+	return (shell);
+}
 
 int	minishell_loop(char **envp)
 {
+	char			*prompt;
 	char			*str;
-	t_lexer			*lexer;
-	t_simple_cmds	*cmds;
-	char			**env_cpy;
+	t_shell			*shell;
 
-	str = readline((expand_var(PROMPT, env_cpy)));
+	prompt = PROMPT;
+	prompt = variable_expansion(prompt, envp);
+	str = readline(prompt);
 	//add_history(str);
-	shell = init_shell(str, envp);
+	shell = test_init_shell(str, envp);
 	if (!shell)
 		return (-1);
 	
@@ -63,21 +93,18 @@ int	minishell_loop(char **envp)
 	//parser
 	//scans the saved tokens for an environment variable and substitutes(expand) it with its value
 	//expander(cmds);
-	executor(cmds);
+	executor(shell);
 	//free_lexer(lexer);
+	free(prompt);
 	free(str);//frees the readline
-	free(cmds->str);
-	free(cmds);
+	free_and_exit(shell, NULL, 0);
 	return (0);
 }
-/*
+
 int	main(int ac, char **av, char **envp)
 {
-	ft_printf(\036[0m)
-	execve(getpath(cat), "welcome.txt"
-	ft_printf(\033[0m);
 	(void)ac;
 	(void)av;
 	while (1)
 		minishell_loop(envp);
-}*/
+}

@@ -2,9 +2,6 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# define BUFFER 500
-# define PROMPT "\033[35mHello \033[36m$USER\033[0m$ "
-
 typedef enum e_lexertype
 {
 	l_non_op,
@@ -42,6 +39,7 @@ typedef struct s_redir
 typedef struct	s_shell
 {
 	struct s_simple_cmds	*cmds;
+	int				amount_of_cmds;
 	char					**env;
 	char				**locvars;
 } t_shell;
@@ -49,16 +47,12 @@ typedef struct	s_shell
 typedef struct s_simple_cmds
 {
 	char                    **str;
-	int                   	(*builtin)(struct s_shell *);
+	int                   	(*builtin)(struct s_shell *, struct s_simple_cmds *);
 	struct s_redir			*redir;
 	int						index;
-	int						amount_of_cmds;
 	struct s_simple_cmds	*next;
 	struct s_simple_cmds	*prev;
 }	t_simple_cmds;
-
-//main.c
-char    **arrdup(char **env);
 
 //lexer.c
 t_lexer			*ft_lexer(char *input);
@@ -69,7 +63,7 @@ t_simple_cmds	*ft_parser(t_lexer *lexer);
 //expander.c
 int 	expander(t_shell *shell);
 int		declare_variable(char *var, char **locvars);
-int		param_expansion(char *str, char **env);
+char	*variable_expansion(char *str, char **env);
 char	*replace_variable(char *str, int start, int end, char **env);
 char	*ft_getenv(char *name, char **env);
 

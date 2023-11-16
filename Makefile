@@ -7,21 +7,23 @@ LIBS := $(LIBFT)libft.a
 BUILTINS := ./builtins/
 SRCS := $(BUILTINS)ft_cd.c \
 		$(BUILTINS)ft_pwd.c \
+		$(BUILTINS)ft_echo.c \
+		$(BUILTINS)ft_env.c \
+		$(BUILTINS)ft_unset.c \
 		free.c \
-#		exec.c \
+		exec.c \
 		exec_children.c \
 		exec_redir.c \
 		exec_utils.c \
 		main.c \
-		lexer.c \
-		parser.c \
 		expander.c \
-		
-SRCS :=  exec.c exec_children.c exec_redir.c exec_utils.c test_exec.c free.c  lexer.c expander.c #parser.c
+#		lexer.c \
+#		parser.c \
+
 OBJS := $(SRCS:.c=.o)
 ################################################################################
 
-all: libft ${NAME} cat welcome.txt
+all: libft ${NAME} welcome
 
 ${NAME}: ${OBJS} ${LIBS}
 	cc -o ${NAME} $^ ${LIBFTFLAGS}
@@ -39,5 +41,8 @@ fclean: clean
 	rm -f ${NAME} ${LIBS}
 
 re: clean all
+
+welcome:
+	cat welcome.txt
 
 .PHONY: all clean fclean re

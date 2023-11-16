@@ -32,7 +32,7 @@ char	*ft_strtrim(char const *s1, char const *set)
 	while (s1[start] != '\0' && search_in_set(set, s1[start]) != 0)
 		start++;
 	end = ft_strlen(s1);
-	while (end > start && search_in_set(set, s1[end - 1]) != 0)
+	while (end > start && search_in_set(set, s1[end]) != 0)
 		end--;
 	new_str = (char *)malloc(end - start + 1);
 	if (!new_str)
