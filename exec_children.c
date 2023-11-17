@@ -33,6 +33,9 @@ int	execute_builtin(t_shell *shell, int **fd, int i)
 
 void	child_process(t_shell *shell, int **fd, int i)
 {
+	//update the non-inhereted local variables and close fds
+	free_tab(shell->locvars);
+	shell->locvars = arrdup(shell->env);
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
     //if process is first command, input is redirected from infile or stay as stin
 	//if process is last command, output is redirected to outfile or stay as stdout

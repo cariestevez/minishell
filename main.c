@@ -1,5 +1,26 @@
 #include "minishell.h"
 
+//for debugging 
+void print_redir_list(t_redir *head) {
+    t_redir *current = head;
+    while (current != NULL) {
+        printf("Type: %d, String: %s\n", current->type, current->str);
+        current = current->next;
+    }
+}
+//for debugghi
+void print_simple_cmds_list(t_shell *shell) {
+    t_simple_cmds *current = shell->cmds;
+    int i = -1;
+    while (current != NULL) {
+        ft_printf("Index: %d, Amount of Commands: %d \n", current->index, shell->amount_of_cmds);
+        while (current->str[++i] != NULL)
+            ft_printf("String[%d]:%s\n", i, current->str[i]);
+        print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
+        current = current->next;
+    }
+}
+
 char    **arrdup(char **env)
 {
     int     i;
@@ -47,28 +68,16 @@ t_shell	*test_init_shell(char *str, char **envp)
 {
 	t_shell         *shell;
 	char			**split_str;
-    int                 i;
 
 	split_str = ft_split(str, ' ');
     shell = malloc(sizeof(t_shell *));
     shell->cmds = malloc(sizeof(t_simple_cmds *));
+	shell->amount_of_cmds = 1;
     shell->env = arrdup(envp);
-    ft_printf("env before cd:\n");
-    i = 0;
-    while (shell->env[i])
-    {
-        ft_printf("%s\n", shell->env[i]);
-        i++;
-    }
+	shell->locvars = arrdup(envp);
     shell->cmds->str = split_str;
     shell->cmds->builtin = &ft_cd;
-    i = 0;
-    while (shell->env[i])
-    {
-        ft_printf("%s\n", shell->env[i]);
-        free(shell->env[i]);
-        i++;
-    }
+	print_simple_cmds_list(shell);
 	return (shell);
 }
 

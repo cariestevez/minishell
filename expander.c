@@ -59,13 +59,14 @@ int		declare_variable(char *var, char **locvars)
 
 	i = 0;
     if (!locvars)
-    {
-        locvars = ft_calloc(sizeof(char *), 1);
-        if (!locvars)
-            return (-1);
-    }
+        return (-1);
     while (locvars[i] != NULL)
+    {
+        if (ft_strncmp(locvars[i], var, ft_strlen(var)) == 0)
+            return (1);
 		i++;
+    }
+    free(locvars[i]);
 	locvars[i] = ft_strdup(var);
     if (!locvars[i])
     {
