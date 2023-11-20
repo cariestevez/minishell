@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "minishell.h"
 
 int	remove_var(char **list, t_simple_cmds *cmd)
 {
@@ -38,7 +38,6 @@ int	unset(t_shell *shell, t_simple_cmds *cmd)
 	i = 1;
 	j = 0;
 
-	remove_var(shell->locvars, cmd);
 	remove_var(shell->env, cmd);
 	return (0);
 }

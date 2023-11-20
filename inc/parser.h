@@ -41,7 +41,6 @@ typedef struct	s_shell
 	struct s_simple_cmds	*cmds;
 	int				amount_of_cmds;
 	char					**env;
-	char				**locvars;
 } t_shell;
 
 typedef struct s_simple_cmds

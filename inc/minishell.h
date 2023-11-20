@@ -1,7 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "./libft/libft.h"
+# include "../libft/libft.h"
 # include "parser.h"
 # include "executor.h"
 # include <readline/readline.h>
@@ -28,10 +28,11 @@ typedef enum    e_exitcode
     EXECUTOR_MALLOC_ERROR,
     EXECUTOR_ACCESS_ERROR,
     EXECUTOR_HEREDOC_ERROR,
+    STDSTREAM_RESTORE_ERROR,
 }   exitcode;
 
 //main.c
-int		minishell_loop(char **envp);
+t_shell	*minishell_loop(t_shell *shell);
 char    **arrdup(char **env);
 
 //free.c
@@ -44,6 +45,7 @@ void    free_array(int **arr);
 int		ft_pwd(t_shell *shell, t_simple_cmds *cmd);
 int 	ft_cd(t_shell *shell, t_simple_cmds *cmd);
 int     update_envvar(char *name, char *new, char **env);
+int     ft_export(t_shell *shell, t_simple_cmds *cmd);
 int		ft_echo(t_shell *shell, t_simple_cmds *cmd);
 int		ft_env(t_shell *shell, t_simple_cmds *cmd);
 int		ft_unset(t_shell *shell, t_simple_cmds *cmd);

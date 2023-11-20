@@ -89,7 +89,6 @@ int redirections(t_simple_cmds *cmd)
 			if (heredoc(cmd->redir) != 0)
 				return (-1);
 		}
-		ft_printf("child %d redirected to %s\n", cmd->redir->str);
 		cmd->redir = cmd->redir->next;
 	}
 	return (SUCCESS);

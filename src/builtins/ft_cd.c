@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "minishell.h"
 
 //exit status 0 on success
 //exit status 2 on incorrect usage, generally invalid options or missing arguments
@@ -25,6 +25,7 @@ char    *get_curpath(char *directory, char **env)
         curpath = directory;
     else
         curpath = get_path(directory, env); //man cd (5.)
+    printf("get_curpath: returning\n");
     return (curpath);
 }
 
@@ -46,14 +47,16 @@ int    update_envvar(char *name, char *new, char **env)
 
 int ft_cd(t_shell *shell, t_simple_cmds *cmd)
 {
+    printf("hello from cd\n");
     char    *curpath;
     char    *old_pwd;
 
     if (!shell || !cmd)
         return (2);
-    curpath = get_curpath(cmd->str[0], shell->env);
+    curpath = get_curpath(cmd->str[1], shell->env);
     if (!curpath)
         return (2);
+    printf("cd: curpath is %s\n", curpath);
     //save old pwd to update envvar OLD_PWD
     old_pwd = getcwd(NULL, 0);
     //alter OLD_PWD in env 

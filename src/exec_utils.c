@@ -19,6 +19,8 @@ int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds)
 	int j;
 
 	j = 0;
+	if (!fd)
+		return (1);
 	while (j < amount_of_cmds)
 	{
 		if (i - 1 != j)
@@ -27,7 +29,7 @@ int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds)
 			close (fd[j][1]);
 		j++;
 	}
-	return (1);
+	return (0);
 }
 
 char	*get_path(char *cmd, char **env)

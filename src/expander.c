@@ -8,20 +8,25 @@ char *replace_variable(char *str, int start, int end, char **env)
 { 
     //something weird not working here!!!
     char    *var;
+    char    *tmp;
     char    *ret;
     char    *append;
     //trims the variable and gets the env value
     var = ft_substr(str, start, end - start);
-    var = ft_strtrim(var, "}${");
-    var = ft_getenv(var, env);
+    tmp = ft_strtrim(var, "}${"); 
+    free(var);
+    var = ft_getenv(tmp, env);
     if (!var)
         return (NULL);
+    free(tmp);
     //joins first part of str with the expanded var
     ret = ft_substr(str, 0, start);
-    ret = ft_strjoin(ret, var);
+    tmp = ft_strjoin(ret, var);
+    free(ret);
     //get the last part of the str and join with ret str
     append = ft_substr(str, end, ft_strlen(str) - end + 1);
-    ret = ft_strjoin(ret, append);
+    ret = ft_strjoin(tmp, append);
+    free(tmp);
     free(append);
     return (ret);
 }
@@ -47,8 +52,9 @@ char    *variable_expansion(char *str, char **env)
                 return (NULL);
         }
         i++;
-    }
+    } 
     return (str);
+   
 }
 
 int		declare_variable(char *var, char **locvars)
@@ -78,8 +84,10 @@ int		declare_variable(char *var, char **locvars)
 
 int expander(t_shell *shell)
 {
+    t_simple_cmds *head;
     int            i;
 
+    head = shell->cmds;
     i = 0;
     while (shell->cmds)
     {
@@ -93,5 +101,6 @@ int expander(t_shell *shell)
         shell->cmds = shell->cmds->next;
     }
     //quote removal
+    shell->cmds = head;
     return (SUCCESS);
 }

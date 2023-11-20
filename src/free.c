@@ -67,7 +67,6 @@ void    free_and_exit(t_shell *shell, int **fd, int exitcode)
 	}
 	free_simple_commands(shell->cmds);
     free_tab(shell->env);
-    free_tab(shell->locvars);
 	free(shell);
 	//perror(get_exit_msg(exitcode));
 	exit(exitcode);

@@ -1,0 +1,2 @@
+child 79034752 redirected to (null)
+hello from export

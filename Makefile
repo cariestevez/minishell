@@ -1,22 +1,24 @@
 ################################################################################
 NAME := minishell
-CFLAGS := -g -Wall -Wextra -Werror -I.
+CFLAGS := -g -Wall -Wextra -Werror -I./inc/
 LIBFTFLAGS := -Ilibft -Llibft -lreadline
 LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
-BUILTINS := ./builtins/
+BUILTINS := ./src/builtins/
+
 SRCS := $(BUILTINS)ft_cd.c \
 		$(BUILTINS)ft_pwd.c \
 		$(BUILTINS)ft_echo.c \
 		$(BUILTINS)ft_env.c \
 		$(BUILTINS)ft_unset.c \
-		free.c \
-		exec.c \
-		exec_children.c \
-		exec_redir.c \
-		exec_utils.c \
-		main.c \
-		expander.c \
+		$(BUILTINS)ft_export.c \
+		./src/free.c \
+		./src/executor.c \
+		./src/subprocess.c \
+		./src/redirections.c \
+		./src/exec_utils.c \
+		./src/main.c \
+		./src/expander.c \
 #		lexer.c \
 #		parser.c \
 

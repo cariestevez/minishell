@@ -9,15 +9,18 @@ void print_redir_list(t_redir *head) {
     }
 }
 //for debugghi
-void print_simple_cmds_list(t_shell *shell) {
+void print_simple_cmds_list(t_shell *shell) 
+{
     t_simple_cmds *current = shell->cmds;
     int i = -1;
-    while (current != NULL) {
+    while (current != NULL) 
+	{
+		i = -1;
         ft_printf("Index: %d, Amount of Commands: %d \n", current->index, shell->amount_of_cmds);
-        while (current->str[++i] != NULL)
-            ft_printf("String[%d]:%s\n", i, current->str[i]);
-        print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
-        current = current->next;
+   		while (current->str[++i] != NULL)
+        	ft_printf("String[%d]:%s\n", i, current->str[i]);
+    	print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
+    	current = current->next;
     }
 }
 
@@ -64,56 +67,75 @@ char    **arrdup(char **env)
 	return (shell);
 }
 */
-t_shell	*test_init_shell(char *str, char **envp)
+int	test_init_shell(t_shell *shell, char *str)
 {
-	t_shell         *shell;
 	char			**split_str;
 
 	split_str = ft_split(str, ' ');
-    shell = malloc(sizeof(t_shell *));
-    shell->cmds = malloc(sizeof(t_simple_cmds *));
+    shell->cmds = ft_calloc(sizeof(t_simple_cmds), 1);
+	if (!shell->cmds)
+		return (1);
 	shell->amount_of_cmds = 1;
-    shell->env = arrdup(envp);
-	shell->locvars = arrdup(envp);
     shell->cmds->str = split_str;
-    shell->cmds->builtin = &ft_cd;
-	print_simple_cmds_list(shell);
-	return (shell);
+    shell->cmds->builtin = NULL;
+	shell->cmds->index = 0;
+	shell->cmds->redir = ft_calloc(sizeof(t_redir), 1);
+	if (!shell->cmds->redir)
+		return (1);
+	/*
+	shell->cmds->redir->type = l_out;
+	shell->cmds->redir->str = ft_strdup("out.txt");
+	shell->cmds->redir->next = NULL;
+	*/
+	shell->cmds->next = NULL;
+	return (0);
 }
 
-int	minishell_loop(char **envp)
+t_shell	*minishell_loop(t_shell *shell)
 {
 	char			*prompt;
 	char			*str;
-	t_shell			*shell;
 
 	prompt = PROMPT;
-	prompt = variable_expansion(prompt, envp);
+	prompt = variable_expansion(prompt, shell->env);
 	str = readline(prompt);
 	//add_history(str);
-	shell = test_init_shell(str, envp);
+	if(test_init_shell(shell, str) != 0)
+		return (NULL);
 	if (!shell)
-		return (-1);
-	
+		return (NULL);
+	print_simple_cmds_list(shell);
 	//saves the first node as the 1st command
 	//should have been validatet at this point already-->
 	//so we know it's a command. Anything else should have returned error in the lexer
 	//add check to exclude empty str in between quotations
 	//parser
 	//scans the saved tokens for an environment variable and substitutes(expand) it with its value
-	//expander(cmds);
+	expander(shell);
+	print_simple_cmds_list(shell);
+	printf("succesfully printed cmds list\n");
 	executor(shell);
 	//free_lexer(lexer);
 	free(prompt);
 	free(str);//frees the readline
-	free_and_exit(shell, NULL, 0);
-	return (0);
+	free_simple_commands(shell->cmds);
+	return (shell);
 }
 
 int	main(int ac, char **av, char **envp)
 {
+	t_shell	*shell;
+
+	shell = ft_calloc(sizeof(t_shell), 1);
+	if (!shell)
+		return (-1);
+	shell->env = arrdup(envp);
 	(void)ac;
 	(void)av;
 	while (1)
-		minishell_loop(envp);
+	{
+		//if exitsignal
+		//	free shell;
+		minishell_loop(shell);
+	}
 }

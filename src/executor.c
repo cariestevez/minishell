@@ -23,12 +23,12 @@ int	**create_pipes(t_shell *shell, int **fd)
 	int	i;
 
 	i = 0;
-	fd = malloc(sizeof(int *) * shell->amount_of_cmds);
+	fd = ft_calloc(sizeof(int *), shell->amount_of_cmds);
 	if (!fd)
 		return (fd);
 	while (i < shell->amount_of_cmds)
 	{
-		fd[i] = malloc(sizeof(int) * 2);
+		fd[i] = ft_calloc(sizeof(int), 2);
 		if (!fd[i])
 			return (fd);
 		i++;
@@ -94,14 +94,18 @@ int	executor(t_shell *shell)
 	fx. cat <<EOF | ls -l
 	- test +++++commands
 	- test builtin scenarios*/
+	printf("hello from executor\n");
 	int		i;
 	int		**fd;
-	pid_t	pid[shell->amount_of_cmds - 1];
+	pid_t	pid[shell->amount_of_cmds];
 
 	fd = NULL;
 	//check if only one command and it is a builtin
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
-		execute_builtin(shell, fd, 0);
+	{
+		if(execute_builtin(shell, fd, 0) == 0)
+			return (SUCCESS);
+	}
 	//otherwise continue with piping and forking
 	fd = create_pipes(shell, fd);
 	if (!fd)
@@ -119,6 +123,6 @@ int	executor(t_shell *shell)
 		i++;
 	}
 	free_array(fd);
-	free_simple_commands(shell->cmds);
+	ft_printf("executor returning\n");
 	return (SUCCESS);
 }
