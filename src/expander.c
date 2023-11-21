@@ -54,31 +54,33 @@ char    *variable_expansion(char *str, char **env)
         i++;
     } 
     return (str);
-   
 }
 
-int		declare_variable(char *var, char **locvars)
+int		declare_variable(char *var, char **env)
 {
 	//the syntax of var should be name=[value]
     //adds the new variable to the end of the array
 	int	i;
 
 	i = 0;
-    if (!locvars)
+    if (!env)
         return (-1);
-    while (locvars[i] != NULL)
+    if (ft_strchr(var, '=') == 0) //wrong syntax
+        return (1);
+    variable_expansion(var, env);
+    while (env[i] != NULL)
     {
-        if (ft_strncmp(locvars[i], var, ft_strlen(var)) == 0)
+        if (ft_strncmp(env[i], var, ft_strlen(var)) == 0)
             return (1);
 		i++;
     }
-    free(locvars[i]);
-	locvars[i] = ft_strdup(var);
-    if (!locvars[i])
+    free(env[i]);
+	env[i] = ft_strdup(var);
+    if (!env[i])
     {
         return (DECLARE_VAR_ERROR);
     }
-    locvars[i + 1] = NULL;
+    env[i + 1] = NULL;
 	return (0);
 }
 

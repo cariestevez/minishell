@@ -77,7 +77,7 @@ int	test_init_shell(t_shell *shell, char *str)
 		return (1);
 	shell->amount_of_cmds = 1;
     shell->cmds->str = split_str;
-    shell->cmds->builtin = NULL;
+    shell->cmds->builtin = &ft_export;
 	shell->cmds->index = 0;
 	shell->cmds->redir = ft_calloc(sizeof(t_redir), 1);
 	if (!shell->cmds->redir)

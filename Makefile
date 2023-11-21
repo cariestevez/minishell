@@ -1,7 +1,8 @@
 ################################################################################
 NAME := minishell
-CFLAGS := -g -Wall -Wextra -Werror -I./inc/
+CFLAGS := -g -Wall -Wextra -Werror 
 LIBFTFLAGS := -Ilibft -Llibft -lreadline
+INC := -Iinc -I$(LIBFT) -Ireadline/include
 LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
 BUILTINS := ./src/builtins/
@@ -34,7 +35,7 @@ libft:
 	make -C ${LIBFT}
 
 .c.o: ${SRCS}
-	cc ${CFLAGS} -Ilibft -c -o $@ $<
+	cc ${CFLAGS} ${INC} -Ilibft -c -o $@ $<
 
 clean:
 	rm -f ${OBJS} && cd ${LIBFT} && make clean && cd ..

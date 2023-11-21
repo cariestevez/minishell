@@ -16,19 +16,17 @@ void    export_print(t_shell *shell)
 
 int ft_export(t_shell *shell, t_simple_cmds *cmd)
 {
-    printf("hello from export\n");
     int i;
 
     i = 1;
-    //if no args are given, prints the local variables
-    if (cmd->str[i] == NULL)
+    if (cmd->str[i] == NULL) //if no args are given, prints the local variables
 	{
 	    export_print(shell);
 	    return (0);
     }
     while(cmd->str[i])
     {
-        if (declare_variable(cmd->str[i], shell->env) < 0)
+        if (declare_variable(cmd->str[i], shell->env) != 0)
             return (-1);
         i++;
     }
