@@ -77,7 +77,18 @@ int	test_init_shell(t_shell *shell, char *str)
 		return (1);
 	shell->amount_of_cmds = 1;
     shell->cmds->str = split_str;
-    shell->cmds->builtin = &ft_export;
+	if (ft_strncmp(shell->cmds->str[0], "cd", 15) == 0)
+    	shell->cmds->builtin = &ft_cd;
+	if (ft_strncmp(shell->cmds->str[0], "pwd", 15) == 0)
+		shell->cmds->builtin = &ft_pwd;
+	if (ft_strncmp(shell->cmds->str[0], "export", 15) == 0)
+		shell->cmds->builtin = &ft_export;
+	if (ft_strncmp(shell->cmds->str[0], "unset", 15) == 0)
+		shell->cmds->builtin = &ft_unset;
+	if (ft_strncmp(shell->cmds->str[0], "env", 15) == 0)
+		shell->cmds->builtin = &ft_env;
+	if (ft_strncmp(shell->cmds->str[0], "echo", 15) == 0)
+		shell->cmds->builtin = &ft_echo;
 	shell->cmds->index = 0;
 	shell->cmds->redir = ft_calloc(sizeof(t_redir), 1);
 	if (!shell->cmds->redir)

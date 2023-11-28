@@ -30,7 +30,7 @@ int	remove_var(char **list, t_simple_cmds *cmd)
 	return (0);
 }
 
-int	unset(t_shell *shell, t_simple_cmds *cmd)
+int	ft_unset(t_shell *shell, t_simple_cmds *cmd)
 {
 	int	i;
 	int	j;
