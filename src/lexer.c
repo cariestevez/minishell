@@ -35,9 +35,12 @@ int	save_token(t_lexer *lexer, char *str, int start, int len)
 	if (!lexer->token)
 		return (0);
 	lexer->key = get_key(lexer->token);
-	lexer->next = new_lexnode(lexer, lexer->index + 1);
-	if (!lexer->next)
-		return (0);
+	if (start + len < (int)ft_strlen(str))
+	{
+		lexer->next = new_lexnode(lexer, lexer->index + 1);
+		if (!lexer->next)
+			return (0);
+	}
 	lexer = lexer->next;
 	return (1);
 }
@@ -98,7 +101,7 @@ int    read_command_line(t_lexer *lexer, char *str)
 			i++;
 		lexer = lexer->next;
 	}
-	lexer = NULL;
+//	lexer = NULL;
 	return (1);
 }
 

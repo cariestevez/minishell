@@ -1,35 +1,38 @@
 #include "parser.h"
 
 //-----------------------------------------------------------------------
-//for debugging. DELETE
+//for debugging. DELETE FILE
 
 void print_lex(t_lexer *lexer)
 {
-	ft_printf("index: %d\n", lexer->index);
-	if (lexer->token)
-		ft_printf("token: %s\n", lexer->token);
-	if (lexer->key)
+	while (lexer)
 	{
-		if (lexer->key == l_pipe)
-			ft_printf("key: PIPE\n");
-		else if (lexer->key == l_in)
-			ft_printf("key: REDIRECTION input\n");
-		else if (lexer->key == l_out)
-			ft_printf("key: REDIRECTION output\n");
-		else if (lexer->key == l_heredoc)
-			ft_printf("key: heredoc\n");
-		else if (lexer->key == l_append)
-			ft_printf("key: REDIR append\n");
-		else if (lexer->key == l_non_op)
-			ft_printf("key: non operator\n");
-		else
-			ft_printf("key: %u\n", lexer->key);
+		ft_printf("index: %d\n", lexer->index);
+		if (lexer->token)
+			ft_printf("token: %s\n", lexer->token);
+		if (lexer->key)
+		{
+			if (lexer->key == l_pipe)
+				ft_printf("key: PIPE\n");
+			else if (lexer->key == l_in)
+				ft_printf("key: REDIRECTION input\n");
+			else if (lexer->key == l_out)
+				ft_printf("key: REDIRECTION output\n");
+			else if (lexer->key == l_heredoc)
+				ft_printf("key: heredoc\n");
+			else if (lexer->key == l_append)
+				ft_printf("key: REDIR append\n");
+			else if (lexer->key == l_non_op)
+				ft_printf("key: non operator\n");
+			else
+				ft_printf("key: %u\n", lexer->key);
+		}
+		write(1, "\n", 1);
+		lexer = lexer->next;
 	}
-	write(1, "\n", 1);
 	return ;
 }
 
-//for debugging 
 void print_redir_list(t_redir *head) {
     t_redir *current = head;
     while (current != NULL) {

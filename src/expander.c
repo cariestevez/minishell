@@ -2,7 +2,7 @@
 /*missing:
 - expand exit code $?
 - expand arguments $1/2/3...
-- find more edge cases*/
+- find more edge cases*/// -> single quotes
 
 char *replace_variable(char *str, int start, int end, char **env)
 { 
