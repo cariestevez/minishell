@@ -36,25 +36,27 @@ t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	cmd_tokens = 0;
 	redir_tokens = 0;
 	head = lexer;
-	while (lexer->token != NULL && lexer->key != l_pipe)//count total ammount of tokens and redirections
+	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)//count total ammount of tokens and redirections
 	{
-		if (lexer->key == l_in || lexer->key == l_out
-			|| lexer->key == l_append || lexer->key == l_heredoc)
+		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
 			redir_tokens++;
 		cmd_tokens++;
 		lexer = lexer->next;
 	}
 	//return(lexer);
 	cmd_tokens -= (redir_tokens * 2);//substract redir operators and for each of them a file or delimiter
+	ft_printf("cmd_tokens = %d\n", cmd_tokens);
+	ft_printf("redir tokens = %d\n", redir_tokens);
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
-	if (!shell->cmds->str[i])
+	if (!shell->cmds->str)
 		return (NULL);
 	lexer = head;
-	while (lexer->token != NULL && lexer->key != l_pipe)//saves the redirections in order of appearance
+	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)//saves the redirections in order of appearance
 	{
 		if (lexer->key == l_in || lexer->key == l_out
 			|| lexer->key == l_append || lexer->key == l_heredoc)
 		{
+			ft_printf("saving redirection\n");
 			if (!lexer->next)//ERROOOR no file name after redir -> bash retuns syntax error
 				return (NULL);
 			shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
@@ -63,13 +65,15 @@ t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 		}
 		else if (lexer->key == l_non_op)//if cmd found, saves it and so the options next to it
 		{
-			while (cmd_tokens > 0) //(lexer != NULL && shell->cmds->str != NULL)
+			ft_printf("saving command\n");
+			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op) //(lexer != NULL && shell->cmds->str != NULL)
 			{
 				//ft_printf("cmd->token; %s\n", shell->cmds->);
 				//shell->cmds->str[i] = (char *)malloc(sizeof(char) * (ft_strlen(lexer->token) + 1));
 				//if (!shell->cmds->str[i])
 					//return (NULL);
 				shell->cmds->str[i] = ft_strdup(lexer->token);
+				ft_printf("cmd str: %s\n", shell->cmds->str[i]);
 				//if (!shell->cmds->str[i])
 					//return (NULL);
 				i++;
@@ -82,8 +86,10 @@ t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 		}
 	}
 	if (lexer == NULL)
+	{
+		ft_printf("arrived at the end of the tokens, returning head\n");
 		lexer = head;
-	ft_printf("save cmds function returning\n");
+	}
 	return (lexer);
 }
 
@@ -116,12 +122,12 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 			free_cmds(head_cmd);
 			return (NULL);
 		}		
-		ft_printf("at index %d, str is %s\n", cmd, head_cmd->str[0]);
+		ft_printf("shell->cmds->str: %s\n", shell->cmds->str[0]);
+		ft_printf("head_cmd->str: %s\n", head_cmd->str[0]);
 		shell->cmds = shell->cmds->next;
 		cmd++;
 	}
 	//add_builtin_ptr(head_cmd);
-	
 	return (head_cmd);
 }
 
