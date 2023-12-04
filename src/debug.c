@@ -33,9 +33,12 @@ void print_lex(t_lexer *lexer)
 	return ;
 }
 
-void print_redir_list(t_redir *head) {
+void print_redir_list(t_redir *head)
+{
     t_redir *current = head;
-    while (current != NULL) {
+    
+	while (current != NULL)
+	{
         printf("Type: %d, String: %s\n", current->type, current->str);
         current = current->next;
     }
@@ -55,7 +58,8 @@ void print_simple_cmds_list(t_shell *shell)
         	ft_printf("String[%d]:%s\n", i, current->str[i]);
 			i++;
 		}
-    	print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
+		if (current->redir)
+    		print_redir_list(current->redir);
     	current = current->next;
     }
 }
