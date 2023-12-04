@@ -91,7 +91,7 @@ t_shell	*minishell_loop(t_shell *shell)
 	if (!shell)
 		return (NULL);
 	lexer = ft_lexer(str);
-	print_lex(lexer);
+	//print_lex(lexer);
 	shell->cmds = ft_parser(lexer, shell);
 	ft_printf("parser returned\n");
 	print_simple_cmds_list(shell);

@@ -71,7 +71,7 @@ int			open_curly(char *str);
 
 //parser.c
 t_simple_cmds *ft_parser(t_lexer *lexer, t_shell *shell);
-t_lexer	*save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
+int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
 //t_lexer	*parse_op(t_lexer *lexer, t_simple_cmds *cmd);
 //int	scan_tokens(t_lexer *lexer, int token, t_shell *shell, int cmd);
 void	add_builtin_ptr(t_simple_cmds *cmd);
@@ -92,8 +92,8 @@ char	*ft_getenv(char *name, char **env);
 
 //debug.c
 void print_lex(t_lexer *lexer);
-//void print_simple_cmds_list(t_shell *shell);
-//void print_redir_list(t_redir *head);
+void print_simple_cmds_list(t_shell *shell);
+void print_redir_list(t_redir *head);
 //void	print_cmds(t_simple_cmds *cmds);
 
 #endif

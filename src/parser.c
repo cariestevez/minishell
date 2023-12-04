@@ -40,108 +40,99 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		cmd_tokens++;
 		lexer = lexer->next;
 	}
-	cmd_tokens -= (redir_tokens * 2);//substract redir operators and for each of them a file or delimiter
-	ft_printf("cmd_tokens = %d\n", cmd_tokens);
-	ft_printf("redir tokens = %d\n", redir_tokens);
-	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
+	cmd_tokens -= (redir_tokens * 2);
+	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens));
 	if (!shell->cmds->str)
 		return (-1);
 	return (cmd_tokens);
 }
 
-t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
+int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 {
 	int		i;
 	int		cmd_tokens;
+	int		redir_count;
 	t_lexer	*head;
+	t_redir	*redir_head;
 
 	i = 0;
+	redir_head = NULL;
+	redir_count = 0;
 	head = lexer;
 	cmd_tokens = count_tokens(lexer, shell);
 	lexer = head;
-	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)//saves the redirections in order of appearance
+	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out
 			|| lexer->key == l_append || lexer->key == l_heredoc)
 		{
-			ft_printf("saving redirection\n");
+			redir_count++;
 			if (!lexer->next)//ERROOOR no file name after redir -> bash retuns syntax error
-				return (NULL);
+				return (-1);
 			shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
+			if (redir_count == 1)
+				redir_head = shell->cmds->redir;
+			//print_redir_list(shell->cmds->redir);
 			shell->cmds->redir = shell->cmds->redir->next;
+			lexer = lexer->next->next;
 		}
-		else if (lexer->key == l_non_op)//if cmd found, saves it and so the options next to it
+		else if (lexer->key == l_non_op)
 		{
-			ft_printf("saving command\n");
-			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op) //(lexer != NULL && shell->cmds->str != NULL)
+			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
-				//ft_printf("cmd->token; %s\n", shell->cmds->);
-				//shell->cmds->str[i] = (char *)malloc(sizeof(char) * (ft_strlen(lexer->token) + 1));
-				//if (!shell->cmds->str[i])
-					//return (NULL);
-				shell->cmds->str[i] = ft_strdup(lexer->token);
-				ft_printf("cmd str: %s\n", shell->cmds->str[i]);
-				//if (!shell->cmds->str[i])
-					//return (NULL);	
-				ft_printf("in save simple cmds, the current token is %s in lexer, saved as %s\n", lexer->token, shell->cmds->str[i]);
+				shell->cmds->str[i] = ft_strdup(lexer->token);	
 				i++;
 				cmd_tokens--;
+				lexer = lexer->next;
 			}
-			lexer = lexer->next->next;
-			//shell->cmds->str[i] = ft_calloc(1, sizeof(char));
-			//if (shell->cmds->str[i] == NULL)
-			// 	//return (NULL);
+			shell->cmds->str[i] = NULL;
 		}
 	}
+	shell->cmds->redir = redir_head;
+	if (lexer && lexer->key == l_pipe)
+		lexer = lexer->next;
 	if (lexer == NULL)
-	{
-		ft_printf("arrived at the end of the tokens, returning head\n");
-		lexer = head;
-	}
-	return (lexer);
+		return (-1);
+	return (lexer->index);
 }
 
 //if error, return to main before exiting to finish to free shell//free shell->cmds to indicate ERROR to the calling func
 t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 {
 	int				cmd;
+	int				idx;
 	t_simple_cmds	*head_cmd;
 
+	idx = 0;
 	cmd = 0;
 	head_cmd = NULL;
 	shell->amount_of_cmds = count_cmds(lexer);
 	if (shell->amount_of_cmds == 0)//in case of syntax error (pipe on 1st position)
 		return (NULL);//returns without alloc shell->cmdss (indicator for failure in main)
-	shell->cmds = new_cmd_node(NULL);
-	if (!shell->cmds)//current cmd node
+	shell->cmds = new_cmd_node(shell->cmds);
+	if (!shell->cmds)
 	{
-		free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
-		//head_cmd = NULL;
-		return (NULL);
-	}
-	while (cmd < shell->amount_of_cmds) //each loop saves 1 cmd
-	{
-		ft_printf("command number %d\n", shell->cmds->index);
-		if (shell->cmds->prev == NULL)
-			head_cmd = shell->cmds;//saves ptr to 1st command for freeing if needed
-		ft_printf("segfault check 1\n");
-		lexer = save_simple_cmd(lexer, shell); //THIS IS THE BUG!! IT SEGFAULTS ON THE LAST COMMAND.
-		ft_printf("segfault check 2\n");
-		if (lexer == NULL && cmd < shell->amount_of_cmds - 1)//indicator for error in save_cmd 
-		{
-			//ERROR saving a cmd
-			free_cmds(head_cmd);
-			return (NULL);
-		}
-		print_simple_cmds_list(shell);
-		shell->cmds->next = new_cmd_node(shell->cmds);
-		if (!shell->cmds->next)
-		{
 			free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
 			//head_cmd = NULL;
 			return (NULL);
+	}
+	while (cmd < shell->amount_of_cmds) //each loop saves 1 cmd
+	{
+		if (shell->cmds->prev == NULL)
+			head_cmd = shell->cmds;
+		idx = save_simple_cmd(lexer, shell);
+		while (idx >= 0 && lexer && lexer->index != idx)
+			lexer = lexer->next;
+		if (lexer == NULL)
+		{
+			free_cmds(head_cmd);
+			return (NULL);
 		}
-		shell->cmds = shell->cmds->next;
+		if (cmd < shell->amount_of_cmds - 1)
+		{
+			shell->cmds->next = new_cmd_node(shell->cmds);
+			shell->cmds = shell->cmds->next;
+		}
 		cmd++;
 	}
 	add_builtin_ptr(head_cmd);
@@ -155,17 +146,17 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 	head = cmd;
 	while (cmd != NULL)
 	{
-		if (ft_strncmp(cmd->str[0], "cd", 2))
+		if (ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
 			cmd->builtin = &ft_cd;
-		else if (ft_strncmp(cmd->str[0], "echo", BUFFER))
+		else if (ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)
 			cmd->builtin = &ft_echo;
-		else if (ft_strncmp(cmd->str[0], "env", BUFFER))
+		else if (ft_strncmp(cmd->str[0], "env", BUFFER) == 0)
 			cmd->builtin = &ft_env;
-		else if (ft_strncmp(cmd->str[0], "export", BUFFER))
+		else if (ft_strncmp(cmd->str[0], "export", BUFFER) == 0)
 			cmd->builtin = &ft_export;
-		else if (ft_strncmp(cmd->str[0], "pwd", BUFFER))
+		else if (ft_strncmp(cmd->str[0], "pwd", BUFFER) == 0)
 			cmd->builtin = &ft_pwd;
-		else if (ft_strncmp(cmd->str[0], "unset", BUFFER))
+		else if (ft_strncmp(cmd->str[0], "unset", BUFFER) == 0)
 			cmd->builtin = &ft_unset;
 		//else if (ft_strncmp(cmd->str[0], "exit", 4))
 			//cmd->builtin = &ft_exit;
