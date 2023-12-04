@@ -2,21 +2,24 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+# include "../libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+
+# ifndef NULL
+#  define NULL ((void*)0)
+# endif
+# define BUFFER 500
+
 typedef enum e_lexertype
 {
+	l_nothing,
 	l_non_op,
-	l_space,
-	l_quote,
-	l_dquote,
-	l_word,
-	l_asterisk,
-	l_paraopen,
-	l_paraclose,
 	l_in,
 	l_out,
 	l_append,
-	l_pipe,
 	l_heredoc,
+	l_pipe,
 }	t_lexertype;
 
 typedef struct s_lexer
@@ -31,7 +34,6 @@ typedef struct s_lexer
 typedef struct s_redir
 {
 	t_lexertype		type;
-	//if type == l_heredoc, str is the delimiting identifier
 	char			*str;
 	struct s_redir	*next;
 }	t_redir;
@@ -43,21 +45,43 @@ typedef struct	s_shell
 	char					**env;
 } t_shell;
 
+typedef   int (*builtin_func)(struct s_shell *, struct s_simple_cmds *);
+
 typedef struct s_simple_cmds
 {
-	char                    **str;
-	int                   	(*builtin)(struct s_shell *, struct s_simple_cmds *);
-	struct s_redir			*redir;
+	char                    **str;//[cmd_exec][arg1][argN]
 	int						index;
+	builtin_func            builtin;
+	struct s_redir			*redir;
 	struct s_simple_cmds	*next;
 	struct s_simple_cmds	*prev;
 }	t_simple_cmds;
 
 //lexer.c
-t_lexer			*ft_lexer(char *input);
+t_lexer		*ft_lexer(char *input);
+int			read_command_line(t_lexer *lexer, char *str);
+int			save_token(t_lexer *lexer, char *str, int start, int len);
+t_lexertype	get_key(char *str);
+
+//utils_lexer.c
+t_lexer 	*new_lexnode(t_lexer *prev, int index);
+int			open_quotes(char *str);
+int			open_brackets(char *str);
+int			open_curly(char *str);
 
 //parser.c
-t_simple_cmds	*ft_parser(t_lexer *lexer);
+t_simple_cmds *ft_parser(t_lexer *lexer, t_shell *shell);
+int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
+//t_lexer	*parse_op(t_lexer *lexer, t_simple_cmds *cmd);
+//int	scan_tokens(t_lexer *lexer, int token, t_shell *shell, int cmd);
+void	add_builtin_ptr(t_simple_cmds *cmd);
+
+//utils_parser.c
+t_simple_cmds	*new_cmd_node(t_simple_cmds *prev);
+void	free_cmds(t_simple_cmds *cmd_node);
+int	count_cmds(t_lexer	*lexer);
+t_redir *new_redir_node(char *file, t_lexertype type);
+
 
 //expander.c
 int 	expander(t_shell *shell);
@@ -66,5 +90,10 @@ char	*variable_expansion(char *str, char **env);
 char	*replace_variable(char *str, int start, int end, char **env);
 char	*ft_getenv(char *name, char **env);
 
+//debug.c
+void print_lex(t_lexer *lexer);
+void print_simple_cmds_list(t_shell *shell);
+void print_redir_list(t_redir *head);
+//void	print_cmds(t_simple_cmds *cmds);
 
 #endif

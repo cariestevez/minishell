@@ -45,8 +45,12 @@ void    free_simple_commands(t_simple_cmds *cmds)
     while (cmds)
     {
         free_tab(cmds->str);
-        free(cmds->redir);
-        if (cmds->index > 0)
+		while (cmds->redir)
+		{
+        	free(cmds->redir);
+			cmds->redir = cmds->redir->next;
+		}
+		if (cmds->index > 0)
             free(cmds->prev);
         if (cmds->next == NULL)
         {

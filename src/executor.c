@@ -6,7 +6,7 @@ int	execute(t_simple_cmds *cmd, char **envp)
 	ft_printf("child %d trying to get access to %s and write to %d\n", cmd->index, get_path(cmd->str[0], envp), STDOUT_FILENO);
 	if ((get_path(cmd->str[0], envp), F_OK) != 0)
 	{
-		ft_putendl_fd(cmd->str[0], 2);
+		ft_putstr_fd(cmd->str[0], 2);
 		ft_putstr_fd(": access failure\n", 2);
 		return (EXECUTOR_EXEC_ERROR);
 	}
