@@ -40,6 +40,7 @@ int		free_lexer(t_lexer *lexer);
 void	free_tab(char **tab);
 void    free_simple_commands(t_simple_cmds *cmds);
 void    free_array(int **arr);
+void	get_error_msg(int exitcode);
 
 //builtins
 int		ft_pwd(t_shell *shell, t_simple_cmds *cmd);

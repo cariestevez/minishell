@@ -52,7 +52,6 @@ int	heredoc(t_redir *heredoc, int index)
 	temp_file = ft_strjoin("/tmp/heredoc_temp", ft_itoa(index));
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	line = readline(HEREDOC_PROMPT);
-	//heredoc->str is the delimiting identifier of the heredoc
 	while (ft_strnstr(line, heredoc->str, ft_strlen(line)))
 	{
 		ft_putstr_fd(line, fd);

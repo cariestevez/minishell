@@ -3,7 +3,6 @@
 int	execute(t_simple_cmds *cmd, char **envp)
 {
 	write(2, "\n", 1);
-	ft_printf("child %d trying to get access to %s and write to %d\n", cmd->index, get_path(cmd->str[0], envp), STDOUT_FILENO);
 	if ((get_path(cmd->str[0], envp), F_OK) != 0)
 	{
 		ft_putstr_fd(cmd->str[0], 2);
@@ -15,6 +14,7 @@ int	execute(t_simple_cmds *cmd, char **envp)
 		ft_putendl_fd(cmd->str[0], 2);
 		ft_putstr_fd(": command not found\n", 2);
 	}
+	perror("execve");
 	return (EXECUTOR_EXEC_ERROR);
 }
 
@@ -39,7 +39,7 @@ int	**create_pipes(t_shell *shell, int **fd)
 	{
 		if (pipe(fd[i]) < 0)
 		{
-			//Error on pipe
+			perror("pipe");
 			while (i >= 0)
 			{
 				close(fd[i][0]);
@@ -63,9 +63,9 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 		if (!shell->cmds->builtin)
 		{
 			pid[i] = fork();
-			//Error on fork
 			if (pid[i] < 0)
 			{
+				perror("fork");
 				i = shell->amount_of_cmds;
 				while (i >= 0)
 				{
@@ -75,7 +75,6 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 				}
 				return (free_array(fd), -1);
 			}
-			//Child process
 			if (pid[i] == 0)
 				child_process(shell, fd, i);
 		}
@@ -89,33 +88,23 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 
 int	executor(t_shell *shell)
 {
-	/*missing
-	- child is not waiting for pipe input, are redirections ok?
-	fx. cat <<EOF | ls -l
-	- test +++++commands
-	- test builtin scenarios*/
-	printf("hello from executor\n");
 	int		i;
 	int		**fd;
 	pid_t	pid[shell->amount_of_cmds];
 
 	fd = NULL;
-	//check if only one command and it is a builtin
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 	{
 		if(execute_builtin(shell, fd, 0) == 0)
 			return (SUCCESS);
 	}
-	//otherwise continue with piping and forking
 	fd = create_pipes(shell, fd);
 	if (!fd)
 		return (EXECUTOR_PIPE_ERROR);
-	//handle heredocs here ...
 	if (fork_processes(shell, pid, fd) != 0)
 		return (EXECUTOR_FORK_ERROR);
-	//this function call will close ALL fds
+	//this call will close all fds
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
-	//parent waits for all children to finish
 	i = 0;
 	while (i < shell->amount_of_cmds)
 	{
@@ -123,6 +112,5 @@ int	executor(t_shell *shell)
 		i++;
 	}
 	free_array(fd);
-	ft_printf("executor returning\n");
 	return (SUCCESS);
 }

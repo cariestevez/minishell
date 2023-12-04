@@ -54,17 +54,16 @@ char    *variable_expansion(char *str, char **env)
     } 
     return (str);
 }
-
+//the syntax of var should be name=[value]
+//adds the new variable to the end of the array
 int		declare_variable(char *var, char **env)
 {
-	//the syntax of var should be name=[value]
-    //adds the new variable to the end of the array
 	int	i;
 
 	i = 0;
     if (!env)
         return (-1);
-    if (ft_strchr(var, '=') == 0) //wrong syntax
+    if (ft_strchr(var, '=') == 0)
         return (1);
     variable_expansion(var, env);
     while (env[i] != NULL)
@@ -97,7 +96,6 @@ int expander(t_shell *shell)
             shell->cmds->str[i] = variable_expansion(shell->cmds->str[i], shell->env);
             if (shell->cmds->str == NULL)
                 return (EXPANDER_VAR_ERROR);
-             ft_printf("expander: %s\n", shell->cmds->str[i]);
              i++;
         }
         shell->cmds = shell->cmds->next;

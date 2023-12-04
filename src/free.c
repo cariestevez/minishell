@@ -61,6 +61,31 @@ void    free_simple_commands(t_simple_cmds *cmds)
     }
 }
 
+void	get_error_msg(int exitcode)
+{
+	if (exitcode == DECLARE_VAR_ERROR)
+		perror("Error declaring variable");
+    else if (exitcode == EXPANDER_VAR_ERROR)
+		perror("Error on expander");
+   	else if (exitcode ==  EXECUTOR_PIPE_ERROR)
+		perror("Error on pipe");
+    else if (exitcode == EXECUTOR_FORK_ERROR)
+		perror("Error on fork");
+    else if (exitcode == EXECUTOR_EXEC_ERROR)
+		perror("Error on execution");
+  	else if (exitcode ==  EXECUTOR_REDIRECTION_ERROR)
+		perror("Error on redirections");
+    else if (exitcode == EXECUTOR_MALLOC_ERROR)
+		perror("Error on malloc");
+  	 else if (exitcode == EXECUTOR_ACCESS_ERROR)
+		perror("Error: access denied");
+   	else if (exitcode == EXECUTOR_HEREDOC_ERROR)
+		perror("Error on heredoc");
+   	else if (exitcode == STDSTREAM_RESTORE_ERROR)
+		perror("Error restoring standard streams");
+	return ;
+}
+
 void    free_and_exit(t_shell *shell, int **fd, int exitcode)
 {
     //this function call will close ALL fds
@@ -72,6 +97,6 @@ void    free_and_exit(t_shell *shell, int **fd, int exitcode)
 	free_simple_commands(shell->cmds);
     free_tab(shell->env);
 	free(shell);
-	//perror(get_exit_msg(exitcode));
+	get_error_msg(exitcode);
 	exit(exitcode);
 }

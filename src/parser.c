@@ -72,7 +72,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
 			if (redir_count == 1)
 				redir_head = shell->cmds->redir;
-			//print_redir_list(shell->cmds->redir);
 			shell->cmds->redir = shell->cmds->redir->next;
 			lexer = lexer->next->next;
 		}
