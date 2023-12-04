@@ -1,10 +1,12 @@
 #include "minishell.h"
 
-int	remove_var(char **list, t_simple_cmds *cmd)
+int	ft_unset(t_shell *shell, t_simple_cmds *cmd)
 {
 	int	i;
 	int	j;
+	char	**list;
 
+	list = shell->env;
 	i = 1;
 	j = 0;
 	while (cmd->str[i])
@@ -27,17 +29,5 @@ int	remove_var(char **list, t_simple_cmds *cmd)
 			}
 			i++;
 	}
-	return (0);
-}
-
-int	ft_unset(t_shell *shell, t_simple_cmds *cmd)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	j = 0;
-
-	remove_var(shell->env, cmd);
 	return (0);
 }

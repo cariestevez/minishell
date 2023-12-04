@@ -3,7 +3,7 @@
 
 # define HEREDOC_PROMPT "heredoc> "
 
-//exec.c
+//executor.c
 int 	executor(t_shell *shell);
 int		fork_processes(t_shell *shell, pid_t *pid, int **fd);
 int		**create_pipes(t_shell *shell, int **fd);

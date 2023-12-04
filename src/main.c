@@ -1,29 +1,5 @@
 #include "minishell.h"
 
-//for debugging 
-void print_redir_list(t_redir *head) {
-    t_redir *current = head;
-    while (current != NULL) {
-        printf("Type: %d, String: %s\n", current->type, current->str);
-        current = current->next;
-    }
-}
-//for debugghi
-void print_simple_cmds_list(t_shell *shell) 
-{
-    t_simple_cmds *current = shell->cmds;
-    int i = -1;
-    while (current != NULL) 
-	{
-		i = -1;
-        ft_printf("Index: %d, Amount of Commands: %d \n", current->index, shell->amount_of_cmds);
-   		while (current->str[++i] != NULL)
-        	ft_printf("String[%d]:%s\n", i, current->str[i]);
-    	print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
-    	current = current->next;
-    }
-}
-
 char    **arrdup(char **env)
 {
     int     i;
@@ -106,27 +82,24 @@ t_shell	*minishell_loop(t_shell *shell)
 {
 	char			*prompt;
 	char			*str;
+	t_lexer			*lexer;
 
 	prompt = PROMPT;
 	prompt = variable_expansion(prompt, shell->env);
 	str = readline(prompt);
 	//add_history(str);
-	if(test_init_shell(shell, str) != 0)
-		return (NULL);
 	if (!shell)
 		return (NULL);
+	lexer = ft_lexer(str);
+	print_lex(lexer);
+	shell->cmds = ft_parser(lexer, shell);
+	ft_printf("parser returned\n");
 	print_simple_cmds_list(shell);
-	//saves the first node as the 1st command
-	//should have been validatet at this point already-->
-	//so we know it's a command. Anything else should have returned error in the lexer
 	//add check to exclude empty str in between quotations
-	//parser
-	//scans the saved tokens for an environment variable and substitutes(expand) it with its value
 	expander(shell);
-	print_simple_cmds_list(shell);
-	printf("succesfully printed cmds list\n");
+	ft_printf("expander returned\n");
 	executor(shell);
-	//free_lexer(lexer);
+	free_lexer(lexer);
 	free(prompt);
 	free(str);//frees the readline
 	free_simple_commands(shell->cmds);

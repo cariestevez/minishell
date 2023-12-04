@@ -2,11 +2,10 @@
 /*missing:
 - expand exit code $?
 - expand arguments $1/2/3...
-- find more edge cases*/
+- find more edge cases*/// -> single quotes
 
 char *replace_variable(char *str, int start, int end, char **env)
 { 
-    //something weird not working here!!!
     char    *var;
     char    *tmp;
     char    *ret;
@@ -98,7 +97,8 @@ int expander(t_shell *shell)
             shell->cmds->str[i] = variable_expansion(shell->cmds->str[i], shell->env);
             if (shell->cmds->str == NULL)
                 return (EXPANDER_VAR_ERROR);
-           i++;
+             ft_printf("expander: %s\n", shell->cmds->str[i]);
+             i++;
         }
         shell->cmds = shell->cmds->next;
     }
