@@ -44,7 +44,8 @@ void print_redir_list(t_redir *head) {
 void print_simple_cmds_list(t_shell *shell) 
 {
     t_simple_cmds *current = shell->cmds;
-    int i = -1;
+    int i = 0;
+	ft_printf("hello from print_simple_cmds\n");
     while (current != NULL) 
 	{
 		i = 0;
@@ -54,7 +55,7 @@ void print_simple_cmds_list(t_shell *shell)
         	ft_printf("String[%d]:%s\n", i, current->str[i]);
 			i++;
 		}
-    	// print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
+    	print_redir_list(current->redir); // Print redir list for each t_simple_cmds node
     	current = current->next;
     }
 }

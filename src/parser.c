@@ -25,17 +25,14 @@
 
 //make it return t_lexer * (also when done with saving tokens, return head or something different than NULL
 //bc returning NULL is used as indicator that something went wrong in the saving process)
-t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
-{
-	int		i;
-	int		cmd_tokens;
-	int		redir_tokens;
-	t_lexer	*head;
 
-	i = 0;
+int	count_tokens(t_lexer *lexer, t_shell *shell)
+{
+	int	cmd_tokens;
+	int	redir_tokens;
+
 	cmd_tokens = 0;
 	redir_tokens = 0;
-	head = lexer;
 	while (lexer->token != NULL && lexer->key != l_pipe)//count total ammount of tokens and redirections
 	{
 		if (lexer->key == l_in || lexer->key == l_out
@@ -44,11 +41,22 @@ t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 		cmd_tokens++;
 		lexer = lexer->next;
 	}
-	//return(lexer);
 	cmd_tokens -= (redir_tokens * 2);//substract redir operators and for each of them a file or delimiter
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
-	if (!shell->cmds->str[i])
-		return (NULL);
+	if (!shell->cmds->str)
+		return (-1);
+	return (cmd_tokens);
+}
+
+t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
+{
+	int		i;
+	int		cmd_tokens;
+	t_lexer	*head;
+
+	i = 0;
+	head = lexer;
+	cmd_tokens = count_tokens(lexer, shell);
 	lexer = head;
 	while (lexer->token != NULL && lexer->key != l_pipe)//saves the redirections in order of appearance
 	{
@@ -59,7 +67,6 @@ t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 				return (NULL);
 			shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
 			shell->cmds->redir = shell->cmds->redir->next;
-			lexer = lexer->next->next;
 		}
 		else if (lexer->key == l_non_op)//if cmd found, saves it and so the options next to it
 		{
@@ -71,19 +78,22 @@ t_lexer*	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 					//return (NULL);
 				shell->cmds->str[i] = ft_strdup(lexer->token);
 				//if (!shell->cmds->str[i])
-					//return (NULL);
+					//return (NULL);	
+				ft_printf("in save simple cmds, the current token is %s in lexer, saved as %s\n", lexer->token, shell->cmds->str[i]);
 				i++;
 				cmd_tokens--;
-				lexer = lexer->next;
 			}
+			lexer = lexer->next->next;
 			//shell->cmds->str[i] = ft_calloc(1, sizeof(char));
 			//if (shell->cmds->str[i] == NULL)
 			// 	//return (NULL);
 		}
 	}
-	if (lexer == NULL)
+	if (!lexer)
+	{
+		ft_printf("segfault check, lexer is null\n");
 		lexer = head;
-	ft_printf("save cmds function returning\n");
+	}
 	return (lexer);
 }
 
@@ -98,66 +108,68 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 	shell->amount_of_cmds = count_cmds(lexer);
 	if (shell->amount_of_cmds == 0)//in case of syntax error (pipe on 1st position)
 		return (NULL);//returns without alloc shell->cmdss (indicator for failure in main)
+	shell->cmds = new_cmd_node(NULL);
+	if (!shell->cmds)//current cmd node
+	{
+		free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
+		//head_cmd = NULL;
+		return (NULL);
+	}
 	while (cmd < shell->amount_of_cmds) //each loop saves 1 cmd
 	{
-		shell->cmds = new_cmd_node(shell->cmds);
-		if (!shell->cmds)//current cmd node
-		{
-			free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
-			//head_cmd = NULL;
-			return (NULL);
-		}
+		ft_printf("command number %d\n", shell->cmds->index);
 		if (shell->cmds->prev == NULL)
 			head_cmd = shell->cmds;//saves ptr to 1st command for freeing if needed
-		lexer = save_simple_cmd(lexer, shell);
+		ft_printf("segfault check 1\n");
+		lexer = save_simple_cmd(lexer, shell); //THIS IS THE BUG!! IT SEGFAULTS ON THE LAST COMMAND.
+		ft_printf("segfault check 2\n");
 		if (lexer == NULL && cmd < shell->amount_of_cmds - 1)//indicator for error in save_cmd 
 		{
 			//ERROR saving a cmd
 			free_cmds(head_cmd);
 			return (NULL);
-		}		
-		ft_printf("at index %d, str is %s\n", cmd, head_cmd->str[0]);
+		}
+		print_simple_cmds_list(shell);
+		shell->cmds->next = new_cmd_node(shell->cmds);
+		if (!shell->cmds->next)
+		{
+			free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
+			//head_cmd = NULL;
+			return (NULL);
+		}
 		shell->cmds = shell->cmds->next;
 		cmd++;
 	}
-	//add_builtin_ptr(head_cmd);
-	
+	add_builtin_ptr(head_cmd);
 	return (head_cmd);
 }
 
-//change strnstr to strncmp after making sure tokens are clean!
-//compare the 1st word of the command with the builtins
-//and save a ptr to the correspondent function in the cmd struct
-// void	add_builtin_ptr(t_simple_cmds *cmd)
-// {
-// 	while (cmd->next != NULL)
-// 	{
-// 		if (ft_strncmp(cmd->str[0], "cd", 2))
-// 			ft_printf("add ptr to cd\n");
-// 			//cmd->builtin = ft_cd;
-// 		else if (ft_strncmp(cmd->str[0], "echo", 4))
-// 			ft_printf("add ptr to echo\n");
-// 			//cmd->builtin = ft_echo;
-// 		else if (ft_strncmp(cmd->str[0], "env", 3))
-// 			ft_printf("add ptr to env\n");
-// 			//cmd->builtin = ft_env;
-// 		else if (ft_strncmp(cmd->str[0], "export", 6))
-// 			ft_printf("add ptr to export\n");
-// 			//cmd->builtin = ft_export;
-// 		else if (ft_strncmp(cmd->str[0], "pwd", 3))
-// 			ft_printf("add ptr to pwd\n");
-// 			//cmd->builtin = ft_pwd;
-// 		else if (ft_strncmp(cmd->str[0], "unset", 5))
-// 			ft_printf("add ptr to unset\n");
-// 			//cmd->builtin = ft_unset;
-// 		// else if (ft_strncmp(cmd->str[0], "exit", 4))
-// 		// 	cmd->builtin = ft_exit;
-// 		cmd = cmd->next;
-// 	}
-// 	return;
-// }
+void	add_builtin_ptr(t_simple_cmds *cmd)
+{
+	t_simple_cmds *head;
 
-//--------------------------------------------------------
+	head = cmd;
+	while (cmd != NULL)
+	{
+		if (ft_strncmp(cmd->str[0], "cd", 2))
+			cmd->builtin = &ft_cd;
+		else if (ft_strncmp(cmd->str[0], "echo", BUFFER))
+			cmd->builtin = &ft_echo;
+		else if (ft_strncmp(cmd->str[0], "env", BUFFER))
+			cmd->builtin = &ft_env;
+		else if (ft_strncmp(cmd->str[0], "export", BUFFER))
+			cmd->builtin = &ft_export;
+		else if (ft_strncmp(cmd->str[0], "pwd", BUFFER))
+			cmd->builtin = &ft_pwd;
+		else if (ft_strncmp(cmd->str[0], "unset", BUFFER))
+			cmd->builtin = &ft_unset;
+		//else if (ft_strncmp(cmd->str[0], "exit", 4))
+			//cmd->builtin = &ft_exit;
+		cmd = cmd->next;
+	}
+	cmd = head;
+	return ;
+}
 
 
 
