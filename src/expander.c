@@ -1,7 +1,4 @@
 #include "minishell.h"
-/*missing:
-- expand exit code $?
-- find more edge cases*/// -> single quotes
 
 char *replace_variable(char *str, int start, int end, t_shell *shell)
 { 
@@ -9,7 +6,6 @@ char *replace_variable(char *str, int start, int end, t_shell *shell)
     char    *tmp;
     char    *ret;
     char    *append;
-    //trims the variable and gets the env value
     
     if (str[start] == '$' && str[start + 1] == '?')
         var = ft_itoa(shell->exitcode);
@@ -23,11 +19,9 @@ char *replace_variable(char *str, int start, int end, t_shell *shell)
             var = "";
          free(tmp);
     }
-    //joins first part of str with the expanded var
     ret = ft_substr(str, 0, start);
     tmp = ft_strjoin(ret, var);
     free(ret);
-    //get the last part of the str and join with ret str
     append = ft_substr(str, end, ft_strlen(str) - end + 1);
     ret = ft_strjoin(tmp, append);
     free(tmp);
@@ -52,8 +46,7 @@ char    *variable_expansion(char *str, t_shell *shell)
             if (!str)
                 return (NULL);
         }
-        if (str[i] == '$' && 
-            (ft_isalnum(str[i + 1]) == 1 || ft_strchr("_{}", str[i + 1]) != 0))
+        if (str[i] == '$' && str[i + 1] != '\0' && (ft_isalnum(str[i + 1]) == 1 || ft_strchr("_{}", str[i + 1]) != 0))
         {
             start = i;
             i++;
@@ -64,7 +57,7 @@ char    *variable_expansion(char *str, t_shell *shell)
                 return (NULL);
         }
         i++;
-    } 
+    }
     return (str);
 }
 
@@ -77,8 +70,8 @@ int		declare_variable(char *var, t_shell *shell)
 	i = 0;
     if (!shell->env)
         return (-1);
-    if (ft_strchr(var, '=') == 0) //wrong syntax
-        return (1);
+    if (ft_strchr(var, '=') == 0)
+        return (DECLARE_VAR_ERROR);
     variable_expansion(var, shell);
     while (shell->env[i] != NULL)
     {
@@ -89,9 +82,7 @@ int		declare_variable(char *var, t_shell *shell)
     free(shell->env[i]);
 	shell->env[i] = ft_strdup(var);
     if (!shell->env[i])
-    {
-        return (DECLARE_VAR_ERROR);
-    }
+        return (perror("strdup"), DECLARE_VAR_ERROR);
     shell->env[i + 1] = NULL;
 	return (0);
 }

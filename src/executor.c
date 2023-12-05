@@ -14,7 +14,6 @@ int	execute(t_simple_cmds *cmd, char **envp)
 		ft_putstr_fd(cmd->str[0], 2);
 		ft_putstr_fd(": command not found\n", 2);
 	}
-	perror("execve");
 	return (EXECUTOR_EXEC_ERROR);
 }
 

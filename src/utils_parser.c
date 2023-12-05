@@ -66,7 +66,6 @@ int	count_cmds(t_lexer	*lexer)
 		}
 		lexer = lexer->next;
 	}
-	ft_printf("count cmds = %i\n", cmds);//delete!
 	return (cmds);
 }
 

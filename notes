@@ -1,0 +1,16 @@
+!missing ft_exit();!
+
+EXPORT: segfault
+(). export var=test | echo $var
+    should display \n, but segfaults
+echo: frees invalid pointer if more than one argument
+
+PARSING+REDIRECTIONS: if input = "> file", bash creates thefile and return the prompt. minishell segfaults 
+
+CD: sets error code to 0 after perror, even though there was an error
+
+PARSING: segfault on no input, on single space, multiple space+tab
+
+FREEING/EXITING: if execute doesnt find command, frees invalid pointer
+
+EXECUTION: in some cases, minishell prints a newline before the expected output???

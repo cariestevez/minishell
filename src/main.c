@@ -37,13 +37,13 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
-	//add_history(str);
+	add_history(str);
 	if (!shell)
 		return (NULL);
 	lexer = ft_lexer(str);
 	//print_lex(lexer);
 	shell->cmds = ft_parser(lexer, shell);
-	print_simple_cmds_list(shell);
+	//print_simple_cmds_list(shell);
 	//add check to exclude empty str in between quotations
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
@@ -73,4 +73,5 @@ int	main(int ac, char **av, char **envp)
 		//	free(shell);
 		//}
 	}
+	rl_clear_history();
 }
