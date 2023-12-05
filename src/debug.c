@@ -49,6 +49,8 @@ void print_simple_cmds_list(t_shell *shell)
     t_simple_cmds *current = shell->cmds;
     int i = 0;
 	ft_printf("hello from print_simple_cmds\n");
+	if (!shell->cmds)
+		ft_printf("no commands in shell struct\n");
     while (current != NULL) 
 	{
 		i = 0;

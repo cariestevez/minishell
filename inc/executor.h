@@ -21,7 +21,7 @@ int redirections(t_simple_cmds *cmd);
 //exec_utils.c
 int    free_and_exit(t_shell *shell, int **fd, int exitcode);
 int		count_commands(t_simple_cmds *cmds);
-int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds);
+int	    close_unneccesary_fds(int **fd, int i, int amount_of_cmds);
 char	*get_path(char *cmd, char **env);
 
 void print_simple_cmds_list(t_shell *shell);

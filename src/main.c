@@ -22,60 +22,12 @@ char    **arrdup(char **env)
     return (ret);
 }
 
-/*t_shell	*init_shell(char *str, char **envp)
+void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt)
 {
-	t_shell	*shell;
-	t_lexer	*lexer;
-
-	shell = ft_calloc(sizeof(t_shell *), 1);
-	if (!shell)
-		return (NULL);
-	lexer = ft_lexer(str);
-	if (!lexer)
-		return (NULL);
-	shell->env = arrdup(envp);
-	if (!shell->env)
-		return (NULL);
-	shell->locvars = ft_calloc(sizeof(char *), 1);
-	shell->cmds = ft_parser(lexer);
-	if (!shell->cmds)
-		return (NULL);
-	return (shell);
-}
-*/
-int	test_init_shell(t_shell *shell, char *str)
-{
-	char			**split_str;
-
-	split_str = ft_split(str, ' ');
-    shell->cmds = ft_calloc(sizeof(t_simple_cmds), 1);
-	if (!shell->cmds)
-		return (1);
-	shell->amount_of_cmds = 1;
-    shell->cmds->str = split_str;
-	if (ft_strncmp(shell->cmds->str[0], "cd", 15) == 0)
-    	shell->cmds->builtin = &ft_cd;
-	if (ft_strncmp(shell->cmds->str[0], "pwd", 15) == 0)
-		shell->cmds->builtin = &ft_pwd;
-	if (ft_strncmp(shell->cmds->str[0], "export", 15) == 0)
-		shell->cmds->builtin = &ft_export;
-	if (ft_strncmp(shell->cmds->str[0], "unset", 15) == 0)
-		shell->cmds->builtin = &ft_unset;
-	if (ft_strncmp(shell->cmds->str[0], "env", 15) == 0)
-		shell->cmds->builtin = &ft_env;
-	if (ft_strncmp(shell->cmds->str[0], "echo", 15) == 0)
-		shell->cmds->builtin = &ft_echo;
-	shell->cmds->index = 0;
-	shell->cmds->redir = ft_calloc(sizeof(t_redir), 1);
-	if (!shell->cmds->redir)
-		return (1);
-	/*
-	shell->cmds->redir->type = l_out;
-	shell->cmds->redir->str = ft_strdup("out.txt");
-	shell->cmds->redir->next = NULL;
-	*/
-	shell->cmds->next = NULL;
-	return (0);
+	free_lexer(lexer);
+	free(prompt);
+	free_simple_commands(shell->cmds);
+	shell->cmds = NULL;
 }
 
 t_shell	*minishell_loop(t_shell *shell)
@@ -93,17 +45,14 @@ t_shell	*minishell_loop(t_shell *shell)
 	lexer = ft_lexer(str);
 	//print_lex(lexer);
 	shell->cmds = ft_parser(lexer, shell);
-	ft_printf("parser returned\n");
 	print_simple_cmds_list(shell);
 	//add check to exclude empty str in between quotations
 	shell->exitcode = expander(shell);
 	if (shell->exitcode)
 		return (get_error_msg(shell->exitcode), shell);
 	shell->exitcode = executor(shell);
-	free_lexer(lexer);
-	free(prompt);
 	free(str);//frees the readline
-	free_simple_commands(shell->cmds);
+	free_on_succes(shell, lexer, prompt);
 	return (shell);
 }
 
@@ -115,11 +64,14 @@ int	main(int ac, char **av, char **envp)
 	if (!shell)
 		return (-1);
 	shell->env = arrdup(envp);
+	shell->exitcode = 0;
 	(void)ac;
 	(void)av;
 	while (1)
 	{
 		minishell_loop(shell);
+		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
+		print_simple_cmds_list(shell);
 		//if exitsignal
 		//{
 		//	free_tab(shell->env);

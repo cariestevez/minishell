@@ -42,13 +42,18 @@ int	free_lexer(t_lexer *lexer)
 
 void    free_simple_commands(t_simple_cmds *cmds)
 {
+	t_redir	*tmp;
+
+	tmp = NULL;
     while (cmds)
     {
         free_tab(cmds->str);
 		while (cmds->redir)
 		{
-        	free(cmds->redir);
+			free(cmds->redir->str);
+        	tmp = cmds->redir;
 			cmds->redir = cmds->redir->next;
+			free(tmp);
 		}
 		if (cmds->index > 0)
             free(cmds->prev);

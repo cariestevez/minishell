@@ -34,6 +34,7 @@ typedef enum    e_exitcode
 //main.c
 t_shell	*minishell_loop(t_shell *shell);
 char    **arrdup(char **env);
+void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt);
 
 //free.c
 int		free_lexer(t_lexer *lexer);
