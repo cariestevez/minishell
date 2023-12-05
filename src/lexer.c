@@ -121,13 +121,13 @@ t_lexer	*ft_lexer(char *str)
 		return (NULL);
 	}
 	lexer = new_lexnode(NULL, 0);
-	head = lexer;
-	if (!lexer)
+	if (lexer == NULL)
 		return (NULL);
+	head = lexer;
 	//1st node will keep pointing to same address even though we add and edit nodes inside of read_cmd_line
 	if (!read_command_line(lexer, str))
 	{
-		free_lexer(lexer);
+		free_lexer(head);
 		return (NULL);
 		//str is freed anyway in the main after this func call
 	}

@@ -5,12 +5,22 @@ EXPORT: segfault
     should display \n, but segfaults
 echo: frees invalid pointer if more than one argument
 
-PARSING+REDIRECTIONS: if input = "> file", bash creates thefile and return the prompt. minishell segfaults 
+PARSER: count_tokens: when number of cmds < num of redirections ->segfault
+
+PARSING+REDIRECTIONS: if input = "> file", bash creates thefile and return the prompt. minishell segfaults
+                        (I need to come up with a solution to distinguis between )
+
+
+EXPANDER: remove quotes //add check to exclude empty str in between quotations?
 
 CD: sets error code to 0 after perror, even though there was an error
 
-PARSING: segfault on no input, on single space, multiple space+tab
+CAT:    when running cat without args, prints multiple \n and waits for input
+        cat < input > output    : if input file exists, doens't create the output file just prints input file
+                             : if input file doesn't exist --> open: Bad file descriptor and waits for input
 
 FREEING/EXITING: if execute doesnt find command, frees invalid pointer
 
 EXECUTION: in some cases, minishell prints a newline before the expected output???
+
+RANDOM: when pressing tab(without enter) it 'executes' ls -a?!

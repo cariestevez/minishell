@@ -46,6 +46,7 @@ void	free_cmds(t_simple_cmds *cmd_node)
 }
 
 //searches for pipes to find out how many simple cmds there are
+//returns syntax error if pipe is on 1st (and on last?) position
 int	count_cmds(t_lexer	*lexer)
 {
 	int	cmds;
@@ -61,7 +62,7 @@ int	count_cmds(t_lexer	*lexer)
 				return (0);
 			}
 			if (lexer->next == NULL)//count a phantom cmd?->allocating for an empty shell->cmd->str. problem? if array should be NULL terminated there might be 2 NULL terminated ptrs
-				ft_printf("last token is `|'. Implement?!\n");
+				ft_printf("if last token is `|'. return syntax error or enter interactive mode?!\n");
 			cmds++;
 		}
 		lexer = lexer->next;
@@ -69,7 +70,7 @@ int	count_cmds(t_lexer	*lexer)
 	return (cmds);
 }
 
-// initializes the new nodes of the list
+// initializes the new nodes of the command list
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev)
 {
 	t_simple_cmds *node;

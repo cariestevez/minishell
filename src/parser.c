@@ -26,6 +26,10 @@
 //make it return t_lexer * (also when done with saving tokens, return head or something different than NULL
 //bc returning NULL is used as indicator that something went wrong in the saving process)
 
+
+//counts the total ammount of tokens and the redirection tokens before finding a pipe
+//allocates memory for the command array
+//returns error if allocation fails, if there are more redir than cmd tokens or if token is a pipe(in case of two consecutive pipes)
 int	count_tokens(t_lexer *lexer, t_shell *shell)
 {
 	int	cmd_tokens;
@@ -33,7 +37,7 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 
 	cmd_tokens = 0;
 	redir_tokens = 0;
-	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)//count total ammount of tokens and redirections
+	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
 			redir_tokens++;
@@ -41,8 +45,13 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		lexer = lexer->next;
 	}
 	cmd_tokens -= (redir_tokens * 2);
+	if (cmd_tokens <= 0)
+	{
+		ft_printf("still need to think about all the cases");//SEGFAULTING
+		return (-1);
+	}
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens));
-	if (!shell->cmds->str)
+	if (shell->cmds->str == NULL)
 		return (-1);
 	return (cmd_tokens);
 }
@@ -60,6 +69,8 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	redir_count = 0;
 	head = lexer;
 	cmd_tokens = count_tokens(lexer, shell);
+	if (cmd_tokens <= 0)
+		return (-1);
 	lexer = head;
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
@@ -67,9 +78,11 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			|| lexer->key == l_append || lexer->key == l_heredoc)
 		{
 			redir_count++;
-			if (!lexer->next)//ERROOOR no file name after redir -> bash retuns syntax error
+			if (lexer->next == NULL)//ERROOOR no file name after redir -> bash retuns syntax error
 				return (-1);
 			shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
+			if (shell->cmds->redir == NULL)
+				return (-1);
 			if (redir_count == 1)
 				redir_head = shell->cmds->redir;
 			shell->cmds->redir = shell->cmds->redir->next;
@@ -95,7 +108,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	return (lexer->index);
 }
 
-//if error, return to main before exiting to finish to free shell//free shell->cmds to indicate ERROR to the calling func
+//if error, return NULL to main (free shell->cmds first if allocated already)
 t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 {
 	int				cmd;
@@ -105,31 +118,34 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 	idx = 0;
 	cmd = 0;
 	head_cmd = NULL;
-	shell->amount_of_cmds = count_cmds(lexer);
-	if (shell->amount_of_cmds == 0)//in case of syntax error (pipe on 1st position)
-		return (NULL);//returns without alloc shell->cmdss (indicator for failure in main)
+	shell->amount_of_cmds = count_cmds(lexer);//i iterate the lexer, is it still pointing to the 1st node?
+	if (shell->amount_of_cmds == 0)
+		return (NULL);
 	shell->cmds = new_cmd_node(shell->cmds);
-	if (!shell->cmds)
-	{
-			free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
-			//head_cmd = NULL;
-			return (NULL);
-	}
-	while (cmd < shell->amount_of_cmds) //each loop saves 1 cmd
+	if (shell->cmds == NULL)
+		return (NULL);
+	while (cmd < shell->amount_of_cmds)
 	{
 		if (shell->cmds->prev == NULL)
 			head_cmd = shell->cmds;
-		idx = save_simple_cmd(lexer, shell);
-		while (idx >= 0 && lexer && lexer->index != idx)
+		idx = save_simple_cmd(lexer, shell);//saves until the pipe and returns the idx of the position after
+		while (idx > 0 && lexer && lexer->index != idx)//we move the lexer after the pipe
 			lexer = lexer->next;
-		if (lexer == NULL)
-		{
-			free_cmds(head_cmd);
-			return (NULL);
-		}
+		// if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
+		// {
+		// 	free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
+		// 	//head_cmd = NULL;
+		// 	return (NULL);
+		// }
 		if (cmd < shell->amount_of_cmds - 1)
 		{
 			shell->cmds->next = new_cmd_node(shell->cmds);
+			if (shell->cmds->next == NULL)
+			{
+				free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
+				//head_cmd = NULL;
+				return (NULL);
+			}
 			shell->cmds = shell->cmds->next;
 		}
 		cmd++;

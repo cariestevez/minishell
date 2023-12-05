@@ -29,8 +29,7 @@ int	free_lexer(t_lexer *lexer)
 {
 	t_lexer	*tmp;
 
-	//t_lexer *head;
-	while (lexer)
+	while (lexer != NULL)
 	{
 		tmp = lexer->next;
 		free(lexer);

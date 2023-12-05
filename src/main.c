@@ -30,6 +30,24 @@ void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt)
 	shell->cmds = NULL;
 }
 
+int	empty_str(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (1);
+	while (str[i] != '\0')
+	{
+		if (str[i] != 32 && !(str[i] >= 8 && str[i] <= 13))
+			return (0);
+		i++;
+	}
+	free(str);
+	str = NULL;
+	return (1);
+}
+
 t_shell	*minishell_loop(t_shell *shell, char *prompt)
 {
 	char			*str;
@@ -37,17 +55,24 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
+	if (empty_str(str))
+		return (shell);
 	add_history(str);
-	if (!shell)
-		return (NULL);
 	lexer = ft_lexer(str);
-	//print_lex(lexer);
+	free(str);//frees the readline already, since it won't be used again
+	str = NULL;//in case we forget it's freed already, we protect it from being double freed
+	if (lexer == NULL)
+		return (shell);
 	shell->cmds = ft_parser(lexer, shell);
+	if (shell->cmds == NULL)
+	{
+		free_lexer(lexer);//is lexer still pointing to the head of the list??! and is it better to free here or inside of the parser??
+		return (shell);
+	}
 	//print_simple_cmds_list(shell);
-	//add check to exclude empty str in between quotations
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
-	free(str);//frees the readline
+
 	free_on_succes(shell, lexer, prompt);
 	return (shell);
 }
