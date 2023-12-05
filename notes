@@ -1,2 +1,1 @@
 1. segfaults before lexer finishes with 'echo helloworld >> outfile'
-2. heredocs arent working, check how its parsed
