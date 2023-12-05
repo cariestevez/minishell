@@ -59,7 +59,7 @@ void print_simple_cmds_list(t_shell *shell)
 			i++;
 		}
 		if (current->redir)
-    		print_redir_list(current->redir);
+    	 	print_redir_list(current->redir);
     	current = current->next;
     }
 }

@@ -11,7 +11,7 @@ int	execute(t_simple_cmds *cmd, char **envp)
 	}
 	if (execve(get_path(cmd->str[0], envp), cmd->str, envp) == -1)
 	{
-		ft_putendl_fd(cmd->str[0], 2);
+		ft_putstr_fd(cmd->str[0], 2);
 		ft_putstr_fd(": command not found\n", 2);
 	}
 	perror("execve");
@@ -34,7 +34,6 @@ int	**create_pipes(t_shell *shell, int **fd)
 		i++;
 	}
 	i = 0;
-	//create required amount of pipes
 	while (i < shell->amount_of_cmds)
 	{
 		if (pipe(fd[i]) < 0)
@@ -46,7 +45,7 @@ int	**create_pipes(t_shell *shell, int **fd)
 				close(fd[i][1]);
 				i--;
 			}
-			free_and_exit(shell, fd, EXECUTOR_PIPE_ERROR);
+			return (NULL);
 		}
 		i++;
 	}
@@ -73,13 +72,16 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 					close(fd[i][1]);
 					i--;
 				}
-				return (free_array(fd), -1);
+				return (EXECUTOR_FORK_ERROR);
 			}
 			if (pid[i] == 0)
 				child_process(shell, fd, i);
 		}
 		else if (shell->cmds->builtin)
-			execute_builtin(shell, fd, shell->cmds->index);
+		{
+			if (execute_builtin(shell, fd, shell->cmds->index))
+				return (EXECUTOR_EXEC_ERROR);
+		}
 		shell->cmds = shell->cmds->next;
 		i++;
 	}
@@ -91,6 +93,7 @@ int	executor(t_shell *shell)
 	int		i;
 	int		**fd;
 	pid_t	pid[shell->amount_of_cmds];
+	int		status;
 
 	fd = NULL;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
@@ -100,15 +103,17 @@ int	executor(t_shell *shell)
 	}
 	fd = create_pipes(shell, fd);
 	if (!fd)
-		return (EXECUTOR_PIPE_ERROR);
+		return (free_and_exit(shell, fd, EXECUTOR_PIPE_ERROR));
 	if (fork_processes(shell, pid, fd) != 0)
-		return (EXECUTOR_FORK_ERROR);
+		return (free_and_exit(shell, fd, EXECUTOR_FORK_ERROR));
 	//this call will close all fds
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
 	i = 0;
 	while (i < shell->amount_of_cmds)
 	{
-		waitpid(pid[i], NULL, 0);
+		waitpid(pid[i], &status, 0);
+		if (WIFEXITED(status) < 1)
+			return (status);
 		i++;
 	}
 	free_array(fd);

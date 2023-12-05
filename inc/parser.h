@@ -43,6 +43,7 @@ typedef struct	s_shell
 	struct s_simple_cmds	*cmds;
 	int				amount_of_cmds;
 	char					**env;
+	int					exitcode;
 } t_shell;
 
 typedef   int (*builtin_func)(struct s_shell *, struct s_simple_cmds *);
@@ -85,9 +86,9 @@ t_redir *new_redir_node(char *file, t_lexertype type);
 
 //expander.c
 int 	expander(t_shell *shell);
-int		declare_variable(char *var, char **locvars);
-char	*variable_expansion(char *str, char **env);
-char	*replace_variable(char *str, int start, int end, char **env);
+int		declare_variable(char *var, t_shell *shell);
+char	*variable_expansion(char *str, t_shell *shell);
+char	*replace_variable(char *str, int start, int end, t_shell *shell);
 char	*ft_getenv(char *name, char **env);
 
 //debug.c

@@ -78,25 +78,10 @@ void	get_error_msg(int exitcode)
     else if (exitcode == EXECUTOR_MALLOC_ERROR)
 		perror("Error on malloc");
   	 else if (exitcode == EXECUTOR_ACCESS_ERROR)
-		perror("Error: access denied");
+		perror("Error on accessing file");
    	else if (exitcode == EXECUTOR_HEREDOC_ERROR)
 		perror("Error on heredoc");
    	else if (exitcode == STDSTREAM_RESTORE_ERROR)
 		perror("Error restoring standard streams");
 	return ;
-}
-
-void    free_and_exit(t_shell *shell, int **fd, int exitcode)
-{
-    //this function call will close ALL fds
-	if (fd != NULL)
-	{
-		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
-	 	free_array(fd);
-	}
-	free_simple_commands(shell->cmds);
-    free_tab(shell->env);
-	free(shell);
-	get_error_msg(exitcode);
-	exit(exitcode);
 }

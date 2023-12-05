@@ -19,7 +19,7 @@ int	ft_echo(t_shell *shell, t_simple_cmds *cmd)
 	else
 		flag_check = 1;
 	display = cmd->str[flag_check];
-	variable_expansion(display, shell->env);
+	variable_expansion(display, shell);
 	if (display == NULL)
 		return (-1);
 	ft_putstr_fd(display, 1);

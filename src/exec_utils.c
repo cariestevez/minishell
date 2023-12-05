@@ -83,3 +83,18 @@ char	*ft_getenv(char *name, char **env)
 	}
 	return (NULL);
 }
+
+int    free_and_exit(t_shell *shell, int **fd, int exitcode)
+{
+    //this function call will close ALL fds
+	if (fd != NULL)
+	{
+		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
+	 	free_array(fd);
+	}
+	free_simple_commands(shell->cmds);
+    //free_tab(shell->env);
+	//free(shell);
+	get_error_msg(exitcode);
+	return (exitcode);
+}

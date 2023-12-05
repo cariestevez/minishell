@@ -26,7 +26,7 @@ int ft_export(t_shell *shell, t_simple_cmds *cmd)
     }
     while(cmd->str[i])
     {
-        if (declare_variable(cmd->str[i], shell->env) != 0)
+        if (declare_variable(cmd->str[i], shell) != 0)
             return (-1);
         i++;
     }

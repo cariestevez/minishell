@@ -8,13 +8,13 @@ int	redirect_input(t_redir *input)
 	if (fd_in == -1)
 	{
 		close(fd_in);
-		ft_printf("failed at opening file\n");
+		perror("open");
 		return (EXECUTOR_REDIRECTION_ERROR);
 	}
 	if (dup2(fd_in, STDIN_FILENO) == -1)
 	{
 		close(fd_in);
-		ft_printf("failed at duplicating fd\n");
+		perror("open");
 		return (EXECUTOR_REDIRECTION_ERROR);
 	}
 	close(fd_in);
@@ -32,11 +32,13 @@ int	redirect_output(t_redir *output)
 	if (fd_out == -1)
 	{
 		close(fd_out);
+		perror("open");
 		return (EXECUTOR_REDIRECTION_ERROR);
 	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 	{
 		close(fd_out);
+		perror("open");
 		return (EXECUTOR_REDIRECTION_ERROR);
 	}
 	close(fd_out);
@@ -52,7 +54,7 @@ int	heredoc(t_redir *heredoc, int index)
 	temp_file = ft_strjoin("/tmp/heredoc_temp", ft_itoa(index));
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	line = readline(HEREDOC_PROMPT);
-	while (ft_strnstr(line, heredoc->str, ft_strlen(line)))
+	while (ft_strncmp(line, heredoc->str, ft_strlen(line)) != 0)
 	{
 		ft_putstr_fd(line, fd);
 		ft_putchar_fd('\n', fd);

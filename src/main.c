@@ -85,7 +85,7 @@ t_shell	*minishell_loop(t_shell *shell)
 	t_lexer			*lexer;
 
 	prompt = PROMPT;
-	prompt = variable_expansion(prompt, shell->env);
+	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
 	//add_history(str);
 	if (!shell)
@@ -96,9 +96,10 @@ t_shell	*minishell_loop(t_shell *shell)
 	ft_printf("parser returned\n");
 	print_simple_cmds_list(shell);
 	//add check to exclude empty str in between quotations
-	expander(shell);
-	ft_printf("expander returned\n");
-	executor(shell);
+	shell->exitcode = expander(shell);
+	if (shell->exitcode)
+		return (get_error_msg(shell->exitcode), shell);
+	shell->exitcode = executor(shell);
 	free_lexer(lexer);
 	free(prompt);
 	free(str);//frees the readline
@@ -118,8 +119,11 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	while (1)
 	{
-		//if exitsignal
-		//	free shell;
 		minishell_loop(shell);
+		//if exitsignal
+		//{
+		//	free_tab(shell->env);
+		//	free(shell);
+		//}
 	}
 }

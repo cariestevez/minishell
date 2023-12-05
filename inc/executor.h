@@ -19,7 +19,7 @@ int	redirect_output(t_redir *output);
 int redirections(t_simple_cmds *cmd);
 
 //exec_utils.c
-void    free_and_exit(t_shell *shell, int **fd, int exitcode);
+int    free_and_exit(t_shell *shell, int **fd, int exitcode);
 int		count_commands(t_simple_cmds *cmds);
 int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds);
 char	*get_path(char *cmd, char **env);
