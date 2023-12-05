@@ -30,13 +30,11 @@ void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt)
 	shell->cmds = NULL;
 }
 
-t_shell	*minishell_loop(t_shell *shell)
+t_shell	*minishell_loop(t_shell *shell, char *prompt)
 {
-	char			*prompt;
 	char			*str;
 	t_lexer			*lexer;
 
-	prompt = PROMPT;
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
 	//add_history(str);
@@ -48,8 +46,6 @@ t_shell	*minishell_loop(t_shell *shell)
 	print_simple_cmds_list(shell);
 	//add check to exclude empty str in between quotations
 	shell->exitcode = expander(shell);
-	if (shell->exitcode)
-		return (get_error_msg(shell->exitcode), shell);
 	shell->exitcode = executor(shell);
 	free(str);//frees the readline
 	free_on_succes(shell, lexer, prompt);
@@ -69,9 +65,8 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	while (1)
 	{
-		minishell_loop(shell);
+		minishell_loop(shell, PROMPT);
 		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
-		print_simple_cmds_list(shell);
 		//if exitsignal
 		//{
 		//	free_tab(shell->env);

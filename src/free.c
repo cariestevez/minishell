@@ -71,7 +71,7 @@ void	get_error_msg(int exitcode)
 	if (exitcode == DECLARE_VAR_ERROR)
 		perror("Error declaring variable");
     else if (exitcode == EXPANDER_VAR_ERROR)
-		perror("Error on expander");
+		printf("Error: variable not found\n");
    	else if (exitcode ==  EXECUTOR_PIPE_ERROR)
 		perror("Error on pipe");
     else if (exitcode == EXECUTOR_FORK_ERROR)

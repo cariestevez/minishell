@@ -32,7 +32,7 @@ typedef enum    e_exitcode
 }   exitcode;
 
 //main.c
-t_shell	*minishell_loop(t_shell *shell);
+t_shell	*minishell_loop(t_shell *shell, char *prompt);
 char    **arrdup(char **env);
 void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt);
 

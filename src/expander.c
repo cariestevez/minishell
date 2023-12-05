@@ -20,7 +20,7 @@ char *replace_variable(char *str, int start, int end, t_shell *shell)
         free(var);
         var = ft_getenv(tmp, shell->env);
         if (!var)
-            return (NULL);
+            var = "";
          free(tmp);
     }
     //joins first part of str with the expanded var
@@ -99,6 +99,7 @@ int		declare_variable(char *var, t_shell *shell)
 int expander(t_shell *shell)
 {
     t_simple_cmds *head;
+    char        *tmp;
     int            i;
 
     head = shell->cmds;
@@ -108,9 +109,13 @@ int expander(t_shell *shell)
          while (shell->cmds->str[i])
          {
             shell->cmds->str[i] = variable_expansion(shell->cmds->str[i], shell);
-            if (shell->cmds->str == NULL)
-                return (EXPANDER_VAR_ERROR);
-             i++;
+            if (shell->cmds->str[i] == NULL)
+            {
+                tmp = shell->cmds->str[i];
+                shell->cmds->str[i] = shell->cmds->str[i + 1];
+                free(tmp);
+            }
+            i++;
         }
         shell->cmds = shell->cmds->next;
     }

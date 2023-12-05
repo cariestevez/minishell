@@ -1,8 +1,22 @@
 #include "minishell.h"
 
+static int	print_args(char **display, t_shell *shell, int i)
+{
+	while (display[i] != NULL)
+	{
+		display[i] = variable_expansion(display[i], shell);
+		if (display[i] == NULL)
+			return (-1);
+		ft_putstr_fd(display[i], 1);
+		i++;
+		if (display[i] != NULL)
+			ft_putchar_fd(' ', 1);
+	}
+	return (0);
+}
+
 int	ft_echo(t_shell *shell, t_simple_cmds *cmd)
 {
-	char	*display;
 	int		flag_check;
 
 	if (!cmd->str[1])
@@ -18,11 +32,7 @@ int	ft_echo(t_shell *shell, t_simple_cmds *cmd)
 	}
 	else
 		flag_check = 1;
-	display = cmd->str[flag_check];
-	variable_expansion(display, shell);
-	if (display == NULL)
-		return (-1);
-	ft_putstr_fd(display, 1);
+	print_args(cmd->str, shell, flag_check);
 	if (flag_check == 1)
 		write(1, "\n", 1);
 	return (0);
