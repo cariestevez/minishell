@@ -90,7 +90,7 @@ int    free_and_exit(t_shell *shell, int **fd, int exitcode)
 	if (fd != NULL)
 	{
 		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
-	 	free_array(fd);
+	 	//free_array(fd);
 	}
 	return (exitcode);
 }

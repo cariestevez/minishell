@@ -47,7 +47,7 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 	cmd_tokens -= (redir_tokens * 2);
 	if (cmd_tokens <= 0)
 	{
-		ft_printf("still need to think about all the cases");//SEGFAULTING
+		ft_printf("still need to think about all the cases\n");//SEGFAULTING sometimes?
 		return (-1);
 	}
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens));
