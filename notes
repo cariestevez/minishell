@@ -24,3 +24,8 @@ FREEING/EXITING: if execute doesnt find command, frees invalid pointer
 EXECUTION: in some cases, minishell prints a newline before the expected output???
 
 RANDOM: when pressing tab(without enter) it 'executes' ls -a?!
+
+LEXER: with "env" "pwd" "cd ~" and soem other commands, minishell segfaults in the lexer, but it doesnt with fx "export" or "cd /home"??
+
+MEMORY: Something that shouldnt be freed is being freed after returning to main, running a command second time causes problems where no problems occured on the first command
+ex. running echo with no args works the first time, but running it again in the same minishell session segfaults before execution

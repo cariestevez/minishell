@@ -59,20 +59,15 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 		return (shell);
 	add_history(str);
 	lexer = ft_lexer(str);
-	free(str);//frees the readline already, since it won't be used again
-	str = NULL;//in case we forget it's freed already, we protect it from being double freed
+	free(str);
+	str = NULL;
 	if (lexer == NULL)
 		return (shell);
 	shell->cmds = ft_parser(lexer, shell);
 	if (shell->cmds == NULL)
-	{
-		free_lexer(lexer);//is lexer still pointing to the head of the list??! and is it better to free here or inside of the parser??
-		return (shell);
-	}
-	//print_simple_cmds_list(shell);
+		return (free_lexer(lexer), shell);
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
-
 	free_on_succes(shell, lexer, prompt);
 	return (shell);
 }
@@ -90,7 +85,7 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	while (1)
 	{
-		minishell_loop(shell, PROMPT);
+		shell = minishell_loop(shell, PROMPT);
 		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
 		//if exitsignal
 		//{
@@ -98,5 +93,7 @@ int	main(int ac, char **av, char **envp)
 		//	free(shell);
 		//}
 	}
+	free_tab(shell->env);
 	rl_clear_history();
+	return (0);
 }
