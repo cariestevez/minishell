@@ -10,6 +10,7 @@ void	free_tab(char **tab)
 		free(tab[i]);
 		i++;
 	}
+	free(tab);
 }
 
 void    free_array(int  **arr)
@@ -47,7 +48,7 @@ void    free_simple_commands(t_simple_cmds *cmds)
     while (cmds)
     {
         free_tab(cmds->str);
-		while (cmds->redir)
+		while (cmds->redir != NULL)
 		{
 			free(cmds->redir->str);
         	tmp = cmds->redir;

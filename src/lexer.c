@@ -62,7 +62,7 @@ int    read_command_line(t_lexer *lexer, char *str)
 		i++;
 	if (str[i] == '#')//=comment-bash just returns the prompt
 		return (0);
-	while (str[i] != '\0')
+	while (i < (int)ft_strlen(str))
 	{
 		start = i;
 		if (str[i] == '\'' || str[i] == '"' || str[i] == '(' || str[i] == '{')//if delimited str
@@ -85,7 +85,6 @@ int    read_command_line(t_lexer *lexer, char *str)
 				flag = 1;
 			if (!(save_token(lexer, str, start, 1 + flag)))
 				return (0);
-
 		}
 		else
 		{
@@ -97,6 +96,8 @@ int    read_command_line(t_lexer *lexer, char *str)
 				i--;// what if i=0?
 		}
 		i += flag + 1;
+		if (i > (int)ft_strlen(str))
+			break ;
 		while (str[i] && str[i] == ' ')
 			i++;
 		lexer = lexer->next;

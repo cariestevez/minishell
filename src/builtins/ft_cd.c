@@ -48,7 +48,6 @@ int ft_cd(t_shell *shell, t_simple_cmds *cmd)
         return (printf("minishell: cd: %s: No such file or directory\n", cmd->str[1]), 2);
     old_pwd = getcwd(NULL, 0);
     update_envvar("OLDPWD", old_pwd, shell->env);
-    ft_printf("cd: curpath is %s\n", curpath);
     if (chdir(curpath) < 0)
         return (perror("minishell: cd"), 2);
     //free(curpath);
