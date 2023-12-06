@@ -115,6 +115,6 @@ int	executor(t_shell *shell)
 			return (status);
 		i++;
 	}
-	free_array(fd);
+	free_i_array(fd);
 	return (SUCCESS);
 }

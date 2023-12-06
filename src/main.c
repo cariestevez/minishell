@@ -22,12 +22,17 @@ char    **arrdup(char **env)
     return (ret);
 }
 
-void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt)
+void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
 {
+	ft_printf("--->free_on_success\n");
 	free_lexer(lexer);
+	ft_printf("back, lexer freed\n");
 	free(prompt);
-	free_simple_commands(shell->cmds);
-	shell->cmds = NULL;
+	ft_printf("back, prompt freed\n");
+	ft_printf("AND HERE wthell is in cmds?: %s\n", cmds->str[0]);
+	free_cmds(cmds);
+	ft_printf("back, cmds freed\n");
+	cmds = NULL;
 }
 
 int	empty_str(char *str)
@@ -52,23 +57,31 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 {
 	char			*str;
 	t_lexer			*lexer;
+	t_simple_cmds	*cmds;
 
+	ft_printf("---> minishell_loop\n");
+	str = NULL;
+	lexer = NULL;
+	cmds = NULL;
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
+	ft_printf("allocated prompt str\n");
 	if (empty_str(str))
 		return (shell);
 	add_history(str);
 	lexer = ft_lexer(str);
 	free(str);
+	ft_printf("freed prompt str\n");
 	str = NULL;
 	if (lexer == NULL)
 		return (shell);
-	shell->cmds = ft_parser(lexer, shell);
-	if (shell->cmds == NULL)
+	cmds = ft_parser(lexer, shell);
+	ft_printf("wthell is in cmds?: %s\n", cmds->str[0]);
+	if (cmds == NULL)
 		return (free_lexer(lexer), shell);
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
-	free_on_succes(shell, lexer, prompt);
+	free_on_succes(cmds, lexer, prompt);
 	return (shell);
 }
 
@@ -76,9 +89,11 @@ int	main(int ac, char **av, char **envp)
 {
 	t_shell	*shell;
 
+	ft_printf("---> main\n");
 	shell = ft_calloc(sizeof(t_shell), 1);
 	if (!shell)
 		return (-1);
+	ft_printf("allocated shell\n");
 	shell->env = arrdup(envp);
 	shell->exitcode = 0;
 	(void)ac;
@@ -94,6 +109,8 @@ int	main(int ac, char **av, char **envp)
 		//}
 	}
 	free_tab(shell->env);
+	free(shell);
+	ft_printf("freed shell\n");
 	rl_clear_history();
 	return (0);
 }

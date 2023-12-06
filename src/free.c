@@ -8,12 +8,14 @@ void	free_tab(char **tab)
 	while (tab[i])
 	{
 		free(tab[i]);
+		tab[i] = NULL;
 		i++;
 	}
 	free(tab);
+	tab = NULL;
 }
 
-void    free_array(int  **arr)
+void    free_i_array(int  **arr)
 {
     int i;
 
@@ -21,22 +23,28 @@ void    free_array(int  **arr)
     while (arr[i] != NULL)
     {
         free(arr[i]);
+		arr[i] = NULL;
         i++;
     }
     free(arr);
+	arr = NULL;
 }
 
 int	free_lexer(t_lexer *lexer)
 {
 	t_lexer	*tmp;
 
+	ft_printf("---> free_lexer\n");
 	while (lexer != NULL)
 	{
 		tmp = lexer->next;
+		free(lexer->token);
+		lexer->token = NULL;
+		ft_printf("freed lexer->token\n");
 		free(lexer);
+		ft_printf("freed lexer node\n");
 		lexer = tmp;
 	}
-	free(lexer);
 	return (0);
 }
 
@@ -48,6 +56,7 @@ void    free_simple_commands(t_simple_cmds *cmds)
     while (cmds)
     {
         free_tab(cmds->str);
+		cmds->str = NULL;
 		while (cmds->redir != NULL)
 		{
 			free(cmds->redir->str);

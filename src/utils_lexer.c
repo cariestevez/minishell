@@ -5,9 +5,11 @@ t_lexer *new_lexnode(t_lexer *prev, int index)
 {
 	t_lexer *node;
 	
+	ft_printf("---> new_lexnode\n");
 	node = (t_lexer *)malloc(sizeof(t_lexer));
 	if (node == NULL)
 		return (NULL);
+	ft_printf("allocated new lexer node\n");
 	node->token = NULL;
 	node->key = 0;
 	node->prev = prev;

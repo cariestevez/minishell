@@ -11,37 +11,49 @@ void	free_cmd_array(char **str)
 		{
 			free(str[i]);
 			str[i] = NULL;
+			ft_printf("freed cmd_node->str[%d]\n", i);
 			i++;
 		}
 		free(str);
+		ft_printf("freed cmd_node->str\n");
 	}
 }
 
-//add redir* free when adding to struct!
 void	free_cmds(t_simple_cmds *cmd_node)
 {
 	t_simple_cmds	*temp;
+	t_redir			*redir_tmp;
 
 	temp = NULL;
+	redir_tmp = NULL;
+	ft_printf("--->free_cmds\n");
 	while (cmd_node != NULL)
 	{
 		temp = cmd_node->next;
 		cmd_node->next = NULL;
 		cmd_node->prev = NULL;
-		// if (cmd_node->builtin != NULL)
-		// {
-		// 	free(cmd_node->builtin);
-		// 	cmd_node->builtin = NULL;
-		// }
-		if (cmd_node->redir != NULL)
+		if (cmd_node->builtin != NULL)
 		{
-			free(cmd_node->redir);
-			cmd_node->redir = NULL;
+			free(cmd_node->builtin);
+			cmd_node->builtin = NULL;
+			ft_printf("freed cmd_node->builtin\n");
 		}
+		while (cmd_node->redir != NULL)
+		{
+			free(cmd_node->redir->str);
+			cmd_node->redir->str = NULL;
+			ft_printf("freed cmd_node->redir->str\n");
+			redir_tmp = cmd_node->redir->next;
+			free(cmd_node->redir);
+			cmd_node->redir = redir_tmp;
+			ft_printf("freed cmd_node->redir\n");
+		}
+		ft_printf("BEFORE FREEING CMD ARRAY\n");
 		free_cmd_array(cmd_node->str);
 		cmd_node->str = NULL;
 		free(cmd_node);
-		cmd_node = temp;	
+		cmd_node = temp;
+		ft_printf("freed cmd_node\n");
 	}
 }
 
@@ -75,9 +87,11 @@ t_simple_cmds	*new_cmd_node(t_simple_cmds *prev)
 {
 	t_simple_cmds *node;
 	
+	ft_printf("---> new_cmd_node\n");
 	node = (t_simple_cmds *)malloc(sizeof(t_simple_cmds));
 	if (node == NULL)
 		return (NULL);
+	ft_printf("allocated command node\n");
 	node->str = NULL;
 	node->builtin = NULL;
 	node->redir = NULL;
@@ -94,9 +108,11 @@ t_redir *new_redir_node (char *file, t_lexertype type)
 {
 	t_redir	*node;
 
+	ft_printf("---> new_redir_node\n");
 	node = (t_redir *)ft_calloc(sizeof(t_redir), 1);
 	if (!node)
 		return (NULL);
+	ft_printf("allocated redirection node\n");
 	node->type = type;
 	node->str = ft_strdup(file);
 	if (!node->str)
