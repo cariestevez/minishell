@@ -24,14 +24,9 @@ char    **arrdup(char **env)
 
 void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
 {
-	ft_printf("--->free_on_success\n");
 	free_lexer(lexer);
-	ft_printf("back, lexer freed\n");
 	free(prompt);
-	ft_printf("back, prompt freed\n");
-	//ft_printf("AND HERE wthell is in cmds?: %s\n", cmds->str[0]);
 	free_cmds(cmds);
-	ft_printf("back, cmds freed\n");
 	cmds = NULL;
 }
 
@@ -59,19 +54,16 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 	t_lexer			*lexer;
 	t_simple_cmds	*cmds;
 
-	ft_printf("---> minishell_loop\n");
 	str = NULL;
 	lexer = NULL;
 	cmds = NULL;
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
-	ft_printf("allocated prompt str\n");
 	if (empty_str(str))
 		return (shell);
 	add_history(str);
 	lexer = ft_lexer(str);
 	free(str);
-	ft_printf("freed prompt str\n");
 	str = NULL;
 	if (lexer == NULL)
 		return (shell);
@@ -90,11 +82,9 @@ int	main(int ac, char **av, char **envp)
 {
 	t_shell	*shell;
 
-	ft_printf("---> main\n");
 	shell = ft_calloc(sizeof(t_shell), 1);
 	if (!shell)
 		return (-1);
-	ft_printf("allocated shell\n");
 	shell->env = arrdup(envp);
 	shell->exitcode = 0;
 	(void)ac;
@@ -111,7 +101,6 @@ int	main(int ac, char **av, char **envp)
 	}
 	free_tab(shell->env);
 	free(shell);
-	ft_printf("freed shell\n");
 	rl_clear_history();
 	return (0);
 }

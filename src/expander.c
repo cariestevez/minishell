@@ -97,8 +97,9 @@ int expander(t_shell *shell)
     i = 0;
     while (shell->cmds)
     {
-         while (shell->cmds->str[i])
-         {
+        i = 0;
+         while (shell->cmds->str[i] != NULL)
+         {       
             shell->cmds->str[i] = variable_expansion(shell->cmds->str[i], shell);
             if (shell->cmds->str[i] == NULL)
             {
