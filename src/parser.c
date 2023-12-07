@@ -37,6 +37,7 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 
 	cmd_tokens = 0;
 	redir_tokens = 0;
+	ft_printf("---> count_tokens\n");
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
@@ -50,14 +51,16 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		ft_printf("still need to think about all the cases\n");//SEGFAULTING sometimes?
 		return (-1);
 	}
-	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens));
+	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
 	if (shell->cmds->str == NULL)
 		return (-1);
+	ft_printf("allocated shell->cmds->str\n");
 	return (cmd_tokens);
 }
 
 int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 {
+	int	x = 0;
 	int		i;
 	int		cmd_tokens;
 	int		redir_count;
@@ -68,6 +71,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	redir_head = NULL;
 	redir_count = 0;
 	head = lexer;
+	ft_printf("---> save_simple_cmd\n");
 	cmd_tokens = count_tokens(lexer, shell);
 	if (cmd_tokens <= 0)
 		return (-1);
@@ -92,7 +96,9 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 		{
 			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
-				shell->cmds->str[i] = ft_strdup(lexer->token);	
+				shell->cmds->str[i] = ft_strdup(lexer->token);
+				ft_printf("allocated shell->cmds->str[%d]\n", x);
+				x++;
 				i++;
 				cmd_tokens--;
 				lexer = lexer->next;
@@ -118,6 +124,7 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 	idx = 0;
 	cmd = 0;
 	head_cmd = NULL;
+	ft_printf("---> ft_parser\n");
 	shell->amount_of_cmds = count_cmds(lexer);//i iterate the lexer, is it still pointing to the 1st node?
 	if (shell->amount_of_cmds == 0)
 		return (NULL);
@@ -129,14 +136,21 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 		if (shell->cmds->prev == NULL)
 			head_cmd = shell->cmds;
 		idx = save_simple_cmd(lexer, shell);//saves until the pipe and returns the idx of the position after
-		while (idx > 0 && lexer && lexer->index != idx)//we move the lexer after the pipe
-			lexer = lexer->next;
-		// if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
+		// if (idx == -1)
 		// {
+		// 	ft_printf("error in save_simple_cmds\n");
 		// 	free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
 		// 	//head_cmd = NULL;
 		// 	return (NULL);
 		// }
+		while (idx > 0 && lexer && lexer->index != idx)//we move the lexer after the pipe
+			lexer = lexer->next;
+		if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
+		{
+			free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
+			//head_cmd = NULL;
+			return (NULL);
+		}
 		if (cmd < shell->amount_of_cmds - 1)
 		{
 			shell->cmds->next = new_cmd_node(shell->cmds);
