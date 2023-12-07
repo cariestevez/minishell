@@ -41,7 +41,14 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
+		{
+			if (lexer->next == NULL)
+			{
+				ft_printf("syntax error near unexpected token 'newline'");
+				return (-1);
+			}
 			redir_tokens++;
+		}
 		cmd_tokens++;
 		lexer = lexer->next;
 	}
@@ -60,8 +67,11 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 
 t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 {
-	if (lexer->next == NULL)//ERROOOR no file name after redir -> bash retuns syntax error
+	if (lexer->next == NULL)
+	{//ERROOOR no file name after redir -> bash retuns syntax error
+		ft_printf("syntax error near unexpected token 'newline'");// NEVER ENTERING HERE???
 		return (NULL);
+	}
 	if (redir_count == 1)
 	{
 		shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
@@ -189,19 +199,19 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 	head = cmd;
 	while (cmd != NULL)
 	{
-		if (ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
+		if (cmd->str != NULL && ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
 			cmd->builtin = &ft_cd;
-		else if (ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)
+		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)
 			cmd->builtin = &ft_echo;
-		else if (ft_strncmp(cmd->str[0], "env", BUFFER) == 0)
+		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "env", BUFFER) == 0)
 			cmd->builtin = &ft_env;
-		else if (ft_strncmp(cmd->str[0], "export", BUFFER) == 0)
+		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "export", BUFFER) == 0)
 			cmd->builtin = &ft_export;
-		else if (ft_strncmp(cmd->str[0], "pwd", BUFFER) == 0)
+		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "pwd", BUFFER) == 0)
 			cmd->builtin = &ft_pwd;
-		else if (ft_strncmp(cmd->str[0], "unset", BUFFER) == 0)
+		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "unset", BUFFER) == 0)
 			cmd->builtin = &ft_unset;
-		//else if (ft_strncmp(cmd->str[0], "exit", 4))
+		//else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "exit", 4))
 			//cmd->builtin = &ft_exit;
 		cmd = cmd->next;
 	}

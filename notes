@@ -17,9 +17,8 @@ EXPANDER: remove quotes //add check to exclude empty str in between quotations?
 
 CD: sets error code to 0 after perror, even though there was an error
 
-CAT:    when running cat without args, prints multiple \n and waits for input
+CAT:    when running cat without args, prints MULTIPLE \n before waiting for input
         cat < input > output    : if input file exists, doens't create the output file just prints input file
-                             : if input file doesn't exist --> open: Bad file descriptor and waits for input
 
 FREEING/EXITING: if execute doesnt find command, frees invalid pointer -->> I solved it commenting out a line in your free_and_exit function
 
