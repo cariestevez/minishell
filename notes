@@ -21,9 +21,9 @@ CAT:    when running cat without args, prints multiple \n and waits for input
         cat < input > output    : if input file exists, doens't create the output file just prints input file
                              : if input file doesn't exist --> open: Bad file descriptor and waits for input
 
-FREEING/EXITING: if execute doesnt find command, frees invalid pointer -->> I solved it commenting out a line in your free_and_exit function
-
-EXECUTION: in some cases, minishell prints a newline before the expected output???
+EXECUTION: executing builtins with pipes:
+if first command is a builtin, it writes to a broken pipe? signal 13 sigpipe
+if the second command is a builtin, waitpid has an error waiting for uninitialized bytes
 
 RANDOM: when pressing tab(without enter) it 'executes' ls -a?!
 

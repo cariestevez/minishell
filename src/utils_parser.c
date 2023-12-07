@@ -27,13 +27,6 @@ void	free_cmds(t_simple_cmds *cmd_node)
 	while (cmd_node != NULL)
 	{
 		temp = cmd_node->next;
-		cmd_node->next = NULL;
-		cmd_node->prev = NULL;
-		if (cmd_node->builtin != NULL)
-		{
-			free(cmd_node->builtin);
-			cmd_node->builtin = NULL;
-		}
 		while (cmd_node->redir != NULL)
 		{
 			free(cmd_node->redir->str);

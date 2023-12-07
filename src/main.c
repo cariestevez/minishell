@@ -52,11 +52,9 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 {
 	char			*str;
 	t_lexer			*lexer;
-	t_simple_cmds	*cmds;
 
 	str = NULL;
 	lexer = NULL;
-	cmds = NULL;
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
 	if (empty_str(str))
@@ -66,15 +64,21 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 	free(str);
 	str = NULL;
 	if (lexer == NULL)
+	{
+		shell->exitcode = errno;
 		return (shell);
+	}
 	shell->cmds = ft_parser(lexer, shell);
 	//ft_printf("wthell is in cmds?: %s\n", cmds->str[0]);
 	if (shell->cmds == NULL)
+	{
+		shell->exitcode = errno;
 		return (free_lexer(lexer), shell);
+	}
 	print_simple_cmds_list(shell);
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
-	free_on_succes(cmds, lexer, prompt);
+	free_on_succes(shell->cmds, lexer, prompt);
 	return (shell);
 }
 
@@ -92,6 +96,8 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		shell = minishell_loop(shell, PROMPT);
+		if (shell->exitcode > 1000)
+			break ;
 		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
 		//if exitsignal
 		//{
@@ -102,5 +108,5 @@ int	main(int ac, char **av, char **envp)
 	free_tab(shell->env);
 	free(shell);
 	rl_clear_history();
-	return (0);
+	return (errno);
 }

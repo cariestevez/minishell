@@ -22,25 +22,27 @@ int	execute_builtin(t_shell *shell, int **fd, int i)
 	t_simple_cmds	*builtin;
 
 	builtin = shell->cmds;
-    //store standard streams for restoration later
+    ft_printf("in exec builtin 1\n");
 	std[0] = dup(STDIN_FILENO);
 	std[1] = dup(STDOUT_FILENO);
+	ft_printf("in exec builtin 2\n");
 	while (builtin->index != i)
 		builtin = builtin->next;
 	if (redirections(builtin) != 0)
 		return (-1);
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
-	//redirect in/out to relevant pipes if not first or last command
 	if (i > 0)
 	{
 		if (dup2(fd[i - 1][0], 0) < 0)
 			return (perror("dup2"), -1);
 	}
+	ft_printf("in exec builtin 3\n");
 	if (i < shell->amount_of_cmds - 1)
 	{
 		if (dup2(fd[i][1], 1) < 0)
 			return (perror("dup2"), -1);
 	}
+	ft_printf("in exec builtin 4\n");
 	builtin->builtin(shell, shell->cmds);
 	if (restore_stdstreams(std) != 0)
 		return (-1);
@@ -49,6 +51,7 @@ int	execute_builtin(t_shell *shell, int **fd, int i)
 
 int	child_process(t_shell *shell, int **fd, int i)
 {
+	print_simple_cmds_list(shell);
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
 	while (shell->cmds->index != i)
 		shell->cmds = shell->cmds->next;
@@ -64,10 +67,10 @@ int	child_process(t_shell *shell, int **fd, int i)
 		if(dup2(fd[i][1], 1) == -1)
 			return (perror("dup2"), -1);
 	}
-	if (i != 0)
-		close(fd[i - 1][0]);
-	if (i != shell->amount_of_cmds - 1)
-		close(fd[i][1]);
+	//if (i != 0)
+		//close(fd[i - 1][0]);
+	//if (i != shell->amount_of_cmds - 1)
+	//	close(fd[i][1]);
 	execute(shell->cmds, shell->env);
 	return (-1);
 }

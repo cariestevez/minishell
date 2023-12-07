@@ -24,9 +24,9 @@ int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds)
 	while (j < amount_of_cmds)
 	{
 		if (i - 1 != j)
-			close (fd[j][0]);
+			close(fd[j][0]);
 		if (i != j)
-			close (fd[j][1]);
+			close(fd[j][1]);
 		j++;
 	}
 	return (0);
@@ -84,7 +84,7 @@ char	*ft_getenv(char *name, char **env)
 	return (NULL);
 }
 
-int    free_and_exit(t_shell *shell, int **fd, int exitcode)
+int    free_and_exit(t_shell *shell, int **fd)
 {
     //this function call will close ALL fds
 	if (fd != NULL)
@@ -92,5 +92,5 @@ int    free_and_exit(t_shell *shell, int **fd, int exitcode)
 		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
 	 	free_i_array(fd); //when commenting it out, we don't get the free() invalid pointer anymore
 	}
-	return (exitcode);
+	return (errno);
 }

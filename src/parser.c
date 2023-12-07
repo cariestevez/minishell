@@ -111,6 +111,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
 				shell->cmds->str[i] = ft_strdup(lexer->token);
+				ft_printf("token saves is %s\n", shell->cmds->str[i]);
 				x++;
 				i++;
 				cmd_tokens--;
@@ -136,18 +137,16 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 
 	idx = 0;
 	cmd = 0;
-	head_cmd = NULL;
 	ft_printf("---> ft_parser\n");
 	shell->amount_of_cmds = count_cmds(lexer);//i iterate the lexer, is it still pointing to the 1st node?
 	if (shell->amount_of_cmds == 0)
 		return (NULL);
-	shell->cmds = new_cmd_node(shell->cmds);
+	shell->cmds = new_cmd_node(NULL);
+	head_cmd = shell->cmds;
 	if (shell->cmds == NULL)
 		return (NULL);
 	while (cmd < shell->amount_of_cmds)
 	{
-		if (shell->cmds->prev == NULL)
-			head_cmd = shell->cmds;
 		idx = save_simple_cmd(lexer, shell);//saves until the pipe and returns the idx of the position after
 		// if (idx == -1)
 		// {
@@ -161,7 +160,7 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 		if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
 		{
 			free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
-			//head_cmd = NULL;
+			head_cmd = NULL;
 			return (NULL);
 		}
 		if (cmd < shell->amount_of_cmds - 1)
@@ -170,7 +169,7 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 			if (shell->cmds->next == NULL)
 			{
 				free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
-				//head_cmd = NULL;
+				head_cmd = NULL;
 				return (NULL);
 			}
 			shell->cmds = shell->cmds->next;
@@ -188,6 +187,7 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 	head = cmd;
 	while (cmd != NULL)
 	{
+		ft_printf("add builtin: cmd->str is %s\n", cmd->str[0]);
 		if (ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
 			cmd->builtin = &ft_cd;
 		else if (ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)
