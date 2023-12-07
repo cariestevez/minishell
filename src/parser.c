@@ -54,7 +54,6 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
 	if (shell->cmds->str == NULL)
 		return (-1);
-	ft_printf("allocated shell->cmds->str\n");
 	return (cmd_tokens);
 }
 

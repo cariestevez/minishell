@@ -1,0 +1,9 @@
+a
+b
+inc
+libft
+Makefile
+minishell
+notes
+src
+welcome.txt
