@@ -104,7 +104,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			redir_count++;
 			shell->cmds->redir = save_redirection(shell, lexer, redir_count);
 			if (redir_count == 1)
-				redir_head = save_redirection(shell, lexer, redir_count);
+				redir_head = shell->cmds->redir;
 			lexer = lexer->next->next;
 		}
 		else if (lexer->key == l_non_op)
