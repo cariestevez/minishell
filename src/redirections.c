@@ -4,28 +4,29 @@ int	redirect_input(t_redir *input)
 {
 	int 	fd_in;
 
+	if (access(input->str, R_OK) == -1)
+		return (ft_printf("minishell: %s: No such file or directory\n", input), -1);
 	fd_in = open(input->str, O_RDONLY, 0777);
 	if (fd_in == -1)
 	{
 		close(fd_in);
 		perror("open");
-		return (EXECUTOR_REDIRECTION_ERROR);
+		return (-1);
 	}
 	if (dup2(fd_in, STDIN_FILENO) == -1)
 	{
 		close(fd_in);
 		perror("open");
-		return (EXECUTOR_REDIRECTION_ERROR);
+		return (-1);
 	}
 	close(fd_in);
-	return (SUCCESS);
+	return (0);
 }
 
 int	redirect_output(t_redir *output)
 {
 	int 	fd_out;
 
-	ft_printf("redirecting out to %s\n", output->str);
 	if (output->type == l_append )
 		fd_out = open(output->str, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	else
@@ -34,16 +35,16 @@ int	redirect_output(t_redir *output)
 	{
 		close(fd_out);
 		perror("open");
-		return (EXECUTOR_REDIRECTION_ERROR);
+		return (-1);
 	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 	{
 		close(fd_out);
 		perror("open");
-		return (EXECUTOR_REDIRECTION_ERROR);
+		return (-1);
 	}
 	close(fd_out);
-	return (SUCCESS);
+	return (0);
 }
 
 int	heredoc(t_redir *heredoc, int index)
@@ -65,11 +66,10 @@ int	heredoc(t_redir *heredoc, int index)
 	free(line);
 	heredoc->str = temp_file;
 	if (redirect_input(heredoc) != 0)
-		return (EXECUTOR_HEREDOC_ERROR);
+		return (-1);
 	unlink(temp_file);
 	free(temp_file);
-	//temp_file will be deleted once all fds are closed
-	return (SUCCESS);
+	return (0);
 }
 
 int redirections(t_simple_cmds *cmd)
@@ -94,5 +94,5 @@ int redirections(t_simple_cmds *cmd)
 		}
 		cmd->redir = cmd->redir->next;
 	}
-	return (SUCCESS);
+	return (0);
 }

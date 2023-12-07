@@ -34,15 +34,12 @@ int	free_lexer(t_lexer *lexer)
 {
 	t_lexer	*tmp;
 
-	ft_printf("---> free_lexer\n");
 	while (lexer != NULL)
 	{
 		tmp = lexer->next;
 		free(lexer->token);
 		lexer->token = NULL;
-		ft_printf("freed lexer->token\n");
 		free(lexer);
-		ft_printf("freed lexer node\n");
 		lexer = tmp;
 	}
 	return (0);

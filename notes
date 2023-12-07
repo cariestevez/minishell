@@ -10,7 +10,7 @@ PARSER: count_tokens: when number of cmds < num of redirections ->segfault
 PARSING+REDIRECTIONS: if input = "> file", bash creates thefile and return the prompt. minishell segfaults
                         (I need to come up with a solution)
 
-REDIRECTIONS: if valid_cmd > file1 > file2 : doesn't create the 2nd file and redirect the content of file1 to it
+REDIRECTIONS:
                 if not_valid_cmd > file1 > file2 : creates the 1st file (sometimes also the 2nd) prints multiple \n and waits for input
 
 EXPANDER: remove quotes //add check to exclude empty str in between quotations?

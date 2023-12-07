@@ -71,7 +71,7 @@ int		declare_variable(char *var, t_shell *shell)
     if (!shell->env)
         return (-1);
     if (ft_strchr(var, '=') == 0)
-        return (DECLARE_VAR_ERROR);
+        return (-1);
     variable_expansion(var, shell);
     while (shell->env[i] != NULL)
     {
@@ -82,7 +82,7 @@ int		declare_variable(char *var, t_shell *shell)
     free(shell->env[i]);
 	shell->env[i] = ft_strdup(var);
     if (!shell->env[i])
-        return (perror("strdup"), DECLARE_VAR_ERROR);
+        return (perror("strdup"), -1);
     shell->env[i + 1] = NULL;
 	return (0);
 }
@@ -113,5 +113,5 @@ int expander(t_shell *shell)
     }
     //quote removal
     shell->cmds = head;
-    return (SUCCESS);
+    return (0);
 }

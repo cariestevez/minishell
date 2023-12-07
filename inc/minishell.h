@@ -16,21 +16,6 @@
 # define PROMPT "\033[35mHello \033[36m${USER}\033[0m$ "
 # define WELCOME "welcome.txt"
 
-typedef enum    e_exitcode
-{
-    SUCCESS,
-    DECLARE_VAR_ERROR,
-    EXPANDER_VAR_ERROR,
-    EXECUTOR_PIPE_ERROR,
-    EXECUTOR_FORK_ERROR,
-    EXECUTOR_EXEC_ERROR,
-    EXECUTOR_REDIRECTION_ERROR,
-    EXECUTOR_MALLOC_ERROR,
-    EXECUTOR_ACCESS_ERROR,
-    EXECUTOR_HEREDOC_ERROR,
-    STDSTREAM_RESTORE_ERROR,
-}   exitcode;
-
 //main.c
 t_shell	*minishell_loop(t_shell *shell, char *prompt);
 char    **arrdup(char **env);

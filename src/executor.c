@@ -7,14 +7,14 @@ int	execute(t_simple_cmds *cmd, char **envp)
 	{
 		ft_putstr_fd(cmd->str[0], 2);
 		ft_putstr_fd(": access failure\n", 2);
-		return (EXECUTOR_EXEC_ERROR);
+		return (-1);
 	}
 	if (execve(get_path(cmd->str[0], envp), cmd->str, envp) == -1)
 	{
 		ft_putstr_fd(cmd->str[0], 2);
 		ft_putstr_fd(": command not found\n", 2);
 	}
-	return (EXECUTOR_EXEC_ERROR);
+	return (-1);
 }
 
 int	**create_pipes(t_shell *shell, int **fd)
@@ -63,7 +63,6 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 			pid[i] = fork();
 			if (pid[i] < 0)
 			{
-				perror("fork");
 				i = shell->amount_of_cmds;
 				while (i >= 0)
 				{
@@ -71,18 +70,18 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 					close(fd[i][1]);
 					i--;
 				}
-				return (EXECUTOR_FORK_ERROR);
+				return (-1);
 			}
 			if (pid[i] == 0)
 			{
-				ft_printf("aoc is %d, cmd index is %d\n", shell->amount_of_cmds, i);
 				child_process(shell, fd, i);
+				return (-1);
 			}
 		}
 		else if (shell->cmds->builtin)
 		{
 			if (execute_builtin(shell, fd, shell->cmds->index))
-				return (EXECUTOR_EXEC_ERROR);
+				return (-1);
 		}
 		shell->cmds = shell->cmds->next;
 		i++;
@@ -99,15 +98,12 @@ int	executor(t_shell *shell)
 
 	fd = NULL;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
-	{
-		if(execute_builtin(shell, fd, 0) == 0)
-			return (SUCCESS);
-	}
+			return (execute_builtin(shell, fd, 0));
 	fd = create_pipes(shell, fd);
 	if (!fd)
-		return (free_and_exit(shell, fd, EXECUTOR_PIPE_ERROR));
+		return (free_and_exit(shell, fd, -1));
 	if (fork_processes(shell, pid, fd) != 0)
-		return (free_and_exit(shell, fd, EXECUTOR_FORK_ERROR));
+		return (free_and_exit(shell, fd, -1));
 	//this call will close all fds
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
 	i = 0;
@@ -119,5 +115,5 @@ int	executor(t_shell *shell)
 		i++;
 	}
 	free_i_array(fd);
-	return (SUCCESS);
+	return (0);
 }

@@ -11,7 +11,7 @@ int     execute(t_simple_cmds *cmd, char **envp);
 
 //exec_children.c
 int		execute_builtin(t_shell *shell, int **fd, int i);
-void	child_process(t_shell *shell, int	**fd, int i);
+int	child_process(t_shell *shell, int	**fd, int i);
 
 //exec_redir.c
 int	redirect_input(t_redir *input);
