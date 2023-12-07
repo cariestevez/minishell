@@ -11,11 +11,9 @@ void	free_cmd_array(char **str)
 		{
 			free(str[i]);
 			str[i] = NULL;
-			ft_printf("freed cmd_node->str[%d]\n", i);
 			i++;
 		}
 		free(str);
-		ft_printf("freed cmd_node->str\n");
 	}
 }
 
@@ -45,7 +43,6 @@ void	free_cmds(t_simple_cmds *cmd_node)
 			free(cmd_node->redir);
 			cmd_node->redir = redir_tmp;
 		}
-		ft_printf("BEFORE FREEING CMD ARRAY\n");
 		free_cmd_array(cmd_node->str);
 		cmd_node->str = NULL;
 		free(cmd_node);
@@ -112,16 +109,3 @@ t_redir *new_redir_node (char *file, t_lexertype type)
 	node->next = NULL;
 	return(node);
 }
-
-// t_shell *init_shell()
-// {
-// 	t_shell	*shell;
-
-// 	shell = (t_shell *)malloc(sizeof(t_shell));
-// 	if (!shell)
-// 		return (NULL);
-// 	shell->cmds = NULL;
-// 	shell->amount_of_cmds = 0;
-// 	shell->env = NULL;
-// 	return (shell);
-// }
