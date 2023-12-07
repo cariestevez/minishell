@@ -29,7 +29,7 @@ void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
 	ft_printf("back, lexer freed\n");
 	free(prompt);
 	ft_printf("back, prompt freed\n");
-	ft_printf("AND HERE wthell is in cmds?: %s\n", cmds->str[0]);
+	//ft_printf("AND HERE wthell is in cmds?: %s\n", cmds->str[0]);
 	free_cmds(cmds);
 	ft_printf("back, cmds freed\n");
 	cmds = NULL;
@@ -75,10 +75,11 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 	str = NULL;
 	if (lexer == NULL)
 		return (shell);
-	cmds = ft_parser(lexer, shell);
-	ft_printf("wthell is in cmds?: %s\n", cmds->str[0]);
-	if (cmds == NULL)
+	shell->cmds = ft_parser(lexer, shell);
+	//ft_printf("wthell is in cmds?: %s\n", cmds->str[0]);
+	if (shell->cmds == NULL)
 		return (free_lexer(lexer), shell);
+	print_simple_cmds_list(shell);
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
 	free_on_succes(cmds, lexer, prompt);

@@ -51,7 +51,7 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		ft_printf("still need to think about all the cases");//SEGFAULTING
 		return (-1);
 	}
-	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens));
+	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
 	if (shell->cmds->str == NULL)
 		return (-1);
 	ft_printf("allocated shell->cmds->str\n");
@@ -136,6 +136,13 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 		if (shell->cmds->prev == NULL)
 			head_cmd = shell->cmds;
 		idx = save_simple_cmd(lexer, shell);//saves until the pipe and returns the idx of the position after
+		// if (idx == -1)
+		// {
+		// 	ft_printf("error in save_simple_cmds\n");
+		// 	free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
+		// 	//head_cmd = NULL;
+		// 	return (NULL);
+		// }
 		while (idx > 0 && lexer && lexer->index != idx)//we move the lexer after the pipe
 			lexer = lexer->next;
 		if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
