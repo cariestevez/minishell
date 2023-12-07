@@ -22,14 +22,6 @@ char    **arrdup(char **env)
     return (ret);
 }
 
-void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
-{
-	free_lexer(lexer);
-	free(prompt);
-	free_cmds(cmds);
-	cmds = NULL;
-}
-
 int	empty_str(char *str)
 {
 	int	i;
@@ -52,11 +44,9 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 {
 	char			*str;
 	t_lexer			*lexer;
-	t_simple_cmds	*cmds;
 
 	str = NULL;
 	lexer = NULL;
-	cmds = NULL;
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
 	if (empty_str(str))
@@ -74,7 +64,7 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 	print_simple_cmds_list(shell);
 	shell->exitcode = expander(shell);
 	shell->exitcode = executor(shell);
-	free_on_succes(cmds, lexer, prompt);
+	free_on_succes(shell->cmds, lexer, prompt);
 	return (shell);
 }
 
@@ -99,7 +89,7 @@ int	main(int ac, char **av, char **envp)
 		//	free(shell);
 		//}
 	}
-	free_tab(shell->env);
+	free_cmd_array(shell->env);
 	free(shell);
 	rl_clear_history();
 	return (0);

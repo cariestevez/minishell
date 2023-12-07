@@ -45,6 +45,7 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 			if (lexer->next == NULL)
 			{
 				ft_printf("syntax error near unexpected token 'newline'");
+				ft_printf("returning -1");
 				return (-1);
 			}
 			redir_tokens++;
@@ -53,15 +54,20 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		lexer = lexer->next;
 	}
 	cmd_tokens -= (redir_tokens * 2);
-	if (cmd_tokens <= 0)
-	{
-		ft_printf("still need to think about all the cases\n");//SEGFAULTING sometimes?
-		return (-1);
-	}
+	// if (cmd_tokens <= 0)
+	// {
+	// 	ft_printf("still need to think about all the cases\n");//SEGFAULTING sometimes?
+	// 	return (-1);
+	// }
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
 	if (shell->cmds->str == NULL)
-		return (-1);
+	{
+		ft_printf("allocation ERROR\n");
+		ft_printf("returning -2\n");
+		return (-2);
+	}
 	ft_printf("allocated shell->cmds->str\n");
+	ft_printf("returning cmd_tokens : %d\n", cmd_tokens);
 	return (cmd_tokens);
 }
 
@@ -90,7 +96,6 @@ t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 
 int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 {
-	int	x = 0;
 	int		i;
 	int		cmd_tokens;
 	int		redir_count;
@@ -122,7 +127,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
 				shell->cmds->str[i] = ft_strdup(lexer->token);
-				x++;
 				i++;
 				cmd_tokens--;
 				lexer = lexer->next;
@@ -134,7 +138,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	if (lexer && lexer->key == l_pipe)
 		lexer = lexer->next;
 	if (lexer == NULL)
-		return (-1);
+		return (-2);
 	return (lexer->index);
 }
 
@@ -152,7 +156,7 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 	shell->amount_of_cmds = count_cmds(lexer);//i iterate the lexer, is it still pointing to the 1st node?
 	if (shell->amount_of_cmds == 0)
 		return (NULL);
-	shell->cmds = new_cmd_node(shell->cmds);
+	shell->cmds = new_cmd_node(NULL);
 	if (shell->cmds == NULL)
 		return (NULL);
 	while (cmd < shell->amount_of_cmds)

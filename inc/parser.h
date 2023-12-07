@@ -1,10 +1,5 @@
-﻿
-#ifndef PARSER_H
+﻿#ifndef PARSER_H
 # define PARSER_H
-
-# include "../libft/libft.h"
-# include <readline/readline.h>
-# include <readline/history.h>
 
 # ifndef NULL
 #  define NULL ((void*)0)
@@ -90,11 +85,5 @@ int		declare_variable(char *var, t_shell *shell);
 char	*variable_expansion(char *str, t_shell *shell);
 char	*replace_variable(char *str, int start, int end, t_shell *shell);
 char	*ft_getenv(char *name, char **env);
-
-//debug.c
-void print_lex(t_lexer *lexer);
-void print_simple_cmds_list(t_shell *shell);
-void print_redir_list(t_redir *head);
-//void	print_cmds(t_simple_cmds *cmds);
 
 #endif

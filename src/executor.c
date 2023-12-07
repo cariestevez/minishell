@@ -118,6 +118,6 @@ int	executor(t_shell *shell)
 			return (status);
 		i++;
 	}
-	free_i_array(fd);
+	free_int_arr(fd);
 	return (SUCCESS);
 }

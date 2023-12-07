@@ -33,15 +33,15 @@ typedef enum    e_exitcode
 
 //main.c
 t_shell	*minishell_loop(t_shell *shell, char *prompt);
+int	empty_str(char *str);
 char    **arrdup(char **env);
-void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
 
 //free.c
+void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
 int		free_lexer(t_lexer *lexer);
-void	free_tab(char **tab);
-void    free_simple_commands(t_simple_cmds *cmds);
-void    free_i_array(int **arr);
-void	get_error_msg(int exitcode);
+void    free_int_arr(int **arr);
+void	free_char_arr(char **str);
+void    free_cmds(t_simple_cmds *cmds);
 
 //builtins
 int		ft_pwd(t_shell *shell, t_simple_cmds *cmd);
@@ -52,5 +52,11 @@ int		ft_echo(t_shell *shell, t_simple_cmds *cmd);
 int		ft_env(t_shell *shell, t_simple_cmds *cmd);
 int		ft_unset(t_shell *shell, t_simple_cmds *cmd);
 int		ft_export(t_shell *shell, t_simple_cmds *cmd);
+
+//debug.c
+void print_lex(t_lexer *lexer);
+void print_simple_cmds_list(t_shell *shell);
+void print_redir_list(t_redir *head);
+//void	print_cmds(t_simple_cmds *cmds);
 
 #endif
