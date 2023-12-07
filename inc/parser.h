@@ -71,9 +71,11 @@ int			open_brackets(char *str);
 int			open_curly(char *str);
 
 //parser.c
-t_simple_cmds *ft_parser(t_lexer *lexer, t_shell *shell);
-int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
-void	add_builtin_ptr(t_simple_cmds *cmd);
+t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell);
+int				save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
+t_redir			*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count);
+int				count_tokens(t_lexer *lexer, t_shell *shell);
+void			add_builtin_ptr(t_simple_cmds *cmd);
 
 //utils_parser.c
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev);

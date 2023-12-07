@@ -58,6 +58,26 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 	return (cmd_tokens);
 }
 
+t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
+{
+	if (lexer->next == NULL)//ERROOOR no file name after redir -> bash retuns syntax error
+		return (NULL);
+	if (redir_count == 1)
+	{
+		shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
+		if (shell->cmds->redir == NULL)
+			return (NULL);
+	}
+	else
+	{
+		shell->cmds->redir->next = new_redir_node(lexer->next->token, lexer->key);
+		if (shell->cmds->redir == NULL)
+			return (NULL);
+		shell->cmds->redir = shell->cmds->redir->next;
+	}
+	return (shell->cmds->redir);
+}
+
 int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 {
 	int	x = 0;
@@ -82,14 +102,9 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			|| lexer->key == l_append || lexer->key == l_heredoc)
 		{
 			redir_count++;
-			if (lexer->next == NULL)//ERROOOR no file name after redir -> bash retuns syntax error
-				return (-1);
-			shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
-			if (shell->cmds->redir == NULL)
-				return (-1);
+			shell->cmds->redir = save_redirection(shell, lexer, redir_count);
 			if (redir_count == 1)
-				redir_head = shell->cmds->redir;
-			shell->cmds->redir = shell->cmds->redir->next;
+				redir_head = save_redirection(shell, lexer, redir_count);
 			lexer = lexer->next->next;
 		}
 		else if (lexer->key == l_non_op)
@@ -97,7 +112,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
 				shell->cmds->str[i] = ft_strdup(lexer->token);
-				ft_printf("allocated shell->cmds->str[%d]\n", x);
 				x++;
 				i++;
 				cmd_tokens--;

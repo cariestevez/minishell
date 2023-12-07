@@ -25,6 +25,7 @@ int	redirect_output(t_redir *output)
 {
 	int 	fd_out;
 
+	ft_printf("redirecting out to %s\n", output->str);
 	if (output->type == l_append )
 		fd_out = open(output->str, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	else

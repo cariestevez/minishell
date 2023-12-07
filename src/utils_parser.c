@@ -103,6 +103,7 @@ t_redir *new_redir_node (char *file, t_lexertype type)
 		return (NULL);
 	node->type = type;
 	node->str = ft_strdup(file);
+	ft_printf("parsing redirection %s\n", file);
 	if (!node->str)
 		return (NULL);
 	node->next = NULL;
