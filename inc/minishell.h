@@ -34,13 +34,13 @@ typedef enum    e_exitcode
 //main.c
 t_shell	*minishell_loop(t_shell *shell, char *prompt);
 char    **arrdup(char **env);
-void	free_on_succes(t_shell *shell, t_lexer *lexer, char *prompt);
+void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
 
 //free.c
 int		free_lexer(t_lexer *lexer);
 void	free_tab(char **tab);
 void    free_simple_commands(t_simple_cmds *cmds);
-void    free_array(int **arr);
+void    free_i_array(int **arr);
 void	get_error_msg(int exitcode);
 
 //builtins

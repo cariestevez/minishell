@@ -50,7 +50,7 @@ typedef   int (*builtin_func)(struct s_shell *, struct s_simple_cmds *);
 
 typedef struct s_simple_cmds
 {
-	char                    **str;//[cmd_exec][arg1][argN]
+	char                    **str;
 	int						index;
 	builtin_func            builtin;
 	struct s_redir			*redir;
@@ -73,16 +73,14 @@ int			open_curly(char *str);
 //parser.c
 t_simple_cmds *ft_parser(t_lexer *lexer, t_shell *shell);
 int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
-//t_lexer	*parse_op(t_lexer *lexer, t_simple_cmds *cmd);
-//int	scan_tokens(t_lexer *lexer, int token, t_shell *shell, int cmd);
 void	add_builtin_ptr(t_simple_cmds *cmd);
 
 //utils_parser.c
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev);
 void	free_cmds(t_simple_cmds *cmd_node);
+void	free_cmd_array(char **str);
 int	count_cmds(t_lexer	*lexer);
 t_redir *new_redir_node(char *file, t_lexertype type);
-
 
 //expander.c
 int 	expander(t_shell *shell);

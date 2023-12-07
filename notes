@@ -22,6 +22,7 @@ CAT:    when running cat without args, prints multiple \n and waits for input
                              : if input file doesn't exist --> open: Bad file descriptor and waits for input
 
 PIPES: when cmd | not_valid_cmd : infinite loooooooooop
+FREEING/EXITING: if execute doesnt find command, frees invalid pointer -->> I solved it commenting out a line in your free_and_exit function
 
 EXECUTION: in some cases, minishell prints a newline before the expected output???
 

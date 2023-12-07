@@ -57,6 +57,7 @@ int	execute_builtin(t_shell *shell, int **fd, int i)
 
 void	child_process(t_shell *shell, int **fd, int i)
 {
+	ft_printf("aoc is %d, cmd index is %d. shell->cmds->idx is %d\n", shell->amount_of_cmds, i, shell->cmds->index);
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
 	while (shell->cmds->index != i)
 		shell->cmds = shell->cmds->next;

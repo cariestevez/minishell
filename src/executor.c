@@ -22,7 +22,7 @@ int	**create_pipes(t_shell *shell, int **fd)
 	int	i;
 
 	i = 0;
-	fd = ft_calloc(sizeof(int *), shell->amount_of_cmds);
+	fd = ft_calloc(sizeof(int *), shell->amount_of_cmds + 1);
 	if (!fd)
 		return (fd);
 	while (i < shell->amount_of_cmds)
@@ -74,7 +74,10 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 				return (EXECUTOR_FORK_ERROR);
 			}
 			if (pid[i] == 0)
+			{
+				ft_printf("aoc is %d, cmd index is %d\n", shell->amount_of_cmds, i);
 				child_process(shell, fd, i);
+			}
 		}
 		else if (shell->cmds->builtin)
 		{
@@ -115,6 +118,6 @@ int	executor(t_shell *shell)
 			return (status);
 		i++;
 	}
-	free_array(fd);
+	free_i_array(fd);
 	return (SUCCESS);
 }
