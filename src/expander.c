@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char *replace_variable(char *str, int start, int end, t_shell *shell)
+char *get_expanded_variable(char *str, int start, int end, t_shell *shell)
 { 
     char    *var;
     char    *tmp;
@@ -42,7 +42,7 @@ char    *variable_expansion(char *str, t_shell *shell)
         {
             start = i;
             i += 2;
-            str = replace_variable(str, start, i, shell);
+            str = get_expanded_variable(str, start, i, shell);
             if (!str)
                 return (NULL);
         }
@@ -52,7 +52,7 @@ char    *variable_expansion(char *str, t_shell *shell)
             i++;
             while (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0)
                 i++;
-            str = replace_variable(str, start, i, shell);
+            str = get_expanded_variable(str, start, i, shell);
             if (!str)
                 return (NULL);
         }
@@ -61,30 +61,61 @@ char    *variable_expansion(char *str, t_shell *shell)
     return (str);
 }
 
+static int replace_variable(char *var, char *new_var, t_shell *shell, int i)
+{
+    char    **current_env;
+
+    current_env = ft_split(shell->env[i], '=');
+   // ft_printf("checking %s\n", current_env[0]);
+    if (ft_strncmp(current_env[0], new_var, ft_strlen(new_var)) == 0)
+    {
+        free(current_env);
+        free(new_var);
+        free(shell->env[i]);
+	    shell->env[i] = ft_strdup(var);
+        return (0);
+    }
+    free(current_env);
+    return (1);
+}
+
+static int add_variable(char *var, t_shell *shell, int i)
+{
+    char    **new_env;
+
+    new_env = ft_calloc(sizeof(char *), i + 2);
+    if (!new_env)
+        return (-1);
+    new_env[i + 1] = NULL;
+    new_env[i] = ft_strdup(var);
+    while (--i >= 0)
+        new_env[i] = ft_strdup(shell->env[i]);
+    free(shell->env);
+    shell->env = new_env;
+    return (0);
+}
+
 int		declare_variable(char *var, t_shell *shell)
 {
-	//the syntax of var should be name=[value]
-    //adds the new variable to the end of the array
-	int	i;
+	int	                  i;
+    char         **new_var;
 
 	i = 0;
-    if (!shell->env)
-        return (-1);
-    if (ft_strchr(var, '=') == 0)
+    if (ft_strrchr(var, '=') == 0)
         return (-1);
     variable_expansion(var, shell);
+    new_var = ft_split(var, '=');
     while (shell->env[i] != NULL)
     {
         if (ft_strncmp(shell->env[i], var, ft_strlen(var)) == 0)
             return (1);
+        if (replace_variable(var, new_var[0], shell, i) == 0)
+            return (0);
 		i++;
     }
-    free(shell->env[i]);
-	shell->env[i] = ft_strdup(var);
-    if (!shell->env[i])
-        return (perror("strdup"), -1);
-    shell->env[i + 1] = NULL;
-	return (0);
+    free(new_var);
+    add_variable(var, shell, i);
+    return (0);
 }
 
 int expander(t_shell *shell)

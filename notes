@@ -1,6 +1,7 @@
 !missing ft_exit();!
 
-EXPORT: segfault
+EXPORT: should overwrite variable names that already exist and not add a new one!!
+segfault
 (). export var=test | echo $var
     should display \n, but segfaults
 
@@ -8,6 +9,8 @@ PARSER: count_tokens: when number of cmds < num of redirections ->segfault
 
 PARSING+REDIRECTIONS: if input = "> file", bash creates thefile and return the prompt. minishell segfaults
                         (I need to come up with a solution)
+                        if redirectons after the first one are not separated by whitespace, they are pased as command args and not redirections
+                        ex. "ls >a>b>c"
 
 REDIRECTIONS:
                 if not_valid_cmd > file1 > file2 : creates the 1st file (sometimes also the 2nd) prints multiple \n and waits for input

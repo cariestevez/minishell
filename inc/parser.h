@@ -88,7 +88,7 @@ t_redir *new_redir_node(char *file, t_lexertype type);
 int 	expander(t_shell *shell);
 int		declare_variable(char *var, t_shell *shell);
 char	*variable_expansion(char *str, t_shell *shell);
-char	*replace_variable(char *str, int start, int end, t_shell *shell);
+char	*get_expanded_variable(char *str, int start, int end, t_shell *shell);
 char	*ft_getenv(char *name, char **env);
 
 //debug.c
