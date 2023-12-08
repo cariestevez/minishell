@@ -50,9 +50,8 @@ char    *variable_expansion(char *str, t_shell *shell)
             start = i;
             ++i;
             while (str[i] != '\0' && (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0))
-                ft_printf("str[i] is %c\n", str[i++]);
+                ++i;
             str = get_expanded_variable(str, start, i, shell);
-            ft_printf("expanded str is %s\n", str);
             if (!str)
                 return (NULL);
            i = ft_strlen(str) - 1;
@@ -67,7 +66,6 @@ static int replace_variable(char *var, char *new_var, t_shell *shell, int i)
     char    **current_env;
 
     current_env = ft_split(shell->env[i], '=');
-   // ft_printf("checking %s\n", current_env[0]);
     if (ft_strncmp(current_env[0], new_var, ft_strlen(new_var)) == 0)
     {
         free(current_env);

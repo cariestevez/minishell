@@ -97,7 +97,7 @@ int	main(int ac, char **av, char **envp)
 		shell = minishell_loop(shell, PROMPT);
 		if (shell->exitcode >= 1000)
 			break ;
-		//ft_printf("returned to main, exitcode %d\n", shell->exitcode);
+		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
 		//if exitsignal
 		//{
 		//	free_tab(shell->env);

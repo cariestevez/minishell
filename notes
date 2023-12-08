@@ -35,4 +35,4 @@ RANDOM: when pressing tab(without enter) it 'executes' ls -a?!
 MEMORY: Something that shouldnt be freed is being freed after returning to main, running a command second time causes problems where no problems occured on the first command
 ex.
         commands and anything inside is being freed (solved in my branch but fucked up other things)
-    memory leak when piping with a builtin
+        memory leak when piping with a builtin

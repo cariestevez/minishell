@@ -96,7 +96,7 @@ int	executor(t_shell *shell)
 	head = shell->cmds;
 	fd = NULL;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
-			return (execute_builtin(shell, fd, 0));
+			return (execute_builtin(shell, fd, 0), errno);
 	fd = create_pipes(shell, fd);
 	if (!fd)
 		return (free_and_exit(shell, fd));
