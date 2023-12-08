@@ -16,8 +16,7 @@ char *get_expanded_variable(char *str, int start, int end, t_shell *shell)
         free(var);
         var = ft_getenv(tmp, shell->env);
         if (!var)
-            var = "";
-         free(tmp);
+            return(free(tmp), "");
     }
     ret = ft_substr(str, 0, start);
     tmp = ft_strjoin(ret, var);
@@ -49,14 +48,16 @@ char    *variable_expansion(char *str, t_shell *shell)
         if (str[i] == '$' && str[i + 1] != '\0' && (ft_isalnum(str[i + 1]) == 1 || ft_strchr("_{}", str[i + 1]) != 0))
         {
             start = i;
-            i++;
-            while (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0)
-                i++;
+            ++i;
+            while (str[i] != '\0' && (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0))
+                ft_printf("str[i] is %c\n", str[i++]);
             str = get_expanded_variable(str, start, i, shell);
+            ft_printf("expanded str is %s\n", str);
             if (!str)
                 return (NULL);
+           i = ft_strlen(str) - 1;
         }
-        i++;
+        ++i;
     }
     return (str);
 }
@@ -108,9 +109,9 @@ int		declare_variable(char *var, t_shell *shell)
     while (shell->env[i] != NULL)
     {
         if (ft_strncmp(shell->env[i], var, ft_strlen(var)) == 0)
-            return (1);
+            return (free(new_var), 1);
         if (replace_variable(var, new_var[0], shell, i) == 0)
-            return (0);
+            return (free(new_var), 0);
 		i++;
     }
     free(new_var);

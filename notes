@@ -1,6 +1,6 @@
 !missing ft_exit();!
 
-EXPORT: should overwrite variable names that already exist and not add a new one!!
+EXPORT:
 segfault
 (). export var=test | echo $var
     should display \n, but segfaults

@@ -75,7 +75,6 @@ t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 
 int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 {
-	int	x = 0;
 	int		i;
 	int		cmd_tokens;
 	int		redir_count;
@@ -106,7 +105,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
 				shell->cmds->str[i] = ft_strdup(lexer->token);
-				x++;
 				i++;
 				cmd_tokens--;
 				lexer = lexer->next;
