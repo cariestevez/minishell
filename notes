@@ -3,7 +3,6 @@
 EXPORT: segfault
 (). export var=test | echo $var
     should display \n, but segfaults
-echo: prints an empty line when no arguments
 
 PARSER: count_tokens: when number of cmds < num of redirections ->segfault
 
@@ -14,6 +13,13 @@ REDIRECTIONS:
                 if not_valid_cmd > file1 > file2 : creates the 1st file (sometimes also the 2nd) prints multiple \n and waits for input
 
 EXPANDER: remove quotes //add check to exclude empty str in between quotations?
+QUOTATIONS = what the hell are the rules for this:
+emollebr@c4a7c6:~/A_project_directory/minishell_collab$ echo "'"'"'$USER'"'"'"
+'"emollebr"'
+emollebr@c4a7c6:~/A_project_directory/minishell_collab$ echo '"'"'$USER'"'"'
+"'emollebr'"
+emollebr@c4a7c6:~/A_project_directory/minishell_collab$ echo "'"'$USER'"'"
+'$USER'
 
 CD: sets error code to 0 after perror, even though there was an error
 
@@ -21,14 +27,9 @@ CAT:    when running cat without args, prints multiple \n and waits for input
         cat < input > output    : if input file exists, doens't create the output file just prints input file
                              : if input file doesn't exist --> open: Bad file descriptor and waits for input
 
-EXECUTION: executing builtins with pipes:
-if first command is a builtin, it writes to a broken pipe? signal 13 sigpipe
-if the second command is a builtin, waitpid has an error waiting for uninitialized bytes
-
 RANDOM: when pressing tab(without enter) it 'executes' ls -a?!
-
-LEXER: with "env" "pwd" "cd ~" and soem other commands, minishell segfaults in the lexer, but it doesnt with fx "export" or "cd /home"??
 
 MEMORY: Something that shouldnt be freed is being freed after returning to main, running a command second time causes problems where no problems occured on the first command
 ex.
         commands and anything inside is being freed (solved in my branch but fucked up other things)
+    memory leak when piping with a builtin

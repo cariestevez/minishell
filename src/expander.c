@@ -107,11 +107,15 @@ int expander(t_shell *shell)
                 shell->cmds->str[i] = shell->cmds->str[i + 1];
                 free(tmp);
             }
+            if (shell->cmds->str[i][0] == '\"')
+                shell->cmds->str[i] = ft_strtrim(shell->cmds->str[i], "\"");
+            else if (shell->cmds->str[i][0] == '\'')
+                shell->cmds->str[i] = ft_strtrim(shell->cmds->str[i], "\'");
+            ft_printf("str is %s\n", shell->cmds->str[i]);
             i++;
         }
         shell->cmds = shell->cmds->next;
     }
-    //quote removal
     shell->cmds = head;
     return (0);
 }

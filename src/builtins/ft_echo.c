@@ -4,7 +4,6 @@ static int	print_args(char **display, t_shell *shell, int i)
 {
 	while (display[i] != NULL)
 	{
-		ft_putstr_fd("echo wants to write\n", 1);
 		display[i] = variable_expansion(display[i], shell);
 		if (display[i] == NULL)
 			return (-1);

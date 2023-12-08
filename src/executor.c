@@ -60,31 +60,25 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 	i = 0;
 	while (shell->cmds != NULL && i < shell->amount_of_cmds)
 	{
-		if (!shell->cmds->builtin)
+		pid[i] = fork();
+		if (pid[i] < 0)
 		{
-			pid[i] = fork();
-			if (pid[i] < 0)
+			i = shell->amount_of_cmds;
+			while (i >= 0)
 			{
-				i = shell->amount_of_cmds;
-				while (i >= 0)
-				{
-					close(fd[i][0]);
-					close(fd[i][1]);
-					i--;
-				}
-				return (-1);
+				close(fd[i][0]);
+				close(fd[i][1]);
+				i--;
 			}
-			if (pid[i] == 0)
-			{
-				child_process(shell, fd, i);
-				return (-1);
-			}
+			return (-1);
 		}
-		else if (shell->cmds->builtin)
+		if (pid[i] == 0 && !shell->cmds->builtin)
 		{
-			if (execute_builtin(shell, fd, i))
-				return (-1);
+			child_process(shell, fd, i);
+			return (-1);
 		}
+		else if (pid[i] == 0 && shell->cmds->builtin)
+			return (execute_builtin(shell, fd, i) + 1000);
 		shell->cmds = shell->cmds->next;
 		i++;
 	}

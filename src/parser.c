@@ -37,7 +37,6 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 
 	cmd_tokens = 0;
 	redir_tokens = 0;
-	ft_printf("---> count_tokens\n");
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
@@ -47,10 +46,7 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 	}
 	cmd_tokens -= (redir_tokens * 2);
 	if (cmd_tokens <= 0)
-	{
-		ft_printf("still need to think about all the cases\n");//SEGFAULTING sometimes?
 		return (-1);
-	}
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
 	if (shell->cmds->str == NULL)
 		return (-1);
@@ -90,7 +86,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	redir_head = NULL;
 	redir_count = 0;
 	head = lexer;
-	ft_printf("---> save_simple_cmd\n");
 	cmd_tokens = count_tokens(lexer, shell);
 	if (cmd_tokens <= 0)
 		return (-1);
@@ -111,7 +106,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			while (cmd_tokens > 0 && lexer && lexer->key == l_non_op)
 			{
 				shell->cmds->str[i] = ft_strdup(lexer->token);
-				ft_printf("token saves is %s\n", shell->cmds->str[i]);
 				x++;
 				i++;
 				cmd_tokens--;
@@ -137,7 +131,6 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 
 	idx = 0;
 	cmd = 0;
-	ft_printf("---> ft_parser\n");
 	shell->amount_of_cmds = count_cmds(lexer);//i iterate the lexer, is it still pointing to the 1st node?
 	if (shell->amount_of_cmds == 0)
 		return (NULL);
@@ -187,7 +180,6 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 	head = cmd;
 	while (cmd != NULL)
 	{
-		ft_printf("add builtin: cmd->str is %s\n", cmd->str[0]);
 		if (ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
 			cmd->builtin = &ft_cd;
 		else if (ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)

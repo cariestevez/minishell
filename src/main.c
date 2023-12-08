@@ -69,7 +69,6 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 		return (shell);
 	}
 	shell->cmds = ft_parser(lexer, shell);
-	//ft_printf("wthell is in cmds?: %s\n", cmds->str[0]);
 	if (shell->cmds == NULL)
 	{
 		shell->exitcode = errno;
@@ -96,9 +95,9 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		shell = minishell_loop(shell, PROMPT);
-		if (shell->exitcode > 1000)
+		if (shell->exitcode >= 1000)
 			break ;
-		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
+		//ft_printf("returned to main, exitcode %d\n", shell->exitcode);
 		//if exitsignal
 		//{
 		//	free_tab(shell->env);
