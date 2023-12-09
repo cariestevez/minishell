@@ -40,6 +40,14 @@ int	empty_str(char *str)
 	return (1);
 }
 
+void sig_handler_inter(int signum)
+{
+	handle_me = signum;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	rl_replace_line("", 0);
+	rl_on_new_line();
+}
+
 t_shell	*minishell_loop(t_shell *shell, char *prompt)
 {
 	char			*str;
@@ -47,6 +55,10 @@ t_shell	*minishell_loop(t_shell *shell, char *prompt)
 
 	str = NULL;
 	lexer = NULL;
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sig_handler_inter);
+	// if (handle_me == SIGQUIT)
+	// 	return (shell);
 	prompt = variable_expansion(prompt, shell);
 	str = readline(prompt);
 	if (empty_str(str))
@@ -72,6 +84,8 @@ int	main(int ac, char **av, char **envp)
 {
 	t_shell	*shell;
 
+	if (ac != 1)
+		return (0);
 	shell = ft_calloc(sizeof(t_shell), 1);
 	if (!shell)
 		return (-1);
@@ -83,6 +97,8 @@ int	main(int ac, char **av, char **envp)
 	{
 		shell = minishell_loop(shell, PROMPT);
 		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
+		// signal(SIGINT, sig_handler);
+
 		//if exitsignal
 		//{
 		//	free_tab(shell->env);

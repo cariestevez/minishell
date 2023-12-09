@@ -6,7 +6,8 @@
 # include "executor.h"
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <errno.h>
+# include <signal.h>
+# include <sys/ioctl.h>
 # include <sys/types.h>
 # include <fcntl.h>
 # include <sys/wait.h>
@@ -15,6 +16,8 @@
 # define BUFFER 500
 # define PROMPT "\033[35mHello \033[36m${USER}\033[0m$ "
 # define WELCOME "welcome.txt"
+
+static volatile sig_atomic_t handle_me = 0;
 
 typedef enum    e_exitcode
 {
