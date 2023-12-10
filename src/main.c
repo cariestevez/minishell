@@ -94,7 +94,7 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	while (1)
 	{
-		shell = minishell_loop(shell, PROMPT);
+		shell = minishell_loop(shell, ft_strdup(PROMPT));
 		if (shell->exitcode >= 1000)
 			break ;
 		ft_printf("returned to main, exitcode %d\n", shell->exitcode);

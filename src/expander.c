@@ -14,12 +14,14 @@ char *get_expanded_variable(char *str, int start, int end, t_shell *shell)
         var = ft_substr(str, start, end - start);
         tmp = ft_strtrim(var, "}${"); 
         free(var);
-        var = ft_getenv(tmp, shell->env);
+        var = ft_strdup(ft_getenv(tmp, shell->env));
+        free(tmp);
         if (!var)
-            return(free(tmp), "");
+            return("");
     }
     ret = ft_substr(str, 0, start);
     tmp = ft_strjoin(ret, var);
+    free(var);
     free(ret);
     append = ft_substr(str, end, ft_strlen(str) - end + 1);
     ret = ft_strjoin(tmp, append);
@@ -32,6 +34,7 @@ char    *variable_expansion(char *str, t_shell *shell)
 {
     int     i;
     int     start;
+    char    *tmp;
    
     i = 0;
     start = 0;
@@ -41,7 +44,9 @@ char    *variable_expansion(char *str, t_shell *shell)
         {
             start = i;
             i += 2;
-            str = get_expanded_variable(str, start, i, shell);
+            tmp = get_expanded_variable(str, start, i, shell);
+            free(str);
+            str = tmp;
             if (!str)
                 return (NULL);
         }
@@ -51,7 +56,9 @@ char    *variable_expansion(char *str, t_shell *shell)
             ++i;
             while (str[i] != '\0' && (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0))
                 ++i;
-            str = get_expanded_variable(str, start, i, shell);
+            tmp = get_expanded_variable(str, start, i, shell);
+            free(str);
+            str = tmp;
             if (!str)
                 return (NULL);
            i = ft_strlen(str) - 1;
