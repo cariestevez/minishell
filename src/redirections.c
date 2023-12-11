@@ -5,7 +5,7 @@ int	redirect_input(t_redir *input)
 	int 	fd_in;
 
 	if (access(input->str, R_OK) == -1)
-		return (ft_printf("minishell: %s: No such file or directory\n", input), -1);
+		return (ft_printf("minishell: %s: No such file or directory\n", input->str), -1);
 	fd_in = open(input->str, O_RDONLY, 0777);
 	if (fd_in == -1)
 	{

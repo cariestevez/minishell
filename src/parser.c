@@ -139,13 +139,6 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 	while (cmd < shell->amount_of_cmds)
 	{
 		idx = save_simple_cmd(lexer, shell);//saves until the pipe and returns the idx of the position after
-		// if (idx == -1)
-		// {
-		// 	ft_printf("error in save_simple_cmds\n");
-		// 	free_cmds(head_cmd);//frees previous shell->cmds saved in the loop in case
-		// 	//head_cmd = NULL;
-		// 	return (NULL);
-		// }
 		while (idx > 0 && lexer && lexer->index != idx)//we move the lexer after the pipe
 			lexer = lexer->next;
 		if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
