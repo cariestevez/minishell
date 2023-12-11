@@ -1,18 +1,18 @@
 #include "minishell.h"
-#include "minishell.h"
 
-char *get_expanded_variable(char *str, int start, int end, t_shell *shell)
+int get_expanded_variable(char **str, int start, int end, t_shell *shell)
 { 
     char    *var;
     char    *tmp;
     char    *ret;
     char    *append;
+    int     new_index;
     
-    if (str[start] == '$' && str[start + 1] == '?')
+    if ((*str)[start] == '$' && (*str)[start + 1] == '?')
         var = ft_itoa(shell->exitcode);
     else
     {
-        var = ft_substr(str, start, end - start);
+        var = ft_substr(*str, start, end - start);
         tmp = ft_strtrim(var, "}${"); 
         free(var);
         var = ft_getenv(tmp, shell->env);
@@ -20,15 +20,16 @@ char *get_expanded_variable(char *str, int start, int end, t_shell *shell)
             var = "";
          free(tmp);
     }
-    ret = ft_substr(str, 0, start);
+    ret = ft_substr(*str, 0, start);
     tmp = ft_strjoin(ret, var);
     free(ret);
-    append = ft_substr(str, end, ft_strlen(str) - end + 1);
-    ret = ft_strjoin(tmp, append);
+    new_index = ft_strlen(tmp);
+    append = ft_substr(*str, end, ft_strlen(*str) - end + 1);
+    free(*str);
+    *str = ft_strjoin(tmp, append);
     free(tmp);
     free(append);
-    free(str);
-    return (ret);
+    return (new_index);
 }
 
 char    *check_for_variables(char *str, t_shell *shell)
@@ -42,7 +43,6 @@ char    *check_for_variables(char *str, t_shell *shell)
     q_flag = -1;
     while (str[i] != '\0')
     {
-        //ft_printf("cfv is at str[i] == %c\n", str[i]);
         if (str[i] == '\"')
             q_flag += -1;
         if (str[i] == '\'' && q_flag == -1)
@@ -53,9 +53,7 @@ char    *check_for_variables(char *str, t_shell *shell)
         }
         if  (str[i] == '$' && str[i + 1] == '?')
         {
-            start = i;
-            i += 2;
-            str = get_expanded_variable(str, start, i, shell);
+            i = get_expanded_variable(&str, i, i + 2, shell) - 1;
             if (!str)
                 return (NULL);
         }
@@ -63,9 +61,9 @@ char    *check_for_variables(char *str, t_shell *shell)
         {
             start = i;
             i++;
-            while (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0)
+            while (str[i] != '\0' && (ft_isalnum(str[i]) == 1 || ft_strchr("_{}", str[i]) != 0))
                 i++;
-            str = get_expanded_variable(str, start, i, shell);
+            i = get_expanded_variable(&str, start, i, shell) - 1;
             if (!str)
                 return (NULL);
         }
@@ -94,7 +92,7 @@ int expander(t_shell *shell)
                 shell->cmds->str[i] = shell->cmds->str[i + 1];
                 free(tmp);
             }
-            quote_removal(shell, i),
+            quote_removal(shell, i);
             i++;
         }
         shell->cmds = shell->cmds->next;
