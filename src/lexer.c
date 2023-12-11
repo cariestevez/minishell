@@ -60,12 +60,12 @@ int    read_command_line(t_lexer *lexer, char *str)
 	flag = 0;
 	while (str[i] != '\0' && str[i] == ' ')
 		i++;
-	if (str[i] == '#')//=comment-bash just returns the prompt
+	if (str[i] == '#')
 		return (0);
 	while (i < (int)ft_strlen(str))
 	{
 		start = i;
-		if (str[i] == '\'' || str[i] == '"' || str[i] == '(' || str[i] == '{')//if delimited str
+		if (str[i] == '\'' || str[i] == '"' || str[i] == '(' || str[i] == '{')
 		{
 			if (str[i] == '\'' || str[i] == '"')
 				temp = str[i];
@@ -92,8 +92,8 @@ int    read_command_line(t_lexer *lexer, char *str)
 				i++;
 			if (!(save_token(lexer, str, start, i - start)))
 				return (0);
-			if (str[i] == ' ')//without the condition it would go backwards and save operators twice
-				i--;// what if i=0?
+			if (str[i] == ' ')
+				i--;
 		}
 		i += flag + 1;
 		if (i > (int)ft_strlen(str))
@@ -105,9 +105,6 @@ int    read_command_line(t_lexer *lexer, char *str)
 	return (1);
 }
 
-//initializes the list and saves the pointer to the 1st node
-//discards cmd lines with unclosed quotes/parentheses
-//reiterates the cmd line to get the tokens
 t_lexer	*ft_lexer(char *str)
 {
 	t_lexer     *lexer;
@@ -115,7 +112,6 @@ t_lexer	*ft_lexer(char *str)
 
 	lexer = NULL;
 	head = NULL;
-	ft_printf("---> ft_lexer\n");
 	if (open_brackets(str) || open_quotes(str) || open_curly(str))
 	{
 		ft_printf("syntax error near unexpected token");//print specific for each case?

@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-// initializes the new nodes of the lexer list
 t_lexer *new_lexnode(t_lexer *prev, int index)
 {
 	t_lexer *node;
@@ -16,7 +15,6 @@ t_lexer *new_lexnode(t_lexer *prev, int index)
 	return (node);
 }
 
-// searches for unclosed quotes
 int open_quotes(char *str)
 {
 	int	i;
@@ -42,7 +40,6 @@ int open_quotes(char *str)
 	return (0);
 }
 
-// searches for unclosed prentheses
 int	open_brackets(char *str)
 {
 	int	i;
@@ -62,11 +59,11 @@ int	open_brackets(char *str)
 			while (str[i] != '\0' && str[i] != bracket)
 				i++;
 			if (str[i] == bracket && bracket == 41)
-				return(0);//brackets closed and correct
+				return(0);
 			if ((str[i] == bracket && bracket == 40) || (str[i] == '\0' && bracket == 41))
-				return (41);//closed the other way around or unclosed )
+				return (41);
 			else if (str[i] == '\0' && bracket == 40)
-				return(40);//unclosed (
+				return(40);
 		}
 		i++;
 	}
@@ -93,11 +90,11 @@ int	open_curly(char *str)
 			while (str[i] != '\0' && str[i] != curly)
 				i++;
 			if (str[i] == curly && curly == 125)
-				return (0);//braces closed and correct
+				return (0);
 			else if ((str[i] == curly && curly == 123) || (str[i] == '\0' && curly == 125))
-				return (125);//closed the other way around or unclosed }
+				return (125);
 			else if (str[i] == '\0' && curly == 123)
-				return (123);//unclosed {
+				return (123);
 		}
 		i++;
 	}

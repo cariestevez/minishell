@@ -78,9 +78,7 @@ t_shell	*minishell_loop(t_shell *shell)
 		shell->exitcode = errno;
 		return (free_lexer(lexer), shell);
 	}
-	print_simple_cmds_list(shell);
 	shell->exitcode = expander(shell);
-	print_simple_cmds_list(shell);
 	shell->exitcode = executor(shell);
 	free_on_succes(head, lexer, prompt);
 	return (shell);
@@ -102,12 +100,8 @@ int	main(int ac, char **av, char **envp)
 		shell = minishell_loop(shell);
 		if (shell->exitcode >= 1000)
 			break ;
-		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
 		//if exitsignal
-		//{
-		//	free_tab(shell->env);
-		//	free(shell);
-		//}
+		// break ;
 	}
 	free_char_arr(shell->env);
 	free(shell);
