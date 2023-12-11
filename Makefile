@@ -12,10 +12,11 @@ SRCS := 	./src/main.c \
 		./src/parser.c \
 		./src/utils_parser.c \
 		./src/executor.c \
-		./src/exec_utils.c \
+		./src/utils_exec.c \
 		./src/free.c \
 		./src/subprocess.c \
 		./src/expander.c \
+		./src/utils_expander.c \
 		./src/redirections.c \
 		./src/debug.c \
 		$(BUILTINS)ft_cd.c \

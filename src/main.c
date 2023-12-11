@@ -48,14 +48,15 @@ int	empty_str(char *str)
 	return (1);
 }
 
-t_shell	*minishell_loop(t_shell *shell, char *prompt)
+t_shell	*minishell_loop(t_shell *shell)
 {
 	char			*str;
 	t_lexer			*lexer;
+	char			*prompt;
 
 	str = NULL;
 	lexer = NULL;
-	prompt = variable_expansion(prompt, shell);
+	prompt = check_for_variables(ft_strdup(PROMPT), shell);
 	str = readline(prompt);
 	if (empty_str(str))
 		return (shell);
@@ -94,7 +95,7 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	while (1)
 	{
-		shell = minishell_loop(shell, ft_strdup(PROMPT));
+		shell = minishell_loop(shell);
 		if (shell->exitcode >= 1000)
 			break ;
 		ft_printf("returned to main, exitcode %d\n", shell->exitcode);
@@ -104,7 +105,7 @@ int	main(int ac, char **av, char **envp)
 		//	free(shell);
 		//}
 	}
-	free_tab(shell->env);
+	free_char_arr(shell->env);
 	free(shell);
 	rl_clear_history();
 	return (errno);

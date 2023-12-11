@@ -50,14 +50,14 @@ char	*get_path(char *cmd, char **env)
 		free(path_elem);
 		if (access(path, F_OK | X_OK) == 0)
 		{
-			free_tab(s_cmd);
+			free_char_arr(s_cmd);
 			return (path);
 		}
 		free(path);
 		i++;
 	}
-	free_tab(fullpath);
-	free_tab(s_cmd);
+	free_char_arr(fullpath);
+	free_char_arr(s_cmd);
 	return (cmd);
 }
 char	*ft_getenv(char *name, char **env)
@@ -86,11 +86,10 @@ char	*ft_getenv(char *name, char **env)
 
 int    free_and_exit(t_shell *shell, int **fd)
 {
-    //this function call will close ALL fds
 	if (fd != NULL)
 	{
 		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
-	 	free_i_array(fd); //when commenting it out, we don't get the free() invalid pointer anymore
+	 	free_int_arr(fd);
 	}
 	return (errno);
 }

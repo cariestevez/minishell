@@ -17,16 +17,15 @@
 # define WELCOME "welcome.txt"
 
 //main.c
-t_shell	*minishell_loop(t_shell *shell, char *prompt);
+t_shell	*minishell_loop(t_shell *shell);
 char    **arrdup(char **env);
 void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
 
 //free.c
+void	free_char_arr(char **tab);
+void    free_int_arr(int **arr);
 int		free_lexer(t_lexer *lexer);
-void	free_tab(char **tab);
 void    free_simple_commands(t_simple_cmds *cmds);
-void    free_i_array(int **arr);
-void	get_error_msg(int exitcode);
 
 //builtins
 int		ft_pwd(t_shell *shell, t_simple_cmds *cmd);

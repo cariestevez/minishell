@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	free_tab(char **tab)
+void	free_char_arr(char **tab)
 {
 	int	i;
 
@@ -15,7 +15,7 @@ void	free_tab(char **tab)
 	tab = NULL;
 }
 
-void    free_i_array(int  **arr)
+void    free_int_arr(int  **arr)
 {
     int i;
 
@@ -52,7 +52,7 @@ void    free_simple_commands(t_simple_cmds *cmds)
 	tmp = NULL;
     while (cmds)
     {
-        free_tab(cmds->str);
+        free_char_arr(cmds->str);
 		cmds->str = NULL;
 		while (cmds->redir != NULL)
 		{

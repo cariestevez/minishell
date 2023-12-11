@@ -80,16 +80,18 @@ void			add_builtin_ptr(t_simple_cmds *cmd);
 //utils_parser.c
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev);
 void	free_cmds(t_simple_cmds *cmd_node);
-void	free_cmd_array(char **str);
-int	count_cmds(t_lexer	*lexer);
+int		count_cmds(t_lexer	*lexer);
 t_redir *new_redir_node(char *file, t_lexertype type);
 
 //expander.c
 int 	expander(t_shell *shell);
-int		declare_variable(char *var, t_shell *shell);
-char	*variable_expansion(char *str, t_shell *shell);
+char	*check_for_variables(char *str, t_shell *shell);
 char	*get_expanded_variable(char *str, int start, int end, t_shell *shell);
-char	*ft_getenv(char *name, char **env);
+
+//utils_expander.c
+int		declare_variable(char *var, t_shell *shell);
+int 	quote_removal(t_shell *shell, int i);
+
 
 //debug.c
 void print_lex(t_lexer *lexer);
