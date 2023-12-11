@@ -31,11 +31,9 @@ t_lexertype get_key(char *str)
 // saves the token and its key in the node
 int	save_token(t_lexer *lexer, char *str, int start, int len)
 {
-	ft_printf("---> save_token\n");
 	lexer->token = ft_substr(str, start, len);
 	if (!lexer->token)
 		return (0);
-	ft_printf("allocated lexer->token\n");
 	lexer->key = get_key(lexer->token);
 	if (start + len < (int)ft_strlen(str))
 	{
@@ -60,7 +58,6 @@ int    read_command_line(t_lexer *lexer, char *str)
 	start = 0;
 	temp = 0;
 	flag = 0;
-	ft_printf("---> read_command_line\n");
 	while (str[i] != '\0' && str[i] == ' ')
 		i++;
 	if (str[i] == '#')//=comment-bash just returns the prompt

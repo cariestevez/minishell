@@ -3,13 +3,7 @@
 int	execute(t_simple_cmds *cmd, char **envp)
 {
 	write(2, "\n", 1);
-	if ((get_path(cmd->str[0], envp), F_OK) != 0)
-	{
-		ft_putstr_fd("minishell: ", 1);
-		ft_putstr_fd(cmd->str[0], 2);
-		ft_putstr_fd(": access failure\n", 2);
-		return (-1);
-	}
+	ft_printf("in exec str is %s\n", cmd->str[0]);
 	if (execve(get_path(cmd->str[0], envp), cmd->str, envp) == -1)
 	{
 		ft_putstr_fd("minishell: ", 1);
@@ -95,14 +89,18 @@ int	executor(t_shell *shell)
 
 	head = shell->cmds;
 	fd = NULL;
-	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
+	if (shell->amount_of_cmds == 1)
+	{
+		if (shell->cmds->builtin != NULL)
 			return (execute_builtin(shell, fd, 0), errno);
+		else
+			return (child_process(shell, fd, 0), errno);
+	}
 	fd = create_pipes(shell, fd);
 	if (!fd)
 		return (free_and_exit(shell, fd));
 	if (fork_processes(shell, pid, fd) != 0)
 		return (free_and_exit(shell, fd), errno + 1000);
-	//this call will close all fds
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
 	i = 0;
 	while (i < shell->amount_of_cmds)

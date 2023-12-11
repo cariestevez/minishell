@@ -41,10 +41,6 @@ int	child_process(t_shell *shell, int **fd, int i)
 		if(dup2(fd[i][1], 1) == -1)
 			return (perror("dup2"), -1);
 	}
-	//if (i != 0)
-		//close(fd[i - 1][0]);
-	//if (i != shell->amount_of_cmds - 1)
-	//	close(fd[i][1]);
 	execute(shell->cmds, shell->env);
 	return (-1);
 }

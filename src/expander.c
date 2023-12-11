@@ -67,6 +67,10 @@ char    *check_for_variables(char *str, t_shell *shell)
             if (!str)
                 return (NULL);
         }
+        if (str[i] == '$' && str[i + 1] != '\0' && ft_strchr("\'\"", str[i + 1]) != 0 )
+        {
+            str = ft_strtrim(str, "$");
+        }
         i++;
     }
     return (str);

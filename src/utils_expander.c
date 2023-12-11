@@ -16,13 +16,13 @@ static int replace_variable(char *var, char *new_var, t_shell *shell, int i)
     current_env = ft_split(shell->env[i], '=');
     if (ft_strncmp(current_env[0], new_var, ft_strlen(new_var)) == 0)
     {
-        free(current_env);
+        free_char_arr(current_env);
         free(new_var);
         free(shell->env[i]);
 	    shell->env[i] = ft_strdup(var);
         return (0);
     }
-    free(current_env);
+    free_char_arr(current_env);
     return (1);
 }
 
@@ -37,7 +37,7 @@ static int add_variable(char *var, t_shell *shell, int i)
     new_env[i] = ft_strdup(var);
     while (--i >= 0)
         new_env[i] = ft_strdup(shell->env[i]);
-    free(shell->env);
+    free_char_arr(shell->env);
     shell->env = new_env;
     return (0);
 }
@@ -52,15 +52,17 @@ int		declare_variable(char *var, t_shell *shell)
         return (-1);
     check_for_variables(var, shell);
     new_var = ft_split(var, '=');
+    if (new_var == NULL)
+        return (-1);
     while (shell->env[i] != NULL)
     {
         if (ft_strncmp(shell->env[i], var, ft_strlen(var)) == 0)
-            return (free(new_var), 1);
+            return (free_char_arr(new_var), 1);
         if (replace_variable(var, new_var[0], shell, i) == 0)
-            return (free(new_var), 0);
+            return (free_char_arr(new_var), 0);
 		i++;
     }
-    free(new_var);
+    free_char_arr(new_var);
     add_variable(var, shell, i);
     return (0);
 }

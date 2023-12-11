@@ -20,11 +20,9 @@ QUOTATIONS = what the hell are the rules for this:
 emollebr@c4a7c6:~/A_project_directory/minishell_collab$ echo "'"'"'$USER'"'"'"
 '"emollebr"'
 emollebr@c4a7c6:~/A_project_directory/minishell_collab$ echo '"'"'$USER'"'"'
-"'emollebr'"
+"'emollebr'"                                                                            
 emollebr@c4a7c6:~/A_project_directory/minishell_collab$ echo "'"'$USER'"'"
 '$USER'
-
-CD: sets error code to 0 after perror, even though there was an error
 
 CAT:    when running cat without args, prints multiple \n and waits for input
         cat < input > output    : if input file exists, doens't create the output file just prints input file

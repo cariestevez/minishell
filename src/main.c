@@ -53,9 +53,11 @@ t_shell	*minishell_loop(t_shell *shell)
 	char			*str;
 	t_lexer			*lexer;
 	char			*prompt;
+	t_simple_cmds	*head;
 
 	str = NULL;
 	lexer = NULL;
+	head = NULL;
 	prompt = check_for_variables(ft_strdup(PROMPT), shell);
 	str = readline(prompt);
 	if (empty_str(str))
@@ -70,6 +72,7 @@ t_shell	*minishell_loop(t_shell *shell)
 		return (shell);
 	}
 	shell->cmds = ft_parser(lexer, shell);
+	head = shell->cmds;
 	if (shell->cmds == NULL)
 	{
 		shell->exitcode = errno;
@@ -77,8 +80,9 @@ t_shell	*minishell_loop(t_shell *shell)
 	}
 	print_simple_cmds_list(shell);
 	shell->exitcode = expander(shell);
+	print_simple_cmds_list(shell);
 	shell->exitcode = executor(shell);
-	free_on_succes(shell->cmds, lexer, prompt);
+	free_on_succes(head, lexer, prompt);
 	return (shell);
 }
 
