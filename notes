@@ -5,6 +5,8 @@ BASH BUUUUUUG running  <" " ere for example
 
 !missing ft_exit();!
 
+PARSER:  ex. "ls >a>b>c" if redirectons after the first one are not separated by whitespace, they are pased as command args and not redirections
+________________________________________________________
 EXPORT:
 segfault
 (). export var=test | echo $var
@@ -17,7 +19,6 @@ REDIRECTIONS:
 
 CAT: cat < input > output    : if input file doesn't exist add_history leaks (maybe solved when exiting the shell since history is being freed at the very end)
 
-PARSER:  ex. "ls >a>b>c" if redirectons after the first one are not separated by whitespace, they are pased as command args and not redirections
 
 EXPANDER: remove quotes //add check to exclude empty str in between quotations?
 

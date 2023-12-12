@@ -26,7 +26,7 @@ void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
 {
 	free_lexer(lexer);
 	free(prompt);
-	free_simple_commands(cmds);
+	free_cmds(cmds);
 	cmds = NULL;
 }
 
@@ -64,6 +64,7 @@ t_shell	*minishell_loop(t_shell *shell)
 		return (shell);
 	add_history(str);
 	lexer = ft_lexer(str);
+	print_lex(lexer);
 	free(str);
 	str = NULL;
 	if (lexer == NULL)
@@ -73,18 +74,11 @@ t_shell	*minishell_loop(t_shell *shell)
 	}
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
-	// if (shell->cmds == NULL)
-	// {
-	// 	shell->exitcode = errno;
-	// 	return (free_lexer(lexer), shell);
-	// }
 	if (shell->cmds != NULL)
 	{
 		shell->exitcode = expander(shell);
-		print_simple_cmds_list(shell);
 		shell->exitcode = executor(shell);
 	}
-//	ft_printf("returning to minishell loop\n");
 	free_on_succes(head, lexer, prompt);
 	return (shell);
 }
@@ -109,6 +103,5 @@ int	main(int ac, char **av, char **envp)
 	free_char_arr(shell->env);
 	free(shell);
 	rl_clear_history();
-	ft_printf("child cleared history\n");
 	return (errno);
 }

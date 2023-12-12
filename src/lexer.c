@@ -31,6 +31,7 @@ t_lexertype get_key(char *str)
 // saves the token and its key in the node
 int	save_token(t_lexer *lexer, char *str, int start, int len)
 {
+	ft_printf("token len: %d\n", len);
 	lexer->token = ft_substr(str, start, len);
 	if (!lexer->token)
 		return (0);
@@ -65,9 +66,9 @@ int    read_command_line(t_lexer *lexer, char *str)
 	while (i < (int)ft_strlen(str))
 	{
 		start = i;
-		if (str[i] == '\'' || str[i] == '"' || str[i] == '(' || str[i] == '{')
+		if (str[i] == '\'' || str[i] == '\"' || str[i] == '(' || str[i] == '{')
 		{
-			if (str[i] == '\'' || str[i] == '"')
+			if (str[i] == '\'' || str[i] == '\"')
 				temp = str[i];
 			else if (str[i] == ')')
 				temp = ')';
@@ -88,11 +89,12 @@ int    read_command_line(t_lexer *lexer, char *str)
 		}
 		else
 		{
-			while (str[i] && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i] != ' ')
+			while (str[i] && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i] != ' '
+				&& str[i] != '\'' && str[i] != '\"' && str[i] != '(' && str[i] != '{')
 				i++;
 			if (!(save_token(lexer, str, start, i - start)))
 				return (0);
-			if (str[i] == ' ')
+			if (str[i] != ' ')
 				i--;
 		}
 		i += flag + 1;

@@ -44,7 +44,7 @@ char    *check_for_variables(char *str, t_shell *shell)
     i = 0;
     start = 0;
     q_flag = -1;
-    while (str[i] != '\0')
+    while (str && str[i] != '\0')
     {
         if (str[i] == '\"')
             q_flag += -1;
@@ -54,13 +54,13 @@ char    *check_for_variables(char *str, t_shell *shell)
             while (str[i] != '\0' && str[i] != '\'')
                 i++;
         }
-        if  (str[i] == '$' && str[i + 1] == '?')
+        if  (str[i] != '\0' && str[i] == '$' && str[i + 1] == '?')
         {
             i = get_expanded_variable(&str, i, i + 2, shell) - 1;
             if (!str)
                 return (NULL);
         }
-        if (str[i] == '$' && str[i + 1] != '\0' && (ft_isalnum(str[i + 1]) == 1 || ft_strchr("_{}", str[i + 1]) != 0))
+        else if (str[i] == '$' && str[i + 1] != '\0' && (ft_isalnum(str[i + 1]) == 1 || ft_strchr("_{}", str[i + 1]) != 0))
         {
             start = i;
             i++;
@@ -70,7 +70,7 @@ char    *check_for_variables(char *str, t_shell *shell)
             if (!str)
                 return (NULL);
         }
-        if (str[i] == '$' && str[i + 1] != '\0' && ft_strchr("\'\"", str[i + 1]) != 0 )
+        else if (str[i] == '$' && str[i + 1] != '\0' && ft_strchr("\'\"", str[i + 1]) != 0 )
         {
             str = ft_strtrim(str, "$");
         }
