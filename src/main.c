@@ -30,13 +30,16 @@ void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
 	cmds = NULL;
 }
 
-int	empty_str(char *str)
+int	empty_str(char *str, t_shell *shell)
 {
 	int	i;
 
 	i = 0;
 	if (!str)
-		return (1);
+	{
+		ft_printf("exit\n");
+		return (shell->exitcode += 1000);
+	}
 	while (str[i] != '\0')
 	{
 		if (str[i] != 32 && !(str[i] >= 8 && str[i] <= 13))
@@ -46,6 +49,14 @@ int	empty_str(char *str)
 	free(str);
 	str = NULL;
 	return (1);
+}
+
+void sig_handler_inter(int signum)
+{
+	handle_me = signum;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	rl_replace_line("", 0);
+	rl_on_new_line();
 }
 
 t_shell	*minishell_loop(t_shell *shell)
@@ -58,10 +69,12 @@ t_shell	*minishell_loop(t_shell *shell)
 	str = NULL;
 	lexer = NULL;
 	head = NULL;
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sig_handler_inter);
 	prompt = check_for_variables(ft_strdup(PROMPT), shell);
 	str = readline(prompt);
-	if (empty_str(str))
-		return (shell);
+	if (empty_str(str, shell))
+		return (free(prompt), shell);
 	add_history(str);
 	lexer = ft_lexer(str);
 	print_lex(lexer);
