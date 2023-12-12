@@ -106,9 +106,9 @@ int	main(int ac, char **av, char **envp)
 		if (shell->exitcode >= 1000)
 			break ;
 	}
-	ft_printf("child exiting with code %d\n", shell->exitcode);
 	free_char_arr(shell->env);
 	free(shell);
 	rl_clear_history();
+	ft_printf("child cleared history\n");
 	return (errno);
 }

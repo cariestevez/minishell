@@ -19,10 +19,13 @@ int get_expanded_variable(char **str, int start, int end, t_shell *shell)
         if (!var)
             var = "";
          free(tmp);
+         tmp = var;
+         var = ft_strdup(tmp);
     }
     ret = ft_substr(*str, 0, start);
     tmp = ft_strjoin(ret, var);
     free(ret);
+    free(var);
     new_index = ft_strlen(tmp);
     append = ft_substr(*str, end, ft_strlen(*str) - end + 1);
     free(*str);

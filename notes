@@ -3,18 +3,17 @@
 
 BASH BUUUUUUG running  <" " ere for example
 
-when running echo $? code enters in redirections function. should it?
-
 !missing ft_exit();!
 
 EXPORT:
 segfault
 (). export var=test | echo $var
-    should display \n, but segfaults
+    leaks :()
 
-REDIRECTIONS: if input = "> file" it works with leaks bc it doesn't free redirections
-            if not_valid_cmd > file1 > file2 same as above
-             LEAKS INSIDE OF THE CHILD? if they're gone when we exit the shell should be fine
+REDIRECTIONS:
+            if not_valid_cmd > file1 > file2
+            if no_command > file 
+            = add_history leaks
 
 CAT: cat < input > output    : if input file doesn't exist add_history leaks (maybe solved when exiting the shell since history is being freed at the very end)
 
