@@ -15,7 +15,6 @@
 
 # define BUFFER 500
 # define PROMPT "\033[35mHello \033[36m${USER}\033[0m$ "
-# define WELCOME "welcome.txt"
 
 static volatile sig_atomic_t handle_me = 0;
 
