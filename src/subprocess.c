@@ -41,6 +41,7 @@ int	child_process(t_shell *shell, int **fd, int i)
 		if(dup2(fd[i][1], 1) == -1)
 			return (perror("dup2"), -1);
 	}
+//	if (shell->cmds->str != NULL)//without this condition it stays trapped when no cmd to execute with the redirection
 	execute(shell->cmds, shell->env);
 	return (-1);
 }
