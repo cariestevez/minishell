@@ -88,6 +88,7 @@ int expander(t_shell *shell)
     head = shell->cmds;
     i = 0;
     while (shell->cmds != NULL)
+    while (shell->cmds != NULL)
     {
         i = 0;
         while (shell->cmds->str != NULL && shell->cmds->str[i] != NULL)
