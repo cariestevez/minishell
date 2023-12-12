@@ -73,13 +73,17 @@ t_shell	*minishell_loop(t_shell *shell)
 	}
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
-	if (shell->cmds == NULL)
+	// if (shell->cmds == NULL)
+	// {
+	// 	shell->exitcode = errno;
+	// 	return (free_lexer(lexer), shell);
+	// }
+	if (shell->cmds != NULL)
 	{
-		shell->exitcode = errno;
-		return (free_lexer(lexer), shell);
+		shell->exitcode = expander(shell);
+		shell->exitcode = executor(shell);
 	}
-	shell->exitcode = expander(shell);
-	shell->exitcode = executor(shell);
+//	ft_printf("returning to minishell loop\n");
 	free_on_succes(head, lexer, prompt);
 	return (shell);
 }

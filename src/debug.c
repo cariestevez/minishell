@@ -55,7 +55,7 @@ void print_simple_cmds_list(t_shell *shell)
 	{
 		i = 0;
         ft_printf("Index: %d, Amount of Commands: %d \n", current->index, shell->amount_of_cmds);
-   		while (current->str && current->str[i] != NULL)
+   		while (current->str != NULL && current->str[i] != NULL)
 		{
         	ft_printf("String[%d]:%s\n", i, current->str[i]);
 			i++;

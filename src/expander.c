@@ -87,7 +87,7 @@ int expander(t_shell *shell)
     while (shell->cmds != NULL)
     {
         i = 0;
-        while (shell->cmds->str[i] != NULL)
+        while (shell->cmds->str != NULL && shell->cmds->str[i] != NULL)
         {       
             shell->cmds->str[i] = check_for_variables(shell->cmds->str[i], shell);
             if (shell->cmds->str[i] == NULL)
