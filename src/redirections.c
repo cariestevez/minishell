@@ -8,15 +8,11 @@ int	redirect_input(t_redir *input)
 		return (ft_printf("minishell: %s: No such file or directory\n", input->str), -1);
 	fd_in = open(input->str, O_RDONLY, 0777);
 	if (fd_in == -1)
-	{
-		close(fd_in);
-		perror("open");
-		return (-1);
-	}
+		return (perror("open"), -1);
 	if (dup2(fd_in, STDIN_FILENO) == -1)
 	{
 		close(fd_in);
-		perror("open");
+		perror("dup2");
 		return (-1);
 	}
 	close(fd_in);
@@ -32,15 +28,11 @@ int	redirect_output(t_redir *output)
 	else
 		fd_out = open(output->str, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd_out == -1)
-	{
-		close(fd_out);
-		perror("open");
-		return (-1);
-	}
+		return (perror("open"), -1);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 	{
 		close(fd_out);
-		perror("open");
+		perror("dup2");
 		return (-1);
 	}
 	close(fd_out);
@@ -69,6 +61,23 @@ int	heredoc(t_redir *heredoc, int index)
 		return (-1);
 	unlink(temp_file);
 	free(temp_file);
+	return (0);
+}
+
+int	redirect_fds(int **fd, int i, int amount_of_cmds)
+{
+	if (i > 0)
+	{
+		if (dup2(fd[i - 1][0], 0) < 0)
+			return (perror("dup2"), 1);
+		close(fd[i][1]);
+	}
+	if (i < amount_of_cmds - 1)
+	{
+		if (dup2(fd[i][1], 1) < 0)
+			return (perror("dup2"), 1);
+		close(fd[i][1]);
+	}
 	return (0);
 }
 

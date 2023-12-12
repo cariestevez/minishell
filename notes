@@ -1,14 +1,11 @@
 !missing ft_exit();!
+missing signals
 
-PARSING+REDIRECTIONS: if input = "> file", bash creates thefile and return the prompt. minishell segfaults
-                        (I need to come up with a solution)
-                        if redirectons after the first one are not separated by whitespace, they are pased as command args and not redirections
-                        ex. "ls >a>b>c"
-
-REDIRECTIONS:
-                if not_valid_cmd > file1 > file2 : creates the 1st file (sometimes also the 2nd) prints multiple \n and waits for input
-    redirections and pipes do not work 0____o
-    echo > / >> doesnt give back the prompt but does what it should
+PARSING+REDIRECTIONS: 
+        if input = "> file", bash creates thefile and return the prompt. minishell segfaults
+                (I need to come up with a solution)
+        if redirectons after the first one are not separated by whitespace, they are pased as command args and not redirections
+                ex. "ls >a>b>c"
 
 RANDOM: when pressing tab(without enter) it 'executes' ls -a?!
 
