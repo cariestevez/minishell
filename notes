@@ -21,8 +21,12 @@ CAT: cat < input > output    : if input file doesn't exist add_history leaks (ma
 
 
 EXPANDER: remove quotes //add check to exclude empty str in between quotations?
+            echo '""'"$USER"'""' | cat -e leaking
 
 when 'command not found' add_history leaks (maybe solved when exiting the shell since history is being freed at the very end)
 
 ex.
         commands and anything inside is being freed (solved in my branch but fucked up other things)
+
+QUESTIONS
+    - how should ctrl \ react with cat
