@@ -90,8 +90,6 @@ int	executor(t_shell *shell)
 	fd = NULL;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 		return (execute_builtin(shell, fd, 0), errno);
-	// if (shell->amount_of_cmds == 1 && shell->cmds->str == NULL)//if redir without cmd
-	// 	return (redirections(shell->cmds), errno);//should just create the file and return exit_code 0
 	fd = create_pipes(shell, fd);
 	if (!fd)
 		return (free_and_exit(shell, fd));

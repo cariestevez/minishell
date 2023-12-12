@@ -26,3 +26,6 @@ when 'command not found' add_history leaks (maybe solved when exiting the shell 
 
 ex.
         commands and anything inside is being freed (solved in my branch but fucked up other things)
+        memory leak when piping with a builtin
+
+BUILTIN: something is wrong when executing with redir or pipes-> shell continues executing inside of the new created file?!

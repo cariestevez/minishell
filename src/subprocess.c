@@ -35,6 +35,7 @@ int	child_process(t_shell *shell, int **fd, int i)
 		shell->cmds = shell->cmds->next;
 	if (redirect_fds(fd, i, shell->amount_of_cmds) != 0)
 		return (1);
+	ft_printf("child calling redirections() now\n");
 	if (redirections(shell->cmds) != 0)
 		return (1);
 	execute(shell->cmds, shell->env);

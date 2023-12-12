@@ -26,7 +26,7 @@ void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
 {
 	free_lexer(lexer);
 	free(prompt);
-	free_cmds(cmds);
+	free_simple_commands(cmds);
 	cmds = NULL;
 }
 
@@ -81,6 +81,7 @@ t_shell	*minishell_loop(t_shell *shell)
 	if (shell->cmds != NULL)
 	{
 		shell->exitcode = expander(shell);
+		print_simple_cmds_list(shell);
 		shell->exitcode = executor(shell);
 	}
 //	ft_printf("returning to minishell loop\n");
@@ -104,9 +105,8 @@ int	main(int ac, char **av, char **envp)
 		shell = minishell_loop(shell);
 		if (shell->exitcode >= 1000)
 			break ;
-		//if exitsignal
-		// break ;
 	}
+	ft_printf("child exiting with code %d\n", shell->exitcode);
 	free_char_arr(shell->env);
 	free(shell);
 	rl_clear_history();

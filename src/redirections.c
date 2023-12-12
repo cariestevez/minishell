@@ -83,6 +83,9 @@ int	redirect_fds(int **fd, int i, int amount_of_cmds)
 
 int redirections(t_simple_cmds *cmd)
 {
+	t_redir	*head;
+
+	head = cmd->redir;
 	while (cmd->redir != NULL)
 	{
 		if (cmd->redir->type == l_in && cmd->redir->str != NULL)
@@ -103,5 +106,6 @@ int redirections(t_simple_cmds *cmd)
 		}
 		cmd->redir = cmd->redir->next;
 	}
+	cmd->redir = head;
 	return (0);
 }

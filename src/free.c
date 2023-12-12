@@ -50,10 +50,13 @@ void    free_simple_commands(t_simple_cmds *cmds)
 	t_redir	*tmp;
 
 	tmp = NULL;
-    while (cmds)
+    while (cmds != NULL)
     {
-        free_char_arr(cmds->str);
-		cmds->str = NULL;
+		if (cmds->str != NULL)
+		{
+        	free_char_arr(cmds->str);
+			cmds->str = NULL;
+		}
 		while (cmds->redir != NULL)
 		{
 			free(cmds->redir->str);

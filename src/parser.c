@@ -39,7 +39,6 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		lexer = lexer->next;
 	}
 	cmd_tokens -= (redir_tokens * 2);
-	ft_printf("cmds = %d redirections = %d\n", cmd_tokens, redir_tokens);
 	if (cmd_tokens <= 0 && redir_tokens != 0)
 		return (0);
 	if (cmd_tokens <= 0)
@@ -47,7 +46,6 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
 	if (shell->cmds->str == NULL)
 		return (-1);
-	ft_printf("allocated for %d + 1 cmds\n", cmd_tokens);
 	return (cmd_tokens);
 }
 
@@ -91,7 +89,6 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			|| lexer->key == l_append || lexer->key == l_heredoc)
 		{
 			redir_count++;
-			ft_printf("found a redir token  in save simple_cmd\n");
 			shell->cmds->redir = save_redirection(shell, lexer, redir_count);
 			if (shell->cmds->redir == NULL)
 				return (-1);
@@ -162,7 +159,6 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 		}
 		cmd++;
 	}
-	print_simple_cmds_list(shell);
 	add_builtin_ptr(head_cmd);
 	return (head_cmd);
 }

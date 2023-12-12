@@ -29,16 +29,11 @@ void	free_cmds(t_simple_cmds *cmd_node)
 		temp = cmd_node->next;
 		while (cmd_node->redir != NULL)
 		{
-			ft_printf("cmd_node->redir->str: %s\n", cmd_node->redir->str);
-			ft_printf("about to free redi->str %p\n", cmd_node->redir->str);
 			free(cmd_node->redir->str);
 			cmd_node->redir->str = NULL;
-			ft_printf("FREED cmd_node->redir->str\n");
 			redir_tmp = cmd_node->redir->next;
-			ft_printf("about to free redi %p\n", cmd_node->redir);
 			free(cmd_node->redir);
 			cmd_node->redir = redir_tmp;
-			ft_printf("FREED cmd_node->redir and moved to next redir node\n");
 		}
 		free_cmd_array(cmd_node->str);
 		cmd_node->str = NULL;
@@ -101,7 +96,6 @@ t_redir *new_redir_node (char *file, t_lexertype type)
 	t_redir	*node;
 
 	node = (t_redir *)ft_calloc(sizeof(t_redir), 1);
-	printf("malloc'd n = %p\n", node);
 	if (!node)
 		return (NULL);
 	node->type = type;
