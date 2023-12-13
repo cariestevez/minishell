@@ -1,11 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirections.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/13 22:03:27 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/13 22:03:29 by emollebr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	redirect_input(t_redir *input)
 {
-	int 	fd_in;
+	int	fd_in;
 
 	if (access(input->str, R_OK) == -1)
-		return (ft_printf("minishell: %s: No such file or directory\n", input->str), -1);
+	{
+		ft_printf("minishell: %s: No such file or directory\n", input->str);
+		return (-1);
+	}
 	fd_in = open(input->str, O_RDONLY, 0777);
 	if (fd_in == -1)
 		return (perror("open"), -1);
@@ -21,9 +36,9 @@ int	redirect_input(t_redir *input)
 
 int	redirect_output(t_redir *output)
 {
-	int 	fd_out;
+	int	fd_out;
 
-	if (output->type == l_append )
+	if (output->type == l_append)
 		fd_out = open(output->str, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	else
 		fd_out = open(output->str, O_WRONLY | O_CREAT | O_TRUNC, 0777);
@@ -39,9 +54,26 @@ int	redirect_output(t_redir *output)
 	return (0);
 }
 
+static void	read_heredoc(char *delimiter)
+{
+	char	*line;
+
+	line = readline(HEREDOC_PROMPT);
+	while (ft_strncmp(line, delimiter, ft_strlen(line)) != 0)
+	{
+		signals_non_interactive();
+		ft_putstr_fd(line, fd);
+		ft_putchar_fd('\n', fd);
+		free(line);
+		signals_interactive();
+		line = readline(HEREDOC_PROMPT);
+	}
+	free(line);
+}
+
 int	heredoc(t_redir *heredoc, int index)
 {
-	char 		*line;
+	char	*line;
 	int		fd;
 	char	*temp_file;
 	char	*file_num;
@@ -50,15 +82,8 @@ int	heredoc(t_redir *heredoc, int index)
 	temp_file = ft_strjoin("/tmp/heredoc_temp", file_num);
 	free(file_num);
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
-	line = readline(HEREDOC_PROMPT);
-	while (ft_strncmp(line, heredoc->str, ft_strlen(line)) != 0)
-	{
-		ft_putstr_fd(line, fd);
-		ft_putchar_fd('\n', fd);
-		free(line);
-		line = readline(HEREDOC_PROMPT);
-	}
-	free(line);
+	signals_interactive();
+	read_heredoc(heredoc->str);
 	free(heredoc->str);
 	heredoc->str = temp_file;
 	if (redirect_input(heredoc) != 0)
@@ -81,34 +106,5 @@ int	redirect_fds(int **fd, int i, int amount_of_cmds)
 			return (perror("dup2"), 1);
 		close(fd[i][1]);
 	}
-	return (0);
-}
-
-int redirections(t_simple_cmds *cmd)
-{
-	t_redir	*head;
-
-	head = cmd->redir;
-	while (cmd->redir != NULL)
-	{
-		if (cmd->redir->type == l_in && cmd->redir->str != NULL)
-		{
-			if (redirect_input(cmd->redir) != 0)
-				return (-1);
-		}
-		if ((cmd->redir->type == l_append || cmd->redir->type == l_out)
-				&& cmd->redir->str != NULL)
-		{
-			if (redirect_output(cmd->redir) != 0)
-				return (-1);
-		}
-		if (cmd->redir->type == l_heredoc && cmd->redir->str != NULL)
-		{
-			if (heredoc(cmd->redir, cmd->index) != 0)
-				return (-1);
-		}
-		cmd->redir = cmd->redir->next;
-	}
-	cmd->redir = head;
 	return (0);
 }

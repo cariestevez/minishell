@@ -12,6 +12,18 @@
 
 #include "minishell.h"
 
+static int	copy_env_list(char ***list, int j)
+{
+	free((*list)[j]);
+	while ((*list)[j] != NULL)
+	{
+		(*list)[j] = (*list)[j + 1];
+		j++;
+	}
+	free((*list)[j]);
+	return (j);
+}
+
 int	ft_unset(t_shell *shell, t_simple_cmds *cmd)
 {
 	char	**list;
@@ -30,15 +42,7 @@ int	ft_unset(t_shell *shell, t_simple_cmds *cmd)
 			j++;
 		}
 		if (cmd->str[i] != NULL)
-		{
-			free(list[j]);
-			while (list[j] != NULL)
-			{
-				list[j] = list[j + 1];
-				j++;
-			}
-			free(list[j]);
-		}
+			j = copy_env_list(&list, j);
 		i++;
 	}
 	return (0);

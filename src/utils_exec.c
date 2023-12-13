@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_exec.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/13 21:39:39 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/13 21:39:41 by emollebr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	count_commands(t_simple_cmds *cmds)
@@ -16,7 +28,7 @@ int	count_commands(t_simple_cmds *cmds)
 
 int	close_unneccesary_fds(int **fd, int i, int amount_of_cmds)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	if (!fd)
@@ -54,6 +66,7 @@ char	*get_path(char *cmd, char **env)
 	free_char_arr(fullpath);
 	return (cmd);
 }
+
 char	*ft_getenv(char *name, char **env)
 {
 	int		i;
@@ -78,12 +91,16 @@ char	*ft_getenv(char *name, char **env)
 	return (NULL);
 }
 
-int    free_and_exit(t_shell *shell, int **fd)
+int	free_and_exit(t_shell *shell, int **fd, pid_t *pid)
 {
+	int	aoc;
+
+	aoc = shell->amount_of_cmds;
 	if (fd != NULL)
 	{
-		close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
-	 	free_int_arr(fd);
+		close_unneccesary_fds(fd, aoc + 1, aoc);
+		free_int_arr(fd);
 	}
+	free(pid);
 	return (errno);
 }

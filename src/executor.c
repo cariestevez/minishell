@@ -1,15 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/13 21:21:13 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/13 21:21:15 by emollebr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int	execute(t_simple_cmds *cmd, char **envp)
+int	pipe_fds(int **fd, int amount_of_cmds)
 {
-	//write(2, "\n", 1);
-	if (cmd->str != NULL && execve(get_path(cmd->str[0], envp), cmd->str, envp) == -1)
+	int	i;
+
+	i = 0;
+	while (i < amount_of_cmds)
 	{
-		ft_putstr_fd("minishell: ", 1);
-		ft_putstr_fd(cmd->str[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
+		if (pipe(fd[i]) < 0)
+		{
+			perror("pipe");
+			while (i >= 0)
+			{
+				close(fd[i][0]);
+				close(fd[i][1]);
+				i--;
+			}
+			return (1);
+		}
+		i++;
 	}
-	return (-1);
+	return (0);
 }
 
 int	**create_pipes(t_shell *shell, int **fd)
@@ -27,23 +50,20 @@ int	**create_pipes(t_shell *shell, int **fd)
 			return (fd);
 		i++;
 	}
-	i = 0;
-	while (i < shell->amount_of_cmds)
-	{
-		if (pipe(fd[i]) < 0)
-		{
-			perror("pipe");
-			while (i >= 0)
-			{
-				close(fd[i][0]);
-				close(fd[i][1]);
-				i--;
-			}
-			return (NULL);
-		}
-		i++;
-	}
+	if (pipe_fds(fd, shell->amount_of_cmds) != 0)
+		return (NULL);
 	return (fd);
+}
+
+void	handle_fork_error(int **fd, int i)
+{
+	while (i >= 0)
+	{
+		close(fd[i][0]);
+		close(fd[i][1]);
+		i--;
+	}
+	return ;
 }
 
 int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
@@ -55,16 +75,7 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 	{
 		pid[i] = fork();
 		if (pid[i] < 0)
-		{
-			i = shell->amount_of_cmds;
-			while (i >= 0)
-			{
-				close(fd[i][0]);
-				close(fd[i][1]);
-				i--;
-			}
-			return (-1);
-		}
+			return (handle_fork_error(fd, shell->amount_of_cmds), -1);
 		if (pid[i] == 0 && !shell->cmds->builtin)
 		{
 			child_process(shell, fd, i);
@@ -80,36 +91,24 @@ int	fork_processes(t_shell *shell, pid_t *pid, int **fd)
 
 int	executor(t_shell *shell)
 {
-	int		i;
-	int		**fd;
-	pid_t	pid[shell->amount_of_cmds];
-	int		status;
-	t_simple_cmds *head;
+	int				**fd;
+	int				status;
+	pid_t			*pid;
+	t_simple_cmds	*head;
 
 	head = shell->cmds;
 	fd = NULL;
+	pid = ft_calloc(sizeof(pid_t), shell->amount_of_cmds);
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 		return (execute_builtin(shell, fd, 0), errno);
 	fd = create_pipes(shell, fd);
 	if (!fd)
-		return (free_and_exit(shell, fd));
+		return (free_and_exit(shell, fd, pid));
 	if (fork_processes(shell, pid, fd) != 0)
-		return (free_and_exit(shell, fd), errno + 1000);
+		return (free_and_exit(shell, fd, pid), errno + 1000);
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
-	i = 0;
-	while (i < shell->amount_of_cmds)
-	{
-		while (head->index != i)
-			head = head->next;
-		if (head->builtin != NULL)
-			status = 0;
-		else
-		{
-			waitpid(pid[i], &status, 0);
-			status =  WEXITSTATUS(status);
-		}
-		i++;
-	}
+	status = wait_for_children(head, pid, shell->amount_of_cmds);
 	free_int_arr(fd);
+	free(pid);
 	return (status);
 }
