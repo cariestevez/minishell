@@ -47,12 +47,15 @@ int	heredoc(t_redir *heredoc, int index)
 
 	temp_file = ft_strjoin("/tmp/heredoc_temp", ft_itoa(index));
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	signals_interactive();
 	line = readline(HEREDOC_PROMPT);
 	while (ft_strncmp(line, heredoc->str, ft_strlen(line)) != 0)
 	{
+		signals_non_interactive();
 		ft_putstr_fd(line, fd);
 		ft_putchar_fd('\n', fd);
 		free(line);
+		signals_interactive();
 		line = readline(HEREDOC_PROMPT);
 	}
 	free(line);

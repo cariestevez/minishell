@@ -15,13 +15,21 @@
 
 # define BUFFER 500
 # define PROMPT "\033[35mHello \033[36m${USER}\033[0m$ "
+# define WELCOME "welcome.txt"
 
-static volatile sig_atomic_t handle_me = 0;
+static volatile sig_atomic_t g_last_exit = 0;
 
 //main.c
-t_shell	*minishell_loop(t_shell *shell);
+void minishell_loop(t_shell *shell);
 char    **arrdup(char **env);
 void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
+// void	sig_handler_child(int signum);
+// void	sig_handler_parent(int signum);
+// void	sig_handler_heredoc(int signum);
+void	signals_non_interactive(void);
+void	signals_interactive(void);
+void	display_new_line(int signum);
+void    reset_rl(int signum);
 
 //free.c
 void	free_char_arr(char **tab);

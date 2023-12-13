@@ -51,39 +51,90 @@ int	empty_str(char *str, t_shell *shell)
 	return (1);
 }
 
-void sig_handler_inter(int signum)
+// void	sig_handler_parent(int signum)
+// {
+// 	signal(SIGINT, SIG_IGN);
+// 	if (signum == SIGINT)
+// 	{
+// 		write(1, "\n", 1);
+// 		g_last_exit = 130;
+// 	}
+// }
+
+// void	sig_handler_child(int signum)
+// {
+// 	int	pid;
+
+// 	pid = getpid();
+// 	if (signum == SIGINT)
+// 	{
+// 		g_last_exit = 130;
+// 		kill()
+// 	}
+// }
+
+// void	sig_handler_heredoc(int signum)
+// {
+// 	signal(SIGINT, SIG_IGN);
+// 	if (signum == SIGINT)
+// 	{
+// 		g_last_exit = 130;
+// 	}
+// }
+void reset_rl(int signum)
 {
-	handle_me = signum;
-	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	(void)signum;
+
+	write(1, "\n", 1);
+	rl_on_new_line();
 	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
+void	display_new_line(int signum)
+{
+	if (signum == SIGQUIT)
+		ft_printf("Quit (core dumped)");
+	write(1, "\n", STDERR_FILENO);
 	rl_on_new_line();
 }
 
-t_shell	*minishell_loop(t_shell *shell)
+void	signals_interactive(void)
+{
+	signal(SIGINT, reset_rl);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	signals_non_interactive(void)
+{
+	signal(SIGINT, display_new_line);
+	signal(SIGQUIT, display_new_line);
+}
+
+void minishell_loop(t_shell *shell)
 {
 	char			*str;
-	t_lexer			*lexer;
 	char			*prompt;
+	t_lexer			*lexer;
 	t_simple_cmds	*head;
 
 	str = NULL;
 	lexer = NULL;
 	head = NULL;
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, sig_handler_inter);
 	prompt = check_for_variables(ft_strdup(PROMPT), shell);
 	str = readline(prompt);
+	signals_non_interactive();
 	if (empty_str(str, shell))
-		return (free(prompt), shell);
+		return (free(prompt));
 	add_history(str);
 	lexer = ft_lexer(str);
-	print_lex(lexer);
+//	print_lex(lexer);
 	free(str);
 	str = NULL;
 	if (lexer == NULL)
 	{
 		shell->exitcode = errno;
-		return (shell);
+		return; //(shell);
 	}
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
@@ -93,7 +144,7 @@ t_shell	*minishell_loop(t_shell *shell)
 		shell->exitcode = executor(shell);
 	}
 	free_on_succes(head, lexer, prompt);
-	return (shell);
+	return;// (shell);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -103,13 +154,15 @@ int	main(int ac, char **av, char **envp)
 	shell = ft_calloc(sizeof(t_shell), 1);
 	if (!shell)
 		return (-1);
+	g_last_exit = 0;
 	shell->env = arrdup(envp);
 	shell->exitcode = 0;
 	(void)ac;
 	(void)av;
 	while (1)
 	{
-		shell = minishell_loop(shell);
+		signals_interactive();
+		minishell_loop(shell);
 		if (shell->exitcode >= 1000)
 			break ;
 	}
