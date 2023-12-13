@@ -35,6 +35,27 @@ int get_expanded_variable(char **str, int start, int end, t_shell *shell)
     return (new_index);
 }
 
+int get_quotes_trimmed(char **str, int start, int end)
+{
+    char    *prepend;
+    char    *append;
+    char    *tmp;
+    int     new_index;
+
+    prepend = ft_substr(*str, 0, start);
+    append = ft_substr(*str, start + 1, end - start - 1);
+    tmp = ft_strjoin(prepend, append);
+    new_index = ft_strlen(tmp);
+    free(prepend);
+    free(append);
+    append = ft_substr(*str, end + 1, ft_strlen(*str) - (end - start));
+    free(*str);
+    *str = ft_strjoin(tmp, append);
+    free(append);
+    free(tmp);
+    return (new_index);
+}
+
 char    *check_for_variables(char *str, t_shell *shell)
 {
     int     i;
@@ -47,7 +68,18 @@ char    *check_for_variables(char *str, t_shell *shell)
     while (str && str[i] != '\0')
     {
         if (str[i] == '\"')
-            q_flag += -1;
+        {
+            if (q_flag != -1)
+            {
+                i = get_quotes_trimmed(&str, q_flag, i);
+                if (!str)
+                    return (NULL);
+            }
+            if (q_flag == -1)
+                q_flag = i;
+            else
+                q_flag = -1;
+        }
         if (str[i] == '\'' && q_flag == -1)
         {
             i++;
@@ -88,7 +120,6 @@ int expander(t_shell *shell)
     head = shell->cmds;
     i = 0;
     while (shell->cmds != NULL)
-    while (shell->cmds != NULL)
     {
         i = 0;
         while (shell->cmds->str != NULL && shell->cmds->str[i] != NULL)
@@ -100,7 +131,6 @@ int expander(t_shell *shell)
                 shell->cmds->str[i] = shell->cmds->str[i + 1];
                 free(tmp);
             }
-            quote_removal(shell, i);
             i++;
         }
         shell->cmds = shell->cmds->next;

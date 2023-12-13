@@ -90,8 +90,6 @@ int		get_expanded_variable(char **str, int start, int end, t_shell *shell);
 
 //utils_expander.c
 int		declare_variable(char *var, t_shell *shell);
-int 	quote_removal(t_shell *shell, int i);
-
 
 //debug.c
 void print_lex(t_lexer *lexer);

@@ -1,14 +1,5 @@
 #include "minishell.h"
 
-int quote_removal(t_shell *shell, int i)
-{
-    if (shell->cmds->str[i][0] == '\"')
-        shell->cmds->str[i] = ft_strtrim(shell->cmds->str[i], "\"");
-    else if (shell->cmds->str[i][0] == '\'')
-        shell->cmds->str[i] = ft_strtrim(shell->cmds->str[i], "\'");
-    return (0);
-}
-
 static int replace_variable(char *var, char *new_var, t_shell *shell, int i)
 {
     char    **current_env;
