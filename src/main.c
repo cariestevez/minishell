@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/13 22:20:02 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/13 22:20:03 by emollebr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char    **arrdup(char **env)
@@ -107,11 +119,9 @@ void minishell_loop(t_shell *shell)
 	}
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
+	expander(shell);
 	if (shell->cmds != NULL)
-	{
-		shell->exitcode = expander(shell);
 		shell->exitcode = executor(shell);
-	}
 	free_on_succes(head, lexer, prompt);
 	return ;
 }

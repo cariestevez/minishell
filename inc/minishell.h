@@ -41,6 +41,6 @@ int     ft_export(t_shell *shell, t_simple_cmds *cmd);
 int		ft_echo(t_shell *shell, t_simple_cmds *cmd);
 int		ft_env(t_shell *shell, t_simple_cmds *cmd);
 int		ft_unset(t_shell *shell, t_simple_cmds *cmd);
-int		ft_export(t_shell *shell, t_simple_cmds *cmd);
+int		ft_exit(t_shell *shell, t_simple_cmds *cmd);
 
 #endif

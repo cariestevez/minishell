@@ -54,7 +54,7 @@ int	redirect_output(t_redir *output)
 	return (0);
 }
 
-static void	read_heredoc(char *delimiter)
+static void	read_heredoc(char *delimiter, int fd)
 {
 	char	*line;
 
@@ -73,7 +73,6 @@ static void	read_heredoc(char *delimiter)
 
 int	heredoc(t_redir *heredoc, int index)
 {
-	char	*line;
 	int		fd;
 	char	*temp_file;
 	char	*file_num;
@@ -83,7 +82,7 @@ int	heredoc(t_redir *heredoc, int index)
 	free(file_num);
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	signals_interactive();
-	read_heredoc(heredoc->str);
+	read_heredoc(heredoc->str, fd);
 	free(heredoc->str);
 	heredoc->str = temp_file;
 	if (redirect_input(heredoc) != 0)

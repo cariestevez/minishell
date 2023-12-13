@@ -18,13 +18,13 @@ SRCS := 	./src/main.c \
 		./src/expander.c \
 		./src/utils_expander.c \
 		./src/redirections.c \
-		./src/debug.c \
 		$(BUILTINS)ft_cd.c \
 		$(BUILTINS)ft_pwd.c \
 		$(BUILTINS)ft_echo.c \
 		$(BUILTINS)ft_env.c \
 		$(BUILTINS)ft_unset.c \
-		$(BUILTINS)ft_export.c
+		$(BUILTINS)ft_export.c \
+		$(BUILTINS)ft_exit.c \
 OBJS := $(SRCS:.c=.o)
 ##################################################################################
 
