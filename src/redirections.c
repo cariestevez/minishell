@@ -44,8 +44,11 @@ int	heredoc(t_redir *heredoc, int index)
 	char 		*line;
 	int		fd;
 	char	*temp_file;
+	char	*file_num;
 
-	temp_file = ft_strjoin("/tmp/heredoc_temp", ft_itoa(index));
+	file_num = ft_itoa(index);
+	temp_file = ft_strjoin("/tmp/heredoc_temp", file_num);
+	free(file_num);
 	fd = open(temp_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	line = readline(HEREDOC_PROMPT);
 	while (ft_strncmp(line, heredoc->str, ft_strlen(line)) != 0)
@@ -56,11 +59,11 @@ int	heredoc(t_redir *heredoc, int index)
 		line = readline(HEREDOC_PROMPT);
 	}
 	free(line);
+	free(heredoc->str);
 	heredoc->str = temp_file;
 	if (redirect_input(heredoc) != 0)
 		return (-1);
 	unlink(temp_file);
-	free(temp_file);
 	return (0);
 }
 

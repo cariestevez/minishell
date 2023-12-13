@@ -77,7 +77,6 @@ t_shell	*minishell_loop(t_shell *shell)
 		return (free(prompt), shell);
 	add_history(str);
 	lexer = ft_lexer(str);
-	print_lex(lexer);
 	free(str);
 	str = NULL;
 	if (lexer == NULL)
