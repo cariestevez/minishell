@@ -60,7 +60,7 @@ typedef struct s_simple_cmds
 
 //lexer.c
 t_lexer		*ft_lexer(char *input);
-int			read_command_line(t_lexer *lexer, char *str);
+int			read_command_line(t_lexer *lexer, char *str, int i);
 int			save_token(t_lexer *lexer, char *str, int start, int len);
 t_lexertype	get_key(char *str);
 
