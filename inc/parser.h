@@ -36,11 +36,13 @@ typedef struct s_redir
 	t_lexertype		type;
 	char			*str;
 	struct s_redir	*next;
+	struct s_redir	*head;
 }	t_redir;
 
 typedef struct	s_shell
 {
 	struct s_simple_cmds	*cmds;
+	struct s_simple_cmds	*cmd_head;
 	int				amount_of_cmds;
 	char					**env;
 	int					exitcode;
@@ -54,6 +56,7 @@ typedef struct s_simple_cmds
 	int						index;
 	builtin_func            builtin;
 	struct s_redir			*redir;
+	struct s_redir			*redir_head;
 	struct s_simple_cmds	*next;
 	struct s_simple_cmds	*prev;
 }	t_simple_cmds;
@@ -62,6 +65,8 @@ typedef struct s_simple_cmds
 t_lexer		*ft_lexer(char *input);
 int			read_command_line(t_lexer *lexer, char *str, int i);
 int			save_token(t_lexer *lexer, char *str, int start, int len);
+int			check_for_quotes(char *str, t_lexer *lexer, int start);
+int			check_for_redirections(char *str, t_lexer *lexer, int start);
 t_lexertype	get_key(char *str);
 
 //utils_lexer.c
@@ -72,9 +77,11 @@ int			open_curly(char *str);
 
 //parser.c
 t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell);
+int				parser_loop(t_shell *shell, t_lexer *lexer);
 int				save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
+t_lexer			*save_cmd_str(t_shell *shell, t_lexer *lexer, int cmd_tokens, int redir_count, int i);
 t_redir			*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count);
-int				count_tokens(t_lexer *lexer, t_shell *shell);
+int				count_tokens(t_lexer *lexer);
 void			add_builtin_ptr(t_simple_cmds *cmd);
 
 //utils_parser.c

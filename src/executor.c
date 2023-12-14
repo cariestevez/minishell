@@ -96,8 +96,8 @@ int	executor(t_shell *shell)
 	pid_t			*pid;
 	t_simple_cmds	*head;
 
-	head = shell->cmds;
 	fd = NULL;
+	head = shell->cmds;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 		return (execute_builtin(shell, fd, 0), errno);
 	pid = ft_calloc(sizeof(pid_t), shell->amount_of_cmds);

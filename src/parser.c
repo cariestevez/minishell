@@ -1,30 +1,6 @@
 #include "minishell.h"
 
-//-------------------------------------------------------------------------------------------
-
-
-// if 1st node is pipe or no command before or after pipe (but another redir or end of str)
-// 		syntax error
-// if | everything before it gets executed and piped to the command after it
-// if < takes the FILE after(on its right) as input and redirects it to the 1st command inmediately before the redir(on its left)
-//		if < at the beginning of cmd line, cmd is the 1st one after the FILE
-// if > takes the output of the last simple command before the operand, that gets redirected to the FILE after it(on its right)
-//		if > at the beginnig of the cmd line, cmd is the 1st one after the FILE
-// if some of the commands cannot be executed, it just creates an empty file with the specified name
-
-//shell->cmd->str => (**str)-> 1st ptr to str: name of executable(cmd), n-ptr(s): option(s) to the cmd, last ptr: NULL terminator str
-
-
-//if lexer->idx 1 then search and save until pipe. else search and save until pipe or lexer = NULL
-
-//make it return t_lexer * (also when done with saving tokens, return head or something different than NULL
-//bc returning NULL is used as indicator that something went wrong in the saving process)
-
-
-//counts the total ammount of tokens and the redirection tokens before finding a pipe
-//allocates memory for the command array
-//returns error if allocation fails, if there are more redir than cmd tokens or if token is a pipe(in case of two consecutive pipes)
-int	count_tokens(t_lexer *lexer, t_shell *shell)
+int	count_tokens(t_lexer *lexer)
 {
 	int	cmd_tokens;
 	int	redir_tokens;
@@ -50,16 +26,13 @@ int	count_tokens(t_lexer *lexer, t_shell *shell)
 		return (0);
 	if (cmd_tokens <= 0)
 		return (-1);
-	shell->cmds->str = (char **)malloc(sizeof(char *) * (cmd_tokens + 1));
-	if (shell->cmds->str == NULL)
-		return (-1);
 	return (cmd_tokens);
 }
 
 t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 {
 	if (lexer->next == NULL)
-	{//ERROOOR no file name after redir -> bash retuns syntax error
+	{
 		ft_printf("syntax error near unexpected token 'newline'");// NEVER ENTERING HERE???
 		return (NULL);
 	}
@@ -68,33 +41,20 @@ t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 		shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
 		if (shell->cmds->redir == NULL)
 			return (NULL);
+		shell->cmds->redir_head = shell->cmds->redir;
 	}
 	else
 	{
 		shell->cmds->redir->next = new_redir_node(lexer->next->token, lexer->key);
 		if (shell->cmds->redir == NULL)
 			return (NULL);
-		shell->cmds->redir = shell->cmds->redir->next;
 	}
+	shell->cmds->redir = shell->cmds->redir->next;
 	return (shell->cmds->redir);
 }
 
-int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
+t_lexer	*save_cmd_str(t_shell *shell, t_lexer *lexer, int cmd_tokens, int redir_count, int i)
 {
-	int		i;
-	int		cmd_tokens;
-	int		redir_count;
-	t_lexer	*head;
-	t_redir	*redir_head;
-
-	i = 0;
-	redir_head = NULL;
-	redir_count = 0;
-	head = lexer;
-	cmd_tokens = count_tokens(lexer, shell);
-	if (cmd_tokens < 0)
-		return (-1);
-	lexer = head;
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out
@@ -103,13 +63,8 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			redir_count++;
 			shell->cmds->redir = save_redirection(shell, lexer, redir_count);
 			if (shell->cmds->redir == NULL)
-				return (-1);
-			if (redir_count == 1)
-				redir_head = shell->cmds->redir;
-			// if (lexer->next != NULL)
+				return (NULL);
 			lexer = lexer->next->next;
-			// else
-			// 	lexer = NULL;
 		}
 		else if (lexer->key == l_non_op)
 		{
@@ -123,7 +78,26 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 			shell->cmds->str[i] = NULL;
 		}
 	}
-	shell->cmds->redir = redir_head;
+	return (lexer);
+}
+
+int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
+{
+	int		tokens_count;
+	int		redir_count;
+	int		i;
+	t_lexer	*lexer_copy;
+
+	i = 0;
+	lexer_copy = lexer;
+	tokens_count = count_tokens(lexer_copy);
+	redir_count = 0;
+	if (tokens_count < 0)
+		return (-1);
+	shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1));
+	if (shell->cmds->str == NULL)
+		return (-1);
+	lexer = save_cmd_str(shell, lexer, tokens_count, redir_count, i);
 	if (lexer && lexer->key == l_pipe)
 		lexer = lexer->next;
 	if (lexer == NULL)
@@ -131,48 +105,46 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	return (lexer->index);
 }
 
-//if error, return NULL to main (free shell->cmds first if allocated already)
-t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
+int	parser_loop(t_shell *shell, t_lexer *lexer)
 {
-	int				cmd;
-	int				idx;
-	t_simple_cmds	*head_cmd;
+	int	cmd;
+	int	idx;
 
 	idx = 0;
 	cmd = 0;
-	shell->amount_of_cmds = count_cmds(lexer);
-	if (shell->amount_of_cmds == 0)
-		return (NULL);
-	shell->cmds = new_cmd_node(NULL);
-	head_cmd = shell->cmds;
-	if (shell->cmds == NULL)
-		return (NULL);
 	while (cmd < shell->amount_of_cmds)
 	{
 		idx = save_simple_cmd(lexer, shell);//saves until the pipe and returns the idx of the position after
 		while (idx > 0 && lexer && lexer->index != idx)//we move the lexer after the pipe
 			lexer = lexer->next;
 		if (lexer == NULL)//this shouldn't be necessary if we handle the case of pipe on last position in count_cmds
-		{
-			free_cmds(head_cmd);
-			head_cmd = NULL;
-			return (NULL);
-		}
+			return (free_cmds(shell->cmd_head), -1);
 		if (cmd < shell->amount_of_cmds - 1)
 		{
 			shell->cmds->next = new_cmd_node(shell->cmds);
 			if (shell->cmds->next == NULL)
-			{
-				free_cmds(head_cmd);
-				head_cmd = NULL;
-				return (NULL);
-			}
+				return (free_cmds(shell->cmd_head), -1);
 			shell->cmds = shell->cmds->next;
 		}
 		cmd++;
 	}
-	add_builtin_ptr(head_cmd);
-	return (head_cmd);
+	return (0);
+}
+
+t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
+{
+	shell->amount_of_cmds = count_cmds(lexer);
+	if (shell->amount_of_cmds == 0)
+		return (NULL);
+	shell->cmds = new_cmd_node(NULL);
+	if (shell->cmds == NULL)
+		return (NULL);
+	if (parser_loop(shell, lexer) != 0)
+		return (NULL);
+	while (shell->cmds->index != 0)
+		shell->cmds = shell->cmds->prev;
+	add_builtin_ptr(shell->cmds);
+	return (shell->cmds);
 }
 
 void	add_builtin_ptr(t_simple_cmds *cmd)
@@ -180,7 +152,7 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 	t_simple_cmds *head;
 
 	head = cmd;
-	while (cmd != NULL && cmd->str != NULL)
+	while (cmd != NULL && cmd->str != NULL && cmd->str[0] != NULL)
 	{
 		if (cmd->str != NULL && ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
 			cmd->builtin = &ft_cd;
@@ -201,66 +173,3 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 	cmd = head;
 	return ;
 }
-
-
-
-// //returns idx of current token to iterate the linked list
-// int	scan_simple_cmd(t_lexer *lexer, int start, t_shell *shell, int cmd_0)
-// {
-// 	int		i;
-// 	int		token_count;
-// 	int		redir;
-// 	int		num_of_str;
-// 	t_lexer	*head;
-
-// 	i = 0;		
-// 	token_count = 0;
-// 	redir = 0;
-// 	num_of_str = 0;
-// 	if (shell->amount_of_cmds == 1)//not needed to search for a pipe
-// 		return (single_cmd(lexer, shell));
-// //SEARCH NEXT PIPE (DELIMIT SIMPLE CMD)
-// 	while (lexer != NULL && lexer->index != start)//go to 1st token of current cmd
-// 		lexer = lexer->next;
-// 	head = lexer;//save position of 1st token
-// 	while (lexer != NULL && lexer->key != l_pipe)
-// 	{
-// 		lexer = lexer->next;
-// 		token_count++;
-// 	}
-// //COUNT NUM OF REDIR IN SIMPLE CMD(typical structure: 1 cmd + x num of redirections + 1 file/delimiter for each of the redir)
-// //how many of the tokens are redir->allocate redir struct
-// 	lexer = head;//start from 1st token of this cmd again
-// 	i = token_count;
-// 	while (lexer != NULL && token_count > 0)
-// 	{
-// 		if (lexer->key == l_in || lexer->key == l_out
-// 			|| lexer->key == l_append || lexer->key == l_heredoc)
-// 			redir++;
-// 		token_count--;
-// 		lexer = lexer->next;
-// 	}
-// //ALLOCATE FOR THE CMD STR ARRAYS
-// 	shell->cmd->str = (char **)malloc(sizeof(char *) * (i - (redir * 2) + 1));
-// 	//if (shell->cmd->str == NULL)
-// 		//ERROOORRRR
-// //GO BACK TO THE START
-// 	lexer = head;
-// 	while (i > 0)//go through all the tokens of this cmd
-// 	{
-// 		if (lexer->key == l_non_op)
-// 			lexer = lexer->next;
-// 		else//SAVE REDIR NODE
-
-// 		i--;
-// 	}
-// 	return (start);
-// }
-
-// t_lexer	scan_simple_cmd(t_lexer *lexer, t_shell *shell, int cmd_0)//always starting at the head of lexer list
-// {
-// 	if (shell->amount_of_cmds == 1)
-// 		return(save_simple_cmd(lexer, 0, shell));
-// 	if (lexer->index == 0)
-// 		shell->cmd->before_pipe
-// }

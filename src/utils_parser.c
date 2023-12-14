@@ -85,9 +85,15 @@ t_simple_cmds	*new_cmd_node(t_simple_cmds *prev)
 	node->prev = prev;
 	node->next = NULL;
 	if (!prev)
+	{
 		node->index = 0;
+		node->redir_head = NULL;
+	}
 	else
+	{
+		node->redir_head = prev->redir_head;
 		node->index = prev->index + 1;
+	}
 	return (node);
 }
 

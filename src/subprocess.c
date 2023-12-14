@@ -64,6 +64,7 @@ int	execute_builtin(t_shell *shell, int **fd, int i)
 	builtin = shell->cmds;
 	while (builtin->index != i)
 		builtin = builtin->next;
+	builtin->redir = builtin->redir_head;
 	if (fd != NULL && redirect_fds(fd, i, shell->amount_of_cmds) != 0)
 		return (1);
 	if (redirections(builtin) != 0)
@@ -86,6 +87,7 @@ int	child_process(t_shell *shell, int **fd, int i)
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
 	while (shell->cmds->index != i)
 		shell->cmds = shell->cmds->next;
+	shell->cmds->redir = shell->cmds->redir_head;
 	if (redirect_fds(fd, i, shell->amount_of_cmds) != 0)
 		return (1);
 	if (redirections(shell->cmds) != 0)
