@@ -120,9 +120,11 @@ void minishell_loop(t_shell *shell)
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
 	expander(shell);
+	free_lexer(lexer);
+	free(prompt);
 	if (shell->cmds != NULL)
 		shell->exitcode = executor(shell);
-	free_on_succes(head, lexer, prompt);
+	free_cmds(head);
 	return ;
 }
 

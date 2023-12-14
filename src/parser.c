@@ -194,7 +194,7 @@ void	add_builtin_ptr(t_simple_cmds *cmd)
 			cmd->builtin = &ft_pwd;
 		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "unset", BUFFER) == 0)
 			cmd->builtin = &ft_unset;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "exit", 4))
+		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "exit", BUFFER) == 0)
 			cmd->builtin = &ft_exit;
 		cmd = cmd->next;
 	}

@@ -4,29 +4,12 @@
 BASH BUUUUUUG running  <" " ere for example
 
 !missing ft_exit();!
-
-PARSER:  ex. "ls >a>b>c" if redirectons after the first one are not separated by whitespace, they are pased as command args and not redirections
 ________________________________________________________
-EXPORT:
-segfault
-(). export var=test | echo $var
-    leaks :()
-
-REDIRECTIONS:
-            if not_valid_cmd > file1 > file2
-            if no_command > file 
-            = add_history leaks
 
 CAT: cat < input > output    : if input file doesn't exist add_history leaks (maybe solved when exiting the shell since history is being freed at the very end)
 
-
 EXPANDER: remove quotes //add check to exclude empty str in between quotations?
             echo '""'"$USER"'""' | cat -e leaking
-
-when 'command not found' add_history leaks (maybe solved when exiting the shell since history is being freed at the very end)
-
-ex.
-        commands and anything inside is being freed (solved in my branch but fucked up other things)
 
 QUESTIONS
     - how should ctrl \ react with cat

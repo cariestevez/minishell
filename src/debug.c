@@ -58,6 +58,8 @@ void print_simple_cmds_list(t_shell *shell)
    		while (current->str != NULL && current->str[i] != NULL)
 		{
         	ft_printf("String[%d]:%s\n", i, current->str[i]);
+			if (current->builtin != NULL)
+				ft_printf("builtin: yes\n");
 			i++;
 		}
 		if (current->redir)

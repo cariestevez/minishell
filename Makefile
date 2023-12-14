@@ -6,7 +6,9 @@ INC := -Iinc -I$(LIBFT) -Ireadline/include
 LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
 BUILTINS := ./src/builtins/
-SRCS := 	./src/main.c \
+SRCS := $(BUILTINS)ft_exit.c \
+		./src/debug.c \
+		./src/main.c \
 		./src/lexer.c \
 		./src/utils_lexer.c \
 		./src/parser.c \
@@ -24,7 +26,7 @@ SRCS := 	./src/main.c \
 		$(BUILTINS)ft_env.c \
 		$(BUILTINS)ft_unset.c \
 		$(BUILTINS)ft_export.c \
-		$(BUILTINS)ft_exit.c \
+
 OBJS := $(SRCS:.c=.o)
 ##################################################################################
 

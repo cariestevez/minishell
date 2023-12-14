@@ -4,6 +4,7 @@
 # include "../libft/libft.h"
 # include "parser.h"
 # include "executor.h"
+# include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <signal.h>
@@ -34,6 +35,7 @@ int		free_lexer(t_lexer *lexer);
 void    free_simple_commands(t_simple_cmds *cmds);
 
 //builtins
+int		ft_exit(t_shell *shell, t_simple_cmds *cmd);
 int		ft_pwd(t_shell *shell, t_simple_cmds *cmd);
 int 	ft_cd(t_shell *shell, t_simple_cmds *cmd);
 int     update_envvar(char *name, char *new, char **env);
@@ -41,6 +43,5 @@ int     ft_export(t_shell *shell, t_simple_cmds *cmd);
 int		ft_echo(t_shell *shell, t_simple_cmds *cmd);
 int		ft_env(t_shell *shell, t_simple_cmds *cmd);
 int		ft_unset(t_shell *shell, t_simple_cmds *cmd);
-int		ft_exit(t_shell *shell, t_simple_cmds *cmd);
 
 #endif
