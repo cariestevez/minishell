@@ -1,12 +1,12 @@
-﻿/* ************************************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/15 12:58:53 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/15 14:00:02 by emollebr         ###   ########.fr       */
+/*   Created: 2023/12/15 16:34:48 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/15 16:34:51 by emollebr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,10 @@ int				skip_spaces(char *str, int i);
 t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell);
 int				parser_loop(t_shell *shell, t_lexer *lexer);
 int				save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
-t_lexer			*save_cmd_str(t_shell *shell, t_lexer *lexer, int *t_and_r, int i);
-t_redir			*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count);
+t_lexer			*save_cmd_str(t_shell *shell, t_lexer *lexer, 
+					int *t_and_r, int i);
+t_redir			*save_redirection(t_shell *shell, t_lexer *lexer, 
+					int redir_count);
 
 //utils_parser.c
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev);
