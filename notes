@@ -2,7 +2,3 @@
 !!!RUN WITH: valgrind --suppressions=suppressions.supp --leak-check=full --show-leak-kinds=all ./minishell
 
 BASH BUUUUUUG running  <" " ere for example
-
-    leaks in general!!
-    mostly in redirections nodes - they also dont print in print_simple_commands
-    sometimes leaks in new_cmd_node

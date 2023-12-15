@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_parser.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/15 10:49:08 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/15 10:49:10 by emollebr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 void	free_cmd_array(char **str)
@@ -43,8 +55,6 @@ void	free_cmds(t_simple_cmds *cmd_node)
 	}
 }
 
-//searches for pipes to find out how many simple cmds there are
-//returns syntax error if pipe is on 1st or last position
 int	count_cmds(t_lexer	*lexer)
 {
 	int	cmds;
@@ -62,7 +72,8 @@ int	count_cmds(t_lexer	*lexer)
 			cmds++;
 		}
 		if ((lexer->key == l_in || lexer->key == l_out
-			|| lexer->key == l_append || lexer->key == l_heredoc) && lexer->next == NULL)
+				|| lexer->key == l_append || lexer->key == l_heredoc) 
+			&& lexer->next == NULL)
 		{
 			ft_printf("syntax error near unexpected token `newline'\n");
 			return (0);
@@ -72,11 +83,10 @@ int	count_cmds(t_lexer	*lexer)
 	return (cmds);
 }
 
-// initializes the new nodes of the command list
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev)
 {
-	t_simple_cmds *node;
-	
+	t_simple_cmds	*node;
+
 	node = (t_simple_cmds *)malloc(sizeof(t_simple_cmds));
 	if (node == NULL)
 		return (NULL);
@@ -98,7 +108,7 @@ t_simple_cmds	*new_cmd_node(t_simple_cmds *prev)
 	return (node);
 }
 
-t_redir *new_redir_node (char *file, t_lexertype type)
+t_redir	*new_redir_node(char *file, t_lexertype type)
 {
 	t_redir	*node;
 
@@ -110,5 +120,5 @@ t_redir *new_redir_node (char *file, t_lexertype type)
 	if (!node->str)
 		return (NULL);
 	node->next = NULL;
-	return(node);
+	return (node);
 }

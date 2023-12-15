@@ -74,6 +74,7 @@ t_lexer 	*new_lexnode(t_lexer *prev, int index);
 int			open_quotes(char *str);
 int			open_brackets(char *str);
 int			open_curly(char *str);
+int			look_for(int this, char *str, int i);
 
 //parser.c
 t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell);
@@ -94,9 +95,13 @@ t_redir *new_redir_node(char *file, t_lexertype type);
 int 	expander(t_shell *shell);
 char	*check_for_variables(char *str, t_shell *shell);
 int		get_expanded_variable(char **str, int start, int end, t_shell *shell);
+int		get_expanded_exitcode(char **str, int start, int end, t_shell *shell);
+int		get_quotes_trimmed(char **str, int start, int end);
 
 //utils_expander.c
 int		declare_variable(char *var, t_shell *shell);
+int if_quotes(char **str, int *q_flag, int i);
+int if_variable(char **str, t_shell *shell, int i);
 
 //debug.c
 void print_lex(t_lexer *lexer);

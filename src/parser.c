@@ -10,14 +10,7 @@ int	count_tokens(t_lexer *lexer)
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
-		{
-			if (lexer->next == NULL)
-			// {
-			// 	ft_printf("syntax error near unexpected token 'newline'");//not needed, I checked it already at this point
-			// 	return (-1);
-			// }
 			redir_tokens++;
-		}
 		cmd_tokens++;
 		lexer = lexer->next;
 	}
@@ -26,9 +19,6 @@ int	count_tokens(t_lexer *lexer)
 		return (0);
 	if (cmd_tokens <= 0)
 		return (-1);
-	// shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1));//could also go here
-	// if (shell->cmds->str == NULL)
-	// 	return (-1);
 	return (cmd_tokens);
 }
 
