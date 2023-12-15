@@ -62,7 +62,7 @@ void print_simple_cmds_list(t_shell *shell)
 				ft_printf("builtin: yes\n");
 			i++;
 		}
-		if (current->redir)
+		if (current->redir != NULL)
     	 	print_redir_list(current->redir);
     	current = current->next;
     }

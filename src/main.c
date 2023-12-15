@@ -119,6 +119,7 @@ void minishell_loop(t_shell *shell)
 	}
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
+	print_simple_cmds_list(shell);
 	expander(shell);
 	free_lexer(lexer);
 	free(prompt);

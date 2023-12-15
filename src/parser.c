@@ -99,7 +99,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 		return (-1);
 	if (tokens_count != 0)//this condition was missing (could also go in the function where it was before count_tokens)
 	{
-		shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1))//moved it to count_tokens, 
+		shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1));//moved it to count_tokens, 
 		if (shell->cmds->str == NULL)
 			return (-1);
 	}
