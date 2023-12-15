@@ -12,10 +12,10 @@ int	count_tokens(t_lexer *lexer)
 		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
 		{
 			if (lexer->next == NULL)
-			{
-				ft_printf("syntax error near unexpected token 'newline'");
-				return (-1);
-			}
+			// {
+			// 	ft_printf("syntax error near unexpected token 'newline'");//not needed, I checked it already at this point
+			// 	return (-1);
+			// }
 			redir_tokens++;
 		}
 		cmd_tokens++;
@@ -26,6 +26,9 @@ int	count_tokens(t_lexer *lexer)
 		return (0);
 	if (cmd_tokens <= 0)
 		return (-1);
+	// shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1));//could also go here
+	// if (shell->cmds->str == NULL)
+	// 	return (-1);
 	return (cmd_tokens);
 }
 
@@ -94,9 +97,12 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 	redir_count = 0;
 	if (tokens_count < 0)
 		return (-1);
-	shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1));
-	if (shell->cmds->str == NULL)
-		return (-1);
+	if (tokens_count != 0)//this condition was missing (could also go in the function where it was before count_tokens)
+	{
+		shell->cmds->str = ft_calloc(sizeof(char *), (tokens_count + 1))//moved it to count_tokens, 
+		if (shell->cmds->str == NULL)
+			return (-1);
+	}
 	lexer = save_cmd_str(shell, lexer, tokens_count, redir_count, i);
 	if (lexer && lexer->key == l_pipe)
 		lexer = lexer->next;
