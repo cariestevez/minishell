@@ -1,0 +1,18 @@
+cmd str[0] is ls
+path_elem is /home/emollebr/bin/, cmd is ls
+path_elem is /usr/local/sbin/, cmd is ls
+path_elem is /usr/local/bin/, cmd is ls
+path_elem is /usr/sbin/, cmd is ls
+path_elem is /usr/bin/, cmd is ls
+total 124
+-rwxr-xr-x 1 emollebr 2022_berlin   211 Dec 15 10:34 file
+drwxr-xr-x 2 emollebr 2022_berlin    59 Dec 15 10:25 inc
+drwxr-xr-x 2 emollebr 2022_berlin  4096 Dec 15 10:34 libft
+-rw-r--r-- 1 emollebr 2022_berlin  1210 Dec 14 17:28 Makefile
+-rwxr-xr-x 1 emollebr 2022_berlin 84040 Dec 15 10:34 minishell
+-rw-r--r-- 1 emollebr 2022_berlin   365 Dec 15 10:25 notes
+-rwxr-xr-x 1 emollebr 2022_berlin   560 Dec 15 10:25 out
+drwxr-xr-x 3 emollebr 2022_berlin  4096 Dec 15 10:34 src
+-rw-r--r-- 1 emollebr 2022_berlin   112 Dec 12 13:28 suppressions.supp
+-rw-r--r-- 1 emollebr 2022_berlin  1195 Dec  7 10:27 welcome.txt
+cmd str[0] is (null)

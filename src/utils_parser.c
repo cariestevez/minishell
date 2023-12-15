@@ -24,6 +24,7 @@ void	free_cmds(t_simple_cmds *cmd_node)
 
 	temp = NULL;
 	redir_tmp = NULL;
+	cmd_node->redir = cmd_node->redir_head;
 	while (cmd_node != NULL)
 	{
 		temp = cmd_node->next;
