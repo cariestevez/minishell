@@ -97,7 +97,7 @@ int	redirect_fds(int **fd, int i, int amount_of_cmds)
 	{
 		if (dup2(fd[i - 1][0], 0) < 0)
 			return (perror("dup2"), 1);
-		close(fd[i][1]);
+		close(fd[i - 1][1]);
 	}
 	if (i < amount_of_cmds - 1)
 	{
