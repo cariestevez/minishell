@@ -14,7 +14,7 @@
 
 int	execute(t_simple_cmds *cmd, char **envp)
 {
-	if (cmd->str[0] != NULL && 
+	if (cmd->str != NULL && cmd->str[0] != NULL && 
 		execve(get_path(cmd->str[0], envp), cmd->str, envp) == -1)
 	{
 		ft_putstr_fd("minishell: ", 1);

@@ -70,47 +70,47 @@ int	declare_variable(char *var, t_shell *shell)
 	return (0);
 }
 
-int if_quotes(char **str, int *q_flag, int i)
+int	if_quotes(char **str, int *q_flag, int i)
 {
-    if ((*str)[i] == '\"')
+	if ((*str)[i] == '\"')
+	{
+		if (*q_flag != -1)
 		{
-			if (*q_flag != -1)
-			{
-				i = get_quotes_trimmed(str, *q_flag, i);
-				if (!(*str))
-					return (-1);
-			}
-			if (*q_flag == -1)
-				*q_flag = i;
-			else
-				*q_flag = -1;
-		}
-    if ((*str)[i] == '\'' && *q_flag == -1)
-		{
-			i++;
-			while ((*str)[i] != '\0' && (*str)[i] != '\'')
-				i++;
-		}
-    return (i);
-}
-
-int if_variable(char **str, t_shell *shell, int i)
-{
-    int start;
-
-    start = 0;
-    if ((*str)[i] == '$' && (*str)[i + 1] != '\0' 
-			&& (ft_isalnum((*str)[i + 1]) == 1 
-				|| ft_strchr("_{}", (*str)[i + 1]) != 0))
-		{
-			start = i;
-			i++;
-			while ((*str)[i] != '\0' && (ft_isalnum((*str)[i]) == 1 
-					|| ft_strchr("_{}", (*str)[i]) != 0))
-				i++;
-			i = get_expanded_variable(&(*str), start, i, shell) - 1;
-			if (!str)
+			i = get_quotes_trimmed(str, *q_flag, i);
+			if (!(*str))
 				return (-1);
 		}
-        return (i);
+		if (*q_flag == -1)
+			*q_flag = i;
+		else
+			*q_flag = -1;
+	}
+	if ((*str)[i] == '\'' && *q_flag == -1)
+	{
+		i++;
+		while ((*str)[i] != '\0' && (*str)[i] != '\'')
+			i++;
+	}
+	return (i);
+}
+
+int	if_variable(char **str, t_shell *shell, int i)
+{
+	int	start;
+
+	start = 0;
+	if ((*str)[i] == '$' && (*str)[i + 1] != '\0' 
+			&& (ft_isalnum((*str)[i + 1]) == 1 
+				|| ft_strchr("_{}", (*str)[i + 1]) != 0))
+	{
+		start = i;
+		i++;
+		while ((*str)[i] != '\0' && (ft_isalnum((*str)[i]) == 1 
+				|| ft_strchr("_{}", (*str)[i]) != 0))
+			i++;
+		i = get_expanded_variable(&(*str), start, i, shell) - 1;
+		if (!str)
+			return (-1);
+	}
+	return (i);
 }

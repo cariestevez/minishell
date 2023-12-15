@@ -7,7 +7,6 @@ LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
 BUILTINS := ./src/builtins/
 SRCS := $(BUILTINS)ft_exit.c \
-		./src/debug.c \
 		./src/main.c \
 		./src/lexer.c \
 		./src/utils_lexer.c \

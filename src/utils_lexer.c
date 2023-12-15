@@ -52,10 +52,10 @@ int	open_quotes(char *str)
 	return (0);
 }
 
-int	look_for(int this, char *str, int i)
+int	look_for(int bracket, char *str, int i)
 {
 	i++;
-	while (str[i] != '\0' && str[i] != this)
+	while (str[i] != '\0' && str[i] != bracket)
 		i++;
 	return (i);
 }
