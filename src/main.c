@@ -9,37 +9,29 @@
 /*   Updated: 2023/12/13 22:20:03 by emollebr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "minishell.h"
 
-char    **arrdup(char **env)
+char	**arrdup(char **env)
 {
-    int     i;
-    char    **ret;
-    i = 0;
-    while (env[i])
-        i++;
-    ret = ft_calloc(sizeof(char **), i + 2);
-    if (!ret)
-        return (NULL);
-    i = 0;
-    while (env[i] != NULL)
-    {
-        ret[i] = ft_strdup(env[i]);
-        if (ret[i] == NULL)
-            return (NULL);
-        i++;
-    }
-    ret[i] = NULL;
-    return (ret);
-}
+	int		i;
+	char	**ret;
 
-void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
-{
-	free_lexer(lexer);
-	free(prompt);
-	free_cmds(cmds);
-	cmds = NULL;
+	i = 0;
+	while (env[i])
+		i++;
+	ret = ft_calloc(sizeof(char **), i + 2);
+	if (!ret)
+		return (NULL);
+	i = 0;
+	while (env[i] != NULL)
+	{
+		ret[i] = ft_strdup(env[i]);
+		if (ret[i] == NULL)
+			return (NULL);
+		i++;
+	}
+	ret[i] = NULL;
+	return (ret);
 }
 
 int	empty_str(char *str, t_shell *shell)
@@ -63,55 +55,36 @@ int	empty_str(char *str, t_shell *shell)
 	return (1);
 }
 
-void reset_rl(int signum)
+t_lexer	*get_input(t_shell *shell)
 {
-	(void)signum;
+	char		*str;
+	char		*prompt;
+	t_lexer		*lexer;
 
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
-
-void	display_new_line(int signum)
-{
-	if (signum == SIGQUIT)
-		ft_printf("Quit (core dumped)");
-	write(1, "\n", STDERR_FILENO);
-	rl_on_new_line();
-}
-
-void	signals_interactive(void)
-{
-	signal(SIGINT, reset_rl);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-void	signals_non_interactive(void)
-{
-	signal(SIGINT, display_new_line);
-	signal(SIGQUIT, display_new_line);
-}
-
-void minishell_loop(t_shell *shell)
-{
-	char			*str;
-	char			*prompt;
-	t_lexer			*lexer;
-	t_simple_cmds	*head;
-
-	str = NULL;
-	lexer = NULL;
-	head = NULL;
 	prompt = check_for_variables(ft_strdup(PROMPT), shell);
 	str = readline(prompt);
 	signals_non_interactive();
 	if (empty_str(str, shell))
-		return (free(prompt));
+	{
+		free(prompt);
+		return (NULL);
+	}
 	add_history(str);
 	lexer = ft_lexer(str);
 	free(str);
 	str = NULL;
+	free(prompt);
+	return (lexer);
+}
+
+void	minishell_loop(t_shell *shell)
+{
+	t_lexer			*lexer;
+	t_simple_cmds	*head;
+
+	lexer = NULL;
+	head = NULL;
+	lexer = get_input(shell);
 	if (lexer == NULL)
 	{
 		shell->exitcode = errno;
@@ -119,13 +92,10 @@ void minishell_loop(t_shell *shell)
 	}
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
-	expander(shell);
 	free_lexer(lexer);
-	free(prompt);
 	if (shell->cmds != NULL)
 		shell->exitcode = executor(shell);
-	free_cmds(head);
-	return ;
+	return (free_cmds(head));
 }
 
 int	main(int ac, char **av, char **envp)

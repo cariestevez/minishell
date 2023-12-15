@@ -10,49 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "minishell.h"
 
-void	free_cmd_array(char **str)
+int	count_tokens(t_lexer *lexer)
 {
-	int	i;
+	int	tokens_and_redirs[0];
+	int	redir_tokens;
 
-	i = 0;
-	if (str != NULL)
+	tokens_and_redirs[0] = 0;
+	redir_tokens = 0;
+	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
-		while (str[i] != NULL)
-		{
-			free(str[i]);
-			str[i] = NULL;
-			i++;
-		}
-		free(str);
+		if (lexer->key == l_in || lexer->key == l_out 
+			|| lexer->key == l_append || lexer->key == l_heredoc)
+			redir_tokens++;
+		tokens_and_redirs[0]++;
+		lexer = lexer->next;
 	}
-}
-
-void	free_cmds(t_simple_cmds *cmd_node)
-{
-	t_simple_cmds	*temp;
-	t_redir			*redir_tmp;
-
-	temp = NULL;
-	redir_tmp = NULL;
-	cmd_node->redir = cmd_node->redir_head;
-	while (cmd_node != NULL)
-	{
-		temp = cmd_node->next;
-		while (cmd_node->redir != NULL)
-		{
-			free(cmd_node->redir->str);
-			cmd_node->redir->str = NULL;
-			redir_tmp = cmd_node->redir->next;
-			free(cmd_node->redir);
-			cmd_node->redir = redir_tmp;
-		}
-		free_cmd_array(cmd_node->str);
-		cmd_node->str = NULL;
-		free(cmd_node);
-		cmd_node = temp;
-	}
+	tokens_and_redirs[0] -= (redir_tokens * 2);
+	if (tokens_and_redirs[0] <= 0 && redir_tokens != 0)
+		return (0);
+	if (tokens_and_redirs[0] <= 0)
+		return (-1);
+	return (tokens_and_redirs[0]);
 }
 
 int	count_cmds(t_lexer	*lexer)
@@ -121,4 +101,31 @@ t_redir	*new_redir_node(char *file, t_lexertype type)
 		return (NULL);
 	node->next = NULL;
 	return (node);
+}
+
+void	add_builtin_ptr(t_simple_cmds *cmd)
+{
+	t_simple_cmds	*head;
+
+	head = cmd;
+	while (cmd != NULL && cmd->str != NULL && cmd->str[0] != NULL)
+	{
+		if (ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
+			cmd->builtin = &ft_cd;
+		else if (ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)
+			cmd->builtin = &ft_echo;
+		else if (ft_strncmp(cmd->str[0], "env", BUFFER) == 0)
+			cmd->builtin = &ft_env;
+		else if (ft_strncmp(cmd->str[0], "export", BUFFER) == 0)
+			cmd->builtin = &ft_export;
+		else if (ft_strncmp(cmd->str[0], "pwd", BUFFER) == 0)
+			cmd->builtin = &ft_pwd;
+		else if (ft_strncmp(cmd->str[0], "unset", BUFFER) == 0)
+			cmd->builtin = &ft_unset;
+		else if (ft_strncmp(cmd->str[0], "exit", BUFFER) == 0)
+			cmd->builtin = &ft_exit;
+		cmd = cmd->next;
+	}
+	cmd = head;
+	return ;
 }

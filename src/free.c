@@ -1,33 +1,51 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/15 14:38:38 by emollebr          #+#    #+#             */
+/*   Updated: 2023/12/15 14:38:40 by emollebr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void	free_char_arr(char **tab)
+void	free_char_arr(char **str)
 {
 	int	i;
 
 	i = 0;
-	while (tab[i])
+	if (str != NULL)
 	{
-		free(tab[i]);
-		tab[i] = NULL;
-		i++;
+		while (str[i] != NULL)
+		{
+			free(str[i]);
+			str[i] = NULL;
+			i++;
+		}
+		free(str);
+		str = NULL;
 	}
-	free(tab);
-	tab = NULL;
 }
 
-void    free_int_arr(int  **arr)
+void	free_int_arr(int	**arr)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (arr[i] != NULL)
-    {
-        free(arr[i]);
-		arr[i] = NULL;
-        i++;
-    }
-    free(arr);
-	arr = NULL;
+	i = 0;
+	if (arr != NULL)
+	{
+		while (arr[i] != NULL)
+		{
+			free(arr[i]);
+			arr[i] = NULL;
+			i++;
+		}
+		free(arr);
+		arr = NULL;
+	}
 }
 
 int	free_lexer(t_lexer *lexer)
@@ -45,32 +63,36 @@ int	free_lexer(t_lexer *lexer)
 	return (0);
 }
 
-void    free_simple_commands(t_simple_cmds *cmds)
+void	free_cmds(t_simple_cmds *cmd_node)
 {
-	t_redir	*tmp;
+	t_simple_cmds	*temp;
+	t_redir			*redir_tmp;
 
-	tmp = NULL;
-    while (cmds != NULL)
-    {
-		if (cmds->str != NULL)
+	temp = NULL;
+	redir_tmp = NULL;
+	cmd_node->redir = cmd_node->redir_head;
+	while (cmd_node != NULL)
+	{
+		temp = cmd_node->next;
+		while (cmd_node->redir != NULL)
 		{
-        	free_char_arr(cmds->str);
-			cmds->str = NULL;
+			free(cmd_node->redir->str);
+			cmd_node->redir->str = NULL;
+			redir_tmp = cmd_node->redir->next;
+			free(cmd_node->redir);
+			cmd_node->redir = redir_tmp;
 		}
-		while (cmds->redir != NULL)
-		{
-			free(cmds->redir->str);
-        	tmp = cmds->redir;
-			cmds->redir = cmds->redir->next;
-			free(tmp);
-		}
-		if (cmds->index > 0)
-            free(cmds->prev);
-        if (cmds->next == NULL)
-        {
-            free(cmds);
-            return ;
-        }
-        cmds = cmds->next;
-    }
+		free_char_arr(cmd_node->str);
+		cmd_node->str = NULL;
+		free(cmd_node);
+		cmd_node = temp;
+	}
+}
+
+void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt)
+{
+	free_lexer(lexer);
+	free(prompt);
+	free_cmds(cmds);
+	cmds = NULL;
 }

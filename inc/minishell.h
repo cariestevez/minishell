@@ -34,7 +34,10 @@ static volatile sig_atomic_t	g_last_exit = 0;
 //main.c
 void	minishell_loop(t_shell *shell);
 char	**arrdup(char **env);
-void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
+t_lexer	*get_input(t_shell *shell);
+int		empty_str(char *str, t_shell *shell);
+
+//signals.c
 void	signals_non_interactive(void);
 void	signals_interactive(void);
 void	display_new_line(int signum);
@@ -44,7 +47,8 @@ void	reset_rl(int signum);
 void	free_char_arr(char **tab);
 void	free_int_arr(int **arr);
 int		free_lexer(t_lexer *lexer);
-void	free_simple_commands(t_simple_cmds *cmds);
+void	free_cmds(t_simple_cmds *cmd_node);
+void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
 
 //builtins
 int		ft_exit(t_shell *shell, t_simple_cmds *cmd);

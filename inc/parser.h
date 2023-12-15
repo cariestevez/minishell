@@ -6,7 +6,7 @@
 /*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 12:58:53 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/15 12:58:59 by emollebr         ###   ########.fr       */
+/*   Updated: 2023/12/15 14:00:02 by emollebr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ typedef struct s_simple_cmds
 
 //lexer.c
 t_lexer			*ft_lexer(char *input);
-int				read_command_line(t_lexer *lexer, char *str, int i);
+int				read_command_line(t_lexer *lexer, char *str);
 int				save_token(t_lexer *lexer, char *str, int start, int len);
 int				check_for_quotes(char *str, t_lexer *lexer, int start);
 int				check_for_redirections(char *str, t_lexer *lexer, int start);
@@ -84,21 +84,24 @@ int				open_brackets(char *str);
 int				open_curly(char *str);
 int				look_for(int bracket, char *str, int i);
 
+//utils_lexer_2.c
+t_lexer			*new_lexnode(t_lexer *prev, int index);
+t_lexertype		get_key(char *str);
+int				skip_spaces(char *str, int i);
+
 //parser.c
 t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell);
 int				parser_loop(t_shell *shell, t_lexer *lexer);
 int				save_simple_cmd(t_lexer	*lexer, t_shell	*shell);
-t_lexer			*save_cmd_str(t_shell *shell, t_lexer *lexer, 
-					int *tokens_and_redirs, int i);
+t_lexer			*save_cmd_str(t_shell *shell, t_lexer *lexer, int *t_and_r, int i);
 t_redir			*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count);
-int				count_tokens(t_lexer *lexer);
-void			add_builtin_ptr(t_simple_cmds *cmd);
 
 //utils_parser.c
 t_simple_cmds	*new_cmd_node(t_simple_cmds *prev);
-void			free_cmds(t_simple_cmds *cmd_node);
 int				count_cmds(t_lexer	*lexer);
 t_redir			*new_redir_node(char *file, t_lexertype type);
+int				count_tokens(t_lexer *lexer);
+void			add_builtin_ptr(t_simple_cmds *cmd);
 
 //expander.c
 int				expander(t_shell *shell);

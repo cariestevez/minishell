@@ -12,30 +12,11 @@
 
 #include "minishell.h"
 
-int	count_tokens(t_lexer *lexer)
-{
-	int	tokens_and_redirs[0];
-	int	redir_tokens;
-
-	tokens_and_redirs[0] = 0;
-	redir_tokens = 0;
-	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
-	{
-		if (lexer->key == l_in || lexer->key == l_out || lexer->key == l_append || lexer->key == l_heredoc)
-			redir_tokens++;
-		tokens_and_redirs[0]++;
-		lexer = lexer->next;
-	}
-	tokens_and_redirs[0] -= (redir_tokens * 2);
-	if (tokens_and_redirs[0] <= 0 && redir_tokens != 0)
-		return (0);
-	if (tokens_and_redirs[0] <= 0)
-		return (-1);
-	return (tokens_and_redirs[0]);
-}
-
 t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 {
+	t_redir	*current_redir;
+
+	current_redir = shell->cmds->redir;
 	if (lexer->next == NULL)
 	{
 		ft_printf("syntax error near unexpected token 'newline'");
@@ -43,41 +24,41 @@ t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 	}
 	if (redir_count == 1)
 	{
-		shell->cmds->redir = new_redir_node(lexer->next->token, lexer->key);
-		if (shell->cmds->redir == NULL)
+		current_redir = new_redir_node(lexer->next->token, lexer->key);
+		if (current_redir == NULL)
 			return (NULL);
-		shell->cmds->redir_head = shell->cmds->redir;
+		shell->cmds->redir_head = current_redir;
 	}
 	else
 	{
-		shell->cmds->redir->next = new_redir_node(lexer->next->token, lexer->key);
+		current_redir->next = new_redir_node(lexer->next->token, lexer->key);
 		if (shell->cmds->redir == NULL)
 			return (NULL);
 	}
-	shell->cmds->redir = shell->cmds->redir->next;
-	return (shell->cmds->redir);
+	current_redir = current_redir->next;
+	return (current_redir);
 }
 
-t_lexer	*save_cmd_str(t_shell *shell, t_lexer *lexer, int *tokens_and_redirs, int i)
+t_lexer	*save_cmd_str(t_shell *shell, t_lexer *lexer, int *t_and_r, int i)
 {
 	while (lexer != NULL && lexer->token != NULL && lexer->key != l_pipe)
 	{
 		if (lexer->key == l_in || lexer->key == l_out
 			|| lexer->key == l_append || lexer->key == l_heredoc)
 		{
-			tokens_and_redirs[1]++;
-			shell->cmds->redir = save_redirection(shell, lexer, tokens_and_redirs[1]);
+			t_and_r[1]++;
+			shell->cmds->redir = save_redirection(shell, lexer, t_and_r[1]);
 			if (shell->cmds->redir == NULL)
 				return (NULL);
 			lexer = lexer->next->next;
 		}
 		else if (lexer->key == l_non_op)
 		{
-			while (tokens_and_redirs[0] > 0 && lexer && lexer->key == l_non_op)
+			while (t_and_r[0] > 0 && lexer && lexer->key == l_non_op)
 			{
 				shell->cmds->str[i] = ft_strdup(lexer->token);
 				i++;
-				tokens_and_redirs[0]--;
+				t_and_r[0]--;
 				lexer = lexer->next;
 			}
 			shell->cmds->str[i] = NULL;
@@ -100,7 +81,7 @@ int	save_simple_cmd(t_lexer	*lexer, t_shell	*shell)
 		return (-1);
 	if (tokens_and_redirs[0] != 0)
 	{
-		shell->cmds->str = ft_calloc(sizeof(char *), (tokens_and_redirs[0] + 1));
+		shell->cmds->str = ft_calloc(8, (tokens_and_redirs[0] + 1));
 		if (shell->cmds->str == NULL)
 			return (-1);
 	}
@@ -151,32 +132,6 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 	while (shell->cmds->index != 0)
 		shell->cmds = shell->cmds->prev;
 	add_builtin_ptr(shell->cmds);
+	expander(shell);
 	return (shell->cmds);
-}
-
-void	add_builtin_ptr(t_simple_cmds *cmd)
-{
-	t_simple_cmds *head;
-
-	head = cmd;
-	while (cmd != NULL && cmd->str != NULL && cmd->str[0] != NULL)
-	{
-		if (cmd->str != NULL && ft_strncmp(cmd->str[0], "cd", BUFFER) == 0)
-			cmd->builtin = &ft_cd;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "echo", BUFFER) == 0)
-			cmd->builtin = &ft_echo;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "env", BUFFER) == 0)
-			cmd->builtin = &ft_env;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "export", BUFFER) == 0)
-			cmd->builtin = &ft_export;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "pwd", BUFFER) == 0)
-			cmd->builtin = &ft_pwd;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "unset", BUFFER) == 0)
-			cmd->builtin = &ft_unset;
-		else if (cmd->str != NULL && ft_strncmp(cmd->str[0], "exit", BUFFER) == 0)
-			cmd->builtin = &ft_exit;
-		cmd = cmd->next;
-	}
-	cmd = head;
-	return ;
 }

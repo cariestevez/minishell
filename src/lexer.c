@@ -11,34 +11,8 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-t_lexertype get_key(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (str[i] == '<')
-	{
-		if (str[i + 1] == '<')
-			return (l_heredoc);
-		else
-			return (l_in);
-	}
-	if (str[i] == '>')
-	{
-		if (str[i + 1] == '>')
-			return (l_append);
-		else
-			return (l_out);
-	}
-	if (str[i] == '|')
-		return (l_pipe);
-	return (l_non_op);
-}
-
-// saves the token and its key in the node
 int	save_token(t_lexer *lexer, char *str, int start, int len)
 {
-	//ft_printf("token len: %d\n", len);
 	lexer->token = ft_substr(str, start, len);
 	if (!lexer->token)
 		return (0);
@@ -53,13 +27,25 @@ int	save_token(t_lexer *lexer, char *str, int start, int len)
 	return (1);
 }
 
-int	check_for_quotes(char *str, t_lexer *lexer, int start)
+int	tokenize_redir(t_lexer *lexer, char *str, int start, int i)
 {
-	char	temp;
-	int			i;
+	int	flag;
 
-	i = start;
-	temp = '\0';
+	flag = 0;
+	if ((str[i] == '>' && str[i + 1] == '>')
+		|| (str[i] == '<' && str[i + 1] == '<'))
+		flag = 1;
+	i += 1 + flag;
+	if (!(save_token(lexer, str, start, 1 + flag)))
+		return (-1);
+	return (i);
+}
+
+int	tokenize_cmd(t_lexer *lexer, char *str, int start, int i)
+{
+	int	temp;
+
+	temp = 0;
 	if (str[i] == '\'' || str[i] == '\"')
 	{
 		temp = str[i];
@@ -67,69 +53,57 @@ int	check_for_quotes(char *str, t_lexer *lexer, int start)
 		while (str[i] != temp)
 			i++;
 	}
-	while (str[i] != '\0' && str[i] != ' ' && str[i] != '>' 
+	while (str[i] != '\0' && str[i] != ' ' && str[i] != '>'
 		&& str[i] != '<' && str[i] != '|')
 		i++;
 	if (!(save_token(lexer, str, start, i - start)))
-			return (-1);
+		return (-1);
 	return (i);
 }
 
-int	check_for_redirections(char *str, t_lexer *lexer, int start)
+int	read_command_line(t_lexer *lexer, char *str)
 {
-	char	flag;
-	int			i;
+	int	i;
+	int	start;
 
-	i = start;
-	flag = 0;
-	if ((str[i] == '>' && str[i + 1] == '>') || (str[i] == '<' && str[i + 1] == '<'))
-		flag = 1;
-	i += 1 + flag;
-	if (!(save_token(lexer, str, start, 1 + flag)))
-			return (-1);
-	return (i);
-}
-
-int    read_command_line(t_lexer *lexer, char *str, int i)
-{
-	if (str[i] == '#')
-		return (0);
-	while (i < (int)ft_strlen(str) && i != -1)
+	i = 0;
+	start = 0;
+	while (i < (int)ft_strlen(str))
 	{
-		while (str[i] != '\0' && str[i] == ' ')
-			i++;
+		i = skip_spaces(str, i);
 		while (str[i] != '\0')
 		{
+			start = i;
 			if (str[i] == '>' || str[i] == '<' || str[i] == '|')
-				i = check_for_redirections(str, lexer, i);
+				i = tokenize_redir(lexer, str, start, i);
 			else
-				i = check_for_quotes(str, lexer, i);
-			while (str[i] != '\0' && str[i] == ' ' && i != -1)
-				i++;
+				i = tokenize_cmd(lexer, str, start, i);
+			if (i < 0)
+				return (0);
+			i = skip_spaces(str, i);
 			lexer = lexer->next;
 		}
 	}
-	return (i);
+	return (1);
 }
 
 t_lexer	*ft_lexer(char *str)
 {
-	t_lexer     *lexer;
-	t_lexer     *head;
-	int				i;
+	t_lexer	*lexer;
+	t_lexer	*head;
 
 	lexer = NULL;
 	head = NULL;
-	i = 0;
 	if (open_brackets(str) || open_quotes(str) || open_curly(str))
-		return (ft_printf("syntax error near unexpected token"), NULL);
+	{
+		ft_printf("syntax error near unexpected token");
+		return (NULL);
+	}
 	lexer = new_lexnode(NULL, 0);
 	if (lexer == NULL)
 		return (NULL);
 	head = lexer;
-	while (str[i] != '\0' && str[i] == ' ')
-		i++;
-	if (!read_command_line(lexer, str, i))
+	if (!read_command_line(lexer, str))
 	{
 		free_lexer(head);
 		return (NULL);

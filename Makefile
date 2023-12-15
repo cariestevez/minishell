@@ -10,6 +10,7 @@ SRCS := $(BUILTINS)ft_exit.c \
 		./src/main.c \
 		./src/lexer.c \
 		./src/utils_lexer.c \
+		./src/utils_lexer_2.c \
 		./src/parser.c \
 		./src/utils_parser.c \
 		./src/executor.c \
@@ -19,6 +20,7 @@ SRCS := $(BUILTINS)ft_exit.c \
 		./src/expander.c \
 		./src/utils_expander.c \
 		./src/redirections.c \
+		./src/signals.c \
 		$(BUILTINS)ft_cd.c \
 		$(BUILTINS)ft_pwd.c \
 		$(BUILTINS)ft_echo.c \
