@@ -12,15 +12,17 @@
 
 #include "minishell.h"
 
-int	get_expanded_exitcode(char **str, int start, int end, t_shell *shell)
+int	get_expanded_exitcode(char **str, int start, int end)
 {
 	char	*var;
 	char	*tmp;
 	char	*ret;
 	char	*append;
 	int		new_index;
+	int		exitcode;
 
-	var = ft_itoa(shell->exitcode);
+	exitcode = g_last_exit;
+	var = ft_itoa(exitcode);
 	ret = ft_substr(*str, 0, start);
 	tmp = ft_strjoin(ret, var);
 	free(ret);
@@ -99,7 +101,7 @@ char	*check_for_variables(char *str, t_shell *shell)
 		if (i == -1)
 			return (NULL);
 		if (str[i] != '\0' && str[i] == '$' && str[i + 1] == '?')
-			i = get_expanded_exitcode(&str, i, i + 2, shell) - 1;
+			i = get_expanded_exitcode(&str, i, i + 2) - 1;
 		else 
 			i = if_variable(&str, shell, i);
 		if (i == -1)
@@ -107,7 +109,8 @@ char	*check_for_variables(char *str, t_shell *shell)
 		else if (str[i] == '$' && str[i + 1] != '\0' 
 			&& ft_strchr("\'\"", str[i + 1]) != 0)
 			str = ft_strtrim(str, "$");
-		i++;
+		if (str[i] != '\0')
+			i++;
 	}
 	return (str);
 }
@@ -126,7 +129,7 @@ int	expander(t_shell *shell)
 		while (current->str != NULL && current->str[i] != NULL)
 		{
 			current->str[i] = check_for_variables(current->str[i], shell);
-			if (shell->cmds->str[i] == NULL)
+			if (current->str[i] == NULL)
 			{
 				tmp = current->str[i];
 				current->str[i] = current->str[i + 1];

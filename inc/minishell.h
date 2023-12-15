@@ -29,13 +29,13 @@
 # define BUFFER 500
 # define PROMPT "\033[35mHello \033[36m${USER}\033[0m$ "
 
-static volatile sig_atomic_t	g_last_exit = 0;
+extern int  g_last_exit;
 
 //main.c
-void	minishell_loop(t_shell *shell);
+sig_atomic_t	minishell_loop(t_shell *shell);
 char	**arrdup(char **env);
-t_lexer	*get_input(t_shell *shell);
-int		empty_str(char *str, t_shell *shell);
+char	*get_input(t_shell *shell);
+int		empty_str(char *str);
 
 //signals.c
 void	signals_non_interactive(void);

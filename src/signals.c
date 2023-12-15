@@ -16,15 +16,21 @@ void	reset_rl(int signum)
 {
 	(void)signum;
 	write(1, "\n", 1);
-	rl_on_new_line();
+	g_last_exit = 130;
 	rl_replace_line("", 0);
+	rl_on_new_line();
 	rl_redisplay();
 }
 
 void	display_new_line(int signum)
 {
 	if (signum == SIGQUIT)
+	{
 		ft_printf("Quit (core dumped)");
+		g_last_exit = 131;
+	}
+	if (signum == SIGINT)
+		g_last_exit = 130;
 	write(1, "\n", STDERR_FILENO);
 	rl_on_new_line();
 }

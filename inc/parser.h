@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+﻿/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
@@ -70,7 +70,7 @@ typedef struct s_simple_cmds
 }	t_simple_cmds;
 
 //lexer.c
-t_lexer			*ft_lexer(char *input);
+t_lexer			*ft_lexer(char *input, int g_last_exit);
 int				read_command_line(t_lexer *lexer, char *str);
 int				save_token(t_lexer *lexer, char *str, int start, int len);
 int				check_for_quotes(char *str, t_lexer *lexer, int start);
@@ -111,7 +111,7 @@ char			*check_for_variables(char *str, t_shell *shell);
 int				get_expanded_variable(char **str, int start, 
 					int end, t_shell *shell);
 int				get_expanded_exitcode(char **str, int start, 
-					int end, t_shell *shell);
+					int end);
 int				get_quotes_trimmed(char **str, int start, int end);
 
 //utils_expander.c

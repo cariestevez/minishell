@@ -1,0 +1,2 @@
+-rwxr-xr-x 1 emollebr 2022_berlin     0 Dec 15 18:18 output.txt
+-rw-r--r-- 1 emollebr 2022_berlin  1195 Dec  7 10:27 welcome.txt

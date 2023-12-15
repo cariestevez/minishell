@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
+int g_last_exit;
+
 char	**arrdup(char **env)
 {
 	int		i;
@@ -34,7 +36,7 @@ char	**arrdup(char **env)
 	return (ret);
 }
 
-int	empty_str(char *str, t_shell *shell)
+int	empty_str(char *str)
 {
 	int	i;
 
@@ -42,7 +44,7 @@ int	empty_str(char *str, t_shell *shell)
 	if (!str)
 	{
 		ft_printf("exit\n");
-		return (shell->exitcode += 1000);
+		return (g_last_exit += 1000);
 	}
 	while (str[i] != '\0')
 	{
@@ -55,66 +57,66 @@ int	empty_str(char *str, t_shell *shell)
 	return (1);
 }
 
-t_lexer	*get_input(t_shell *shell)
+char	*get_input(t_shell *shell)
 {
-	char		*str;
 	char		*prompt;
-	t_lexer		*lexer;
+	char		*str;
 
+	str = NULL;
 	prompt = check_for_variables(ft_strdup(PROMPT), shell);
 	str = readline(prompt);
 	signals_non_interactive();
-	if (empty_str(str, shell))
+	if (empty_str(str))
 	{
 		free(prompt);
 		return (NULL);
 	}
 	add_history(str);
-	lexer = ft_lexer(str);
-	free(str);
-	str = NULL;
 	free(prompt);
-	return (lexer);
+	return (str);
 }
 
-void	minishell_loop(t_shell *shell)
+sig_atomic_t	minishell_loop(t_shell *shell)
 {
 	t_lexer			*lexer;
 	t_simple_cmds	*head;
+	char			*str;
 
 	lexer = NULL;
 	head = NULL;
-	lexer = get_input(shell);
+	str = get_input(shell);
+	if (str == NULL)
+		return (g_last_exit);
+	lexer = ft_lexer(str, g_last_exit);
+	free(str);
+	str = NULL;
 	if (lexer == NULL)
-	{
-		shell->exitcode = errno;
-		return ;
-	}
+		return (errno);
 	shell->cmds = ft_parser(lexer, shell);
 	head = shell->cmds;
 	free_lexer(lexer);
 	if (shell->cmds != NULL)
-		shell->exitcode = executor(shell);
-	return (free_cmds(head));
+		g_last_exit = executor(shell);
+	free_cmds(head);
+	return (g_last_exit);
 }
 
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	*shell;
 
+	g_last_exit = 0;
 	shell = ft_calloc(sizeof(t_shell), 1);
 	if (!shell)
 		return (-1);
-	g_last_exit = 0;
 	shell->env = arrdup(envp);
-	shell->exitcode = 0;
 	(void)ac;
 	(void)av;
 	while (1)
 	{
 		signals_interactive();
-		minishell_loop(shell);
-		if (shell->exitcode >= 1000)
+		g_last_exit = minishell_loop(shell);
+		if (g_last_exit >= 1000)
 			break ;
 	}
 	free_char_arr(shell->env);
