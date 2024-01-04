@@ -34,8 +34,8 @@ t_redir	*save_redirection(t_shell *shell, t_lexer *lexer, int redir_count)
 		current_redir->next = new_redir_node(lexer->next->token, lexer->key);
 		if (shell->cmds->redir == NULL)
 			return (NULL);
+		current_redir = current_redir->next;
 	}
-	current_redir = current_redir->next;
 	return (current_redir);
 }
 
@@ -133,5 +133,6 @@ t_simple_cmds	*ft_parser(t_lexer *lexer, t_shell *shell)
 		shell->cmds = shell->cmds->prev;
 	add_builtin_ptr(shell->cmds);
 	expander(shell);
+	remove_quotes(shell);
 	return (shell->cmds);
 }

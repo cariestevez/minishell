@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: cestevez <cestevez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 16:34:48 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/15 16:34:51 by emollebr         ###   ########.fr       */
+/*   Updated: 2024/01/04 21:18:34 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,8 @@ int				get_quotes_trimmed(char **str, int start, int end);
 int				declare_variable(char *var, t_shell *shell);
 int				if_quotes(char **str, int *q_flag, int i);
 int				if_variable(char **str, t_shell *shell, int i);
+
+//utils_random.c
+void    remove_quotes(t_shell *shell);
 
 #endif

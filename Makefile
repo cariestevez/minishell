@@ -8,6 +8,7 @@ LIBS := $(LIBFT)libft.a
 BUILTINS := ./src/builtins/
 SRCS := $(BUILTINS)ft_exit.c \
 		./src/main.c \
+		./src/utils_random.c \
 		./src/lexer.c \
 		./src/utils_lexer.c \
 		./src/utils_lexer_2.c \
