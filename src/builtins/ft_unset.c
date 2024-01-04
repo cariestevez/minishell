@@ -33,11 +33,11 @@ int	ft_unset(t_shell *shell, t_simple_cmds *cmd)
 	list = shell->env;
 	i = 1;
 	j = 0;
-	while (cmd->str[i])
+	while (cmd->str && cmd->str[i])
 	{
 		j = 0;
-		while (ft_strncmp(cmd->str[i], list[j], ft_strlen(cmd->str[i])) != 0
-			&& list[j] != NULL)
+		while (list != NULL && list[j] != NULL
+			&& ft_strncmp(cmd->str[i], list[j], ft_strlen(cmd->str[i])) != 0)
 		{
 			j++;
 		}

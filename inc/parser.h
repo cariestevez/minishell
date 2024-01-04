@@ -70,7 +70,7 @@ typedef struct s_simple_cmds
 }	t_simple_cmds;
 
 //lexer.c
-t_lexer			*ft_lexer(char *input, int g_last_exit);
+t_lexer			*ft_lexer(char *input);
 int				read_command_line(t_lexer *lexer, char *str);
 int				save_token(t_lexer *lexer, char *str, int start, int len);
 int				check_for_quotes(char *str, t_lexer *lexer, int start);

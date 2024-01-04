@@ -20,7 +20,6 @@ static int	replace_variable(char *var, char *new_var, t_shell *shell, int i)
 	if (ft_strncmp(current_env[0], new_var, ft_strlen(new_var)) == 0)
 	{
 		free_char_arr(current_env);
-		free(new_var);
 		free(shell->env[i]);
 		shell->env[i] = ft_strdup(var);
 		return (0);

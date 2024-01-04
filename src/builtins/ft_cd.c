@@ -47,6 +47,7 @@ int	update_envvar(char *name, char *new, char **env)
 	name = ft_strjoin(name, "=");
 	env[i] = ft_strjoin(name, new);
 	free(new);
+	free(name);
 	return (0);
 }
 

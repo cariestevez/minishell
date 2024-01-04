@@ -105,7 +105,7 @@ int	executor(t_shell *shell)
 	if (!fd)
 		return (free_and_exit(shell, fd, pid));
 	if (fork_processes(shell, pid, fd) != 0)
-		return (free_and_exit(shell, fd, pid), errno + 1000);
+		return (free_and_exit(shell, fd, pid), g_last_exit + 1000);
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
 	status = wait_for_children(head, pid, shell->amount_of_cmds);
 	free_int_arr(fd);

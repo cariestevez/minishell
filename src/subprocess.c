@@ -20,6 +20,7 @@ int	execute(t_simple_cmds *cmd, char **envp)
 		ft_putstr_fd("minishell: ", 1);
 		ft_putstr_fd(cmd->str[0], 2);
 		ft_putstr_fd(": command not found\n", 2);
+		g_last_exit = 127;
 	}
 	return (-1);
 }

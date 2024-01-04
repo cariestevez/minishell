@@ -87,7 +87,7 @@ sig_atomic_t	minishell_loop(t_shell *shell)
 	str = get_input(shell);
 	if (str == NULL)
 		return (g_last_exit);
-	lexer = ft_lexer(str, g_last_exit);
+	lexer = ft_lexer(str);
 	free(str);
 	str = NULL;
 	if (lexer == NULL)
@@ -117,10 +117,13 @@ int	main(int ac, char **av, char **envp)
 		signals_interactive();
 		g_last_exit = minishell_loop(shell);
 		if (g_last_exit >= 1000)
+		{
+			g_last_exit -= 1000;
 			break ;
+		}
 	}
 	free_char_arr(shell->env);
 	free(shell);
 	rl_clear_history();
-	return (errno);
+	return (g_last_exit);
 }

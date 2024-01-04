@@ -55,7 +55,7 @@ static size_t	count_words(const char *str, char c)
 
 	trigger = 0;
 	count = 0;
-	while (*str)
+	while (str && *str)
 	{
 		if (*str != c && trigger == 0)
 		{

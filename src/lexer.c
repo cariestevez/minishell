@@ -88,7 +88,7 @@ int	read_command_line(t_lexer *lexer, char *str)
 	return (1);
 }
 
-t_lexer	*ft_lexer(char *str, int g_last_exit)
+t_lexer	*ft_lexer(char *str)
 {
 	t_lexer	*lexer;
 	t_lexer	*head;
