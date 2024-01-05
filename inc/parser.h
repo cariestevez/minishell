@@ -1,15 +1,14 @@
-﻿/* ************************************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cestevez <cestevez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/15 16:34:48 by emollebr          #+#    #+#             */
-/*   Updated: 2024/01/04 21:18:34 by cestevez         ###   ########.fr       */
+/*   Created: 2024/01/05 09:38:15 by emollebr          #+#    #+#             */
+/*   Updated: 2024/01/05 09:38:17 by emollebr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #ifndef PARSER_H
 # define PARSER_H
 
@@ -120,6 +119,6 @@ int				if_quotes(char **str, int *q_flag, int i);
 int				if_variable(char **str, t_shell *shell, int i);
 
 //utils_random.c
-void    remove_quotes(t_shell *shell);
+void			remove_quotes(t_shell *shell);
 
 #endif

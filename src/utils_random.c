@@ -15,6 +15,7 @@
 void	remove_quotes(t_shell *shell)
 {
 	int				i;
+	int				current_len;
 	t_simple_cmds	*current_cmd;
 	char			*truncated;
 
@@ -26,10 +27,11 @@ void	remove_quotes(t_shell *shell)
 		i = 0;
 		while (current_cmd->str != NULL && current_cmd->str[i] != NULL)
 		{
+			current_len = ft_strlen(current_cmd->str[i]);
 			if (current_cmd->str[i][0] == '\''
-				&& current_cmd->str[i][ft_strlen(current_cmd->str[i]) - 1] == '\'')
+				&& current_cmd->str[i][current_len - 1] == '\'')
 			{
-				truncated = ft_substr(current_cmd->str[i], 1, ft_strlen(current_cmd->str[i]) - 2);
+				truncated = ft_substr(current_cmd->str[i], 1, current_len - 2);
 				free(current_cmd->str[i]);
 				current_cmd->str[i] = truncated;
 			}

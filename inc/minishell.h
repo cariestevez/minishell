@@ -29,13 +29,13 @@
 # define BUFFER 500
 # define PROMPT "\033[35mHello \033[36m${USER}\033[0m$ "
 
-extern int  g_last_exit;
+extern int	g_last_exit;
 
 //main.c
-sig_atomic_t	minishell_loop(t_shell *shell);
+int		minishell_loop(t_shell *shell);
+int		empty_str(char *str);
 char	**arrdup(char **env);
 char	*get_input(t_shell *shell);
-int		empty_str(char *str);
 
 //signals.c
 void	signals_non_interactive(void);
@@ -44,9 +44,9 @@ void	display_new_line(int signum);
 void	reset_rl(int signum);
 
 //free.c
+int		free_lexer(t_lexer *lexer);
 void	free_char_arr(char **tab);
 void	free_int_arr(int **arr);
-int		free_lexer(t_lexer *lexer);
 void	free_cmds(t_simple_cmds *cmd_node);
 void	free_on_succes(t_simple_cmds *cmds, t_lexer *lexer, char *prompt);
 

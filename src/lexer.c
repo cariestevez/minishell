@@ -1,15 +1,14 @@
-﻿/* ************************************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/15 16:33:47 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/15 16:33:51 by emollebr         ###   ########.fr       */
+/*   Created: 2024/01/05 09:39:26 by emollebr          #+#    #+#             */
+/*   Updated: 2024/01/05 09:39:27 by emollebr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "minishell.h"
 
 int	save_token(t_lexer *lexer, char *str, int start, int len)
@@ -95,7 +94,6 @@ t_lexer	*ft_lexer(char *str)
 
 	lexer = NULL;
 	head = NULL;
-
 	if (open_brackets(str) || open_quotes(str) || open_curly(str))
 	{
 		ft_printf("syntax error near unexpected token");

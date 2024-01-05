@@ -19,10 +19,8 @@ int	get_expanded_exitcode(char **str, int start, int end)
 	char	*ret;
 	char	*append;
 	int		new_index;
-	int		exitcode;
 
-	exitcode = g_last_exit;
-	var = ft_itoa(exitcode);
+	var = ft_itoa(g_last_exit);
 	ret = ft_substr(*str, 0, start);
 	tmp = ft_strjoin(ret, var);
 	free(ret);

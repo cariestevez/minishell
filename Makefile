@@ -6,8 +6,7 @@ INC := -Iinc -I$(LIBFT) -Ireadline/include
 LIBFT := ./libft/
 LIBS := $(LIBFT)libft.a
 BUILTINS := ./src/builtins/
-SRCS := $(BUILTINS)ft_exit.c \
-		./src/main.c \
+SRCS := ./src/main.c \
 		./src/utils_random.c \
 		./src/lexer.c \
 		./src/utils_lexer.c \
@@ -22,6 +21,7 @@ SRCS := $(BUILTINS)ft_exit.c \
 		./src/utils_expander.c \
 		./src/redirections.c \
 		./src/signals.c \
+		$(BUILTINS)ft_exit.c \
 		$(BUILTINS)ft_cd.c \
 		$(BUILTINS)ft_pwd.c \
 		$(BUILTINS)ft_echo.c \
