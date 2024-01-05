@@ -51,3 +51,29 @@ int	restore_streams(int *std)
 	close(std[1]);
 	return (0);
 }
+
+int	check_edgecases(t_shell *shell)
+{
+	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
+	{
+		execute_builtin(shell, NULL, 0);
+		return (1);
+	}
+	if (shell->cmds->redir && !shell->cmds->str)
+	{
+		redirections(shell->cmds);
+		restore_streams(shell->std);
+		return (1);
+	}
+	return (0);
+}
+
+void	reset_rl(int signum)
+{
+	(void)signum;
+	g_last_exit = 130;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}

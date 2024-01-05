@@ -41,7 +41,6 @@ char	*get_input(t_shell *shell);
 void	signals_non_interactive(void);
 void	signals_interactive(void);
 void	display_new_line(int signum);
-void	reset_rl(int signum);
 void	signals_heredoc(void);
 void	redisplay_heredoc(int signum);
 

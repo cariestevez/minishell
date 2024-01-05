@@ -57,7 +57,7 @@ int	redirections(t_simple_cmds *cmd)
 int	execute_builtin(t_shell *shell, int **fd, int i)
 {
 	t_simple_cmds	*builtin;
-	
+
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
 	builtin = shell->cmds;
 	while (builtin->index != i)

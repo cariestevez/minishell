@@ -12,27 +12,6 @@
 
 #include <minishell.h>
 
-void	reset_rl(int signum)
-{
-	(void)signum;
-	g_last_exit = 130;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-// 	if (signum == SIGINT)
-// 	{
-// 		write(STDERR_FILENO, "\n", 1);
-// 		rl_on_new_line();
-// 		rl_replace_line("", 0);
-// 		if (g_last_exit != 155)
-// 		{
-// 			rl_redisplay();
-// 		}
-// 		g_last_exit = 130;
-// 	}
-}
-
 void	display_new_line(int signum)
 {
 	if (signum == SIGQUIT)
@@ -54,18 +33,9 @@ void	signals_interactive(void)
 
 void	signals_non_interactive(void)
 {
-	// write(1, "non interactive mode\n", 21);
 	signal(SIGINT, display_new_line);
 	signal(SIGQUIT, display_new_line);
 }
-
-// void	handle_signals_cmd(int sig)
-// {
-// 	if (sig == SIGINT)
-// 		write(STDERR_FILENO, "overwritten\n", 1);
-// 	else if (sig == SIGQUIT)
-// 		write(STDERR_FILENO, "overwritten\n", 18);
-// }
 
 void	signals_heredoc(void)
 {
@@ -78,5 +48,4 @@ void	redisplay_heredoc(int signum)
 	(void)signum;
 	g_last_exit = 130;
 	write(1, "\n", 1);
-	write(0, "\n", 1);
 }

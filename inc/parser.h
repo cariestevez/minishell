@@ -122,5 +122,7 @@ int				if_variable(char **str, t_shell *shell, int i);
 //utils_random.c
 void			remove_quotes(t_shell *shell);
 int				restore_streams(int *std);
+int				check_edgecases(t_shell *shell);
+void			reset_rl(int signum);
 
 #endif

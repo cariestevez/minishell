@@ -60,25 +60,27 @@ int	redirect_output(t_redir *output)
 static void	read_heredoc(char *delimiter, int fd)
 {
 	char	*line;
+	int		old_status;
 
+	old_status = g_last_exit;
 	signals_heredoc();
+	g_last_exit = 0;
 	while (g_last_exit != 130)
 	{
 		write(1, HEREDOC_PROMPT, ft_strlen(HEREDOC_PROMPT));
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
-			break;
-		printf("g_last_extit: %i\n", g_last_exit);
+			break ;
 		if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0)
-			break;
+			break ;
 		ft_putstr_fd(line, fd);
 		free(line);
 	}
-	printf("we broke free\n");
 	rl_redisplay();
 	signals_non_interactive();
 	if (g_last_exit != 130)
-		free(line);
+		return (free(line));
+	g_last_exit = old_status;
 }
 
 int	heredoc(t_redir *heredoc, int index)
