@@ -57,6 +57,7 @@ int	check_edgecases(t_shell *shell)
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 	{
 		execute_builtin(shell, NULL, 0);
+		restore_streams(shell->std);
 		return (1);
 	}
 	if (shell->cmds->redir && !shell->cmds->str)
