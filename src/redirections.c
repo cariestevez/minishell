@@ -54,20 +54,34 @@ int	redirect_output(t_redir *output)
 	return (0);
 }
 
+//ctrl C prints C in same line and gives back prompt
+//ctrl D gives back the prompt
+//ctrl \ does NOTHING
+
 static void	read_heredoc(char *delimiter, int fd)
 {
 	char	*line;
 
+	signals_heredoc();
+	write(1, "waiting for 1st line\n", 21);
+	// write(1, HEREDOC_PROMPT, ft_strlen(HEREDOC_PROMPT));
+	// line = get_next_line(0);
 	line = readline(HEREDOC_PROMPT);
-	while (ft_strncmp(line, delimiter, ft_strlen(line)) != 0)
+	write(1, "after reading 1st line\n", 23);
+	while (line && ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) != 0 && g_last_exit != 666)
 	{
-		signals_non_interactive();
+		signals_heredoc();
+		write(1, "start of loop\n", 14);
 		ft_putstr_fd(line, fd);
 		ft_putchar_fd('\n', fd);
 		free(line);
-		signals_interactive();
+		// signals_interactive();
 		line = readline(HEREDOC_PROMPT);
+		write(1, HEREDOC_PROMPT, ft_strlen(HEREDOC_PROMPT));
+		// line = get_next_line(0);
+		write(1, "end of loop\n", 12);
 	}
+	printf("exiting heredoc function\n");
 	free(line);
 }
 

@@ -46,7 +46,10 @@ int	redirections(t_simple_cmds *cmd)
 		if (cmd->redir->type == l_heredoc && cmd->redir->str != NULL)
 		{
 			if (heredoc(cmd->redir, cmd->index) != 0)
+			{
+				ft_putstr_fd("enters here\n", 2);
 				return (-1);
+			}
 		}
 		cmd->redir = cmd->redir->next;
 	}

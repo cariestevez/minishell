@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: cestevez <cestevez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 14:38:38 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/15 14:38:40 by emollebr         ###   ########.fr       */
+/*   Updated: 2024/01/05 10:59:52 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ void	free_cmds(t_simple_cmds *cmd_node)
 
 	temp = NULL;
 	redir_tmp = NULL;
+	if (cmd_node == NULL)
+		return;
 	cmd_node->redir = cmd_node->redir_head;
 	while (cmd_node != NULL)
 	{

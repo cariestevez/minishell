@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: cestevez <cestevez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 21:21:13 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/13 21:21:15 by emollebr         ###   ########.fr       */
+/*   Updated: 2024/01/05 12:35:41 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ int	executor(t_shell *shell)
 	head = shell->cmds;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 		return (execute_builtin(shell, fd, 0), errno);
+	if (shell->cmds->redir && !shell->cmds->str)
+    	return (redirections(shell->cmds));
 	pid = ft_calloc(sizeof(pid_t), shell->amount_of_cmds);
 	fd = create_pipes(shell, fd);
 	if (!fd)

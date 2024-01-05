@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emollebr <emollebr@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: cestevez <cestevez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 12:54:21 by emollebr          #+#    #+#             */
-/*   Updated: 2023/12/15 12:54:23 by emollebr         ###   ########.fr       */
+/*   Updated: 2024/01/05 10:49:09 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void	signals_non_interactive(void);
 void	signals_interactive(void);
 void	display_new_line(int signum);
 void	reset_rl(int signum);
+void	signals_heredoc(void);
+void	redisplay_heredoc(int signum);
 
 //free.c
 int		free_lexer(t_lexer *lexer);
