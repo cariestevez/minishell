@@ -96,18 +96,25 @@ int	executor(t_shell *shell)
 	pid_t			*pid;
 	t_simple_cmds	*head;
 
+	shell->std[0] = dup(STDIN_FILENO);
+	shell->std[1] = dup(STDOUT_FILENO);
 	fd = NULL;
 	head = shell->cmds;
 	if (shell->amount_of_cmds == 1 && shell->cmds->builtin != NULL)
 		return (execute_builtin(shell, fd, 0), errno);
 	if (shell->cmds->redir && !shell->cmds->str)
-    	return (redirections(shell->cmds));
+	{
+		redirections(shell->cmds);
+    	return (restore_streams(shell->std));
+	}
 	pid = ft_calloc(sizeof(pid_t), shell->amount_of_cmds);
 	fd = create_pipes(shell, fd);
 	if (!fd)
 		return (free_and_exit(shell, fd, pid));
 	if (fork_processes(shell, pid, fd) != 0)
 		return (free_and_exit(shell, fd, pid), g_last_exit + 1000);
+	if (shell->amount_of_cmds == 1)
+		restore_streams(shell->std);
 	close_unneccesary_fds(fd, shell->amount_of_cmds + 1, shell->amount_of_cmds);
 	status = wait_for_children(head, pid, shell->amount_of_cmds);
 	free_int_arr(fd);

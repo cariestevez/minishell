@@ -53,6 +53,7 @@ typedef struct s_shell
 	struct s_simple_cmds		*cmds;
 	struct s_simple_cmds		*cmd_head;
 	char						**env;
+	int							std[2];
 }	t_shell;
 
 typedef int	(*t_builtin_func)(struct s_shell *, struct s_simple_cmds *);
@@ -120,5 +121,6 @@ int				if_variable(char **str, t_shell *shell, int i);
 
 //utils_random.c
 void			remove_quotes(t_shell *shell);
+int				restore_streams(int *std);
 
 #endif

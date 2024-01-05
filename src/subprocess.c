@@ -46,10 +46,7 @@ int	redirections(t_simple_cmds *cmd)
 		if (cmd->redir->type == l_heredoc && cmd->redir->str != NULL)
 		{
 			if (heredoc(cmd->redir, cmd->index) != 0)
-			{
-				ft_putstr_fd("enters here\n", 2);
 				return (-1);
-			}
 		}
 		cmd->redir = cmd->redir->next;
 	}
@@ -60,10 +57,7 @@ int	redirections(t_simple_cmds *cmd)
 int	execute_builtin(t_shell *shell, int **fd, int i)
 {
 	t_simple_cmds	*builtin;
-	int				std[2];
-
-	std[0] = dup(0);
-	std[1] = dup(1);
+	
 	close_unneccesary_fds(fd, i, shell->amount_of_cmds);
 	builtin = shell->cmds;
 	while (builtin->index != i)
@@ -74,15 +68,6 @@ int	execute_builtin(t_shell *shell, int **fd, int i)
 	if (redirections(builtin) != 0)
 		return (1);
 	builtin->builtin(shell, shell->cmds);
-	if (shell->amount_of_cmds == 1)
-	{
-		if (dup2(std[0], 0) < 0)
-			return (perror("dup2"), 1);
-		close(std[0]);
-		if (dup2(std[1], 1) < 0)
-			return (perror("dup2"), 1);
-		close(std[1]);
-	}
 	return (0);
 }
 

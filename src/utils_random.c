@@ -40,3 +40,14 @@ void	remove_quotes(t_shell *shell)
 		current_cmd = current_cmd->next;
 	}
 }
+
+int	restore_streams(int *std)
+{
+	if (dup2(std[0], 0) < 0)
+		return (perror("dup2"), 1);
+	close(std[0]);
+	if (dup2(std[1], 1) < 0)
+		return (perror("dup2"), 1);
+	close(std[1]);
+	return (0);
+}
