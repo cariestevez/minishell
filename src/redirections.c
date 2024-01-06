@@ -70,13 +70,15 @@ static void	read_heredoc(char *delimiter, int fd)
 		write(1, HEREDOC_PROMPT, ft_strlen(HEREDOC_PROMPT));
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
+		{
+			write(1, "warning: here-document delimited by end-of-file\n", 49);
 			break ;
+		}
 		if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0)
 			break ;
 		ft_putstr_fd(line, fd);
 		free(line);
 	}
-	rl_redisplay();
 	signals_non_interactive();
 	if (g_last_exit != 130)
 		return (free(line));
