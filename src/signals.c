@@ -47,5 +47,5 @@ void	redisplay_heredoc(int signum)
 {
 	(void)signum;
 	g_last_exit = 130;
-	write(1, "\n", 1);
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
 }
