@@ -125,3 +125,4 @@ int				replace_variable(char *var, char *new_var,
 int				restore_streams(int *std);
 int				check_edgecases(t_shell *shell);
 void			remove_quotes(t_shell *shell);
+void			trim_dollar_sign(char **str);

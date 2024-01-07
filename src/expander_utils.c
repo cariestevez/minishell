@@ -73,7 +73,6 @@ int	if_quotes(char **str, int *q_flag, int i)
 {
 	if ((*str)[i] == '\"')
 	{
-		ft_printf("in IF QUOTES\n");
 		if (*q_flag != -1)
 		{
 			i = get_quotes_trimmed(str, *q_flag, i);
@@ -111,6 +110,5 @@ int	if_variable(char **str, t_shell *shell, int i)
 			i++;
 		i = get_expanded_variable(&(*str), start, i, shell) - 1;
 	}
-	ft_printf("str[%d]: %c\n", i, (*str)[i]);
 	return (i);
 }

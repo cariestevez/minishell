@@ -12,33 +12,51 @@
 
 #include "minishell.h"
 
+static char	*util_remove_quotes(t_simple_cmds *current_cmd, int i)
+{
+	char			*truncated;
+	int				current_len;
+
+	truncated = NULL;
+	current_len = ft_strlen(current_cmd->str[i]);
+	if ((current_cmd->str[i][0] == '\''
+		|| current_cmd->str[i][0] == '\"')
+		&& (current_cmd->str[i][current_len - 1] == '\''
+		|| current_cmd->str[i][current_len - 1] == '\"'))
+	{
+		truncated = ft_substr(current_cmd->str[i], 1, current_len - 2);
+		free(current_cmd->str[i]);
+		current_cmd->str[i] = truncated;
+	}
+	return (current_cmd->str[i]);
+}
+
 void	remove_quotes(t_shell *shell)
 {
 	int				i;
-	int				current_len;
 	t_simple_cmds	*current_cmd;
-	char			*truncated;
 
 	i = 0;
-	truncated = NULL;
 	current_cmd = shell->cmds;
 	while (current_cmd != NULL)
 	{
 		i = 0;
 		while (current_cmd->str != NULL && current_cmd->str[i] != NULL)
 		{
-			current_len = ft_strlen(current_cmd->str[i]);
-			if (current_cmd->str[i][0] == '\''
-				&& current_cmd->str[i][current_len - 1] == '\'')
-			{
-				truncated = ft_substr(current_cmd->str[i], 1, current_len - 2);
-				free(current_cmd->str[i]);
-				current_cmd->str[i] = truncated;
-			}
+			current_cmd->str[i] = util_remove_quotes(current_cmd, i);
 			i++;
 		}
 		current_cmd = current_cmd->next;
 	}
+}
+
+void	trim_dollar_sign(char **str)
+{
+	char	*tmp;
+
+	tmp = ft_strtrim(*str, "$");
+	free(*str);
+	*str = tmp;
 }
 
 int	restore_streams(int *std)
