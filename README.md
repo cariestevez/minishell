@@ -1,4 +1,4 @@
-See [subject](https://github.com/cariestevez/minishell/blob/main/minishell.en.subject.pdf))
+See [subject](https://github.com/cariestevez/minishell/blob/main/minishell.en.subject.pdf)
 
 # 🐚 minishell
 
